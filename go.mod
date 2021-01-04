@@ -3,7 +3,7 @@ module github.com/rocky114/craftsman
 go 1.15
 
 require (
-	github.com/facebook/ent v0.5.3 // indirect
+	github.com/facebook/ent v0.5.3
 	github.com/gin-gonic/gin v1.6.3 // indirect
 	github.com/go-playground/validator/v10 v10.4.1 // indirect
 	github.com/golang/protobuf v1.4.3 // indirect
