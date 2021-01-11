@@ -1,24 +1,23 @@
 package main
 
 import (
-	"craftsman/model"
 	"fmt"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	"time"
 )
 
 func main() {
-	dsn := "root:rocky114@tcp(81.68.171.7:3306)/rocky?charset=utf8mb4&parseTime=True&loc=Local"
-	db, _ := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	ticker := time.NewTicker(3 * time.Second)
 
-	member := model.Member{
-		Name:    "admin",
-		IsAdmin: 1,
-		IsSuper: 1,
-		Status:  "active",
+	fmt.Println("当前时间为:", time.Now())
+
+	go func() {
+		for {
+			t := <-ticker.C
+			fmt.Println("当前时间为：", t)
+		}
+	}()
+
+	for {
+		time.Sleep(time.Second * 1)
 	}
-
-	result := db.Create(&member)
-
-	fmt.Println(result)
 }
