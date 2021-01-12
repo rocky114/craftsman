@@ -7,20 +7,19 @@ import (
 )
 
 var (
-	MysqlConfig *config.Mysql
+	GlobalConfig config.Server
 )
 
 func Viper() {
-	v := viper.New()
-	v.SetConfigFile("config.yaml")
+	viper.SetConfigFile("config.toml")
 
-	err := v.ReadInConfig()
+	err := viper.ReadInConfig()
 
 	if err != nil {
 		panic(fmt.Errorf("Fatal error config file: %s \n", err))
 	}
 
-	if err := v.Unmarshal(MysqlConfig); err != nil {
+	if err := viper.Unmarshal(&GlobalConfig); err != nil {
 		panic(fmt.Errorf("config parse error: %s \n", err))
 	}
 }
