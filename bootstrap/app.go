@@ -2,6 +2,7 @@ package bootstrap
 
 import (
 	"craftsman/config"
+	"flag"
 	"fmt"
 	"github.com/spf13/viper"
 )
@@ -10,8 +11,13 @@ var (
 	GlobalConfig config.Server
 )
 
-func Viper() {
-	viper.SetConfigFile("config.toml")
+func Config() {
+	var configFile string
+
+	flag.StringVar(&configFile, "c", "config.toml", "choose config file(shorthand)")
+	flag.StringVar(&configFile, "config", "config.toml", "chose config file")
+
+	viper.SetConfigFile(configFile)
 
 	err := viper.ReadInConfig()
 

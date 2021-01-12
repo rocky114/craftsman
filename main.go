@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	bootstrap.Viper()
+	bootstrap.Config()
 
 	fmt.Println(bootstrap.GlobalConfig.Mysql.Host)
 
