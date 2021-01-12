@@ -1,23 +1,12 @@
 package main
 
 import (
+	"craftsman/bootstrap"
 	"fmt"
-	"time"
 )
 
 func main() {
-	ticker := time.NewTicker(3 * time.Second)
+	bootstrap.Viper()
 
-	fmt.Println("当前时间为:", time.Now())
-
-	go func() {
-		for {
-			t := <-ticker.C
-			fmt.Println("当前时间为：", t)
-		}
-	}()
-
-	for {
-		time.Sleep(time.Second * 1)
-	}
+	fmt.Println("starting application...")
 }
