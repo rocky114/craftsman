@@ -6,9 +6,10 @@ import (
 )
 
 func main() {
-	bootstrap.Config()
+	fmt.Println("application starting...")
 
-	fmt.Println(bootstrap.GlobalConfig.Mysql.Host)
-
-	fmt.Println("starting application...")
+	db, _ := bootstrap.MysqlConn.DB()
+	defer func() {
+		_ = db.Close()
+	}()
 }

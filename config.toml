@@ -1,6 +1,7 @@
 [mysql]
-host = "127.0.0.1"
-port = 3306
+host = "81.68.171.7"
+port = "3306"
 username = "root"
 password = "rocky114"
 database = "rocky"
+options = "charset=utf8mb4&parseTime=True&loc=Local"
