@@ -1,15 +1,41 @@
 package main
 
 import (
-	"craftsman/bootstrap"
+	"craftsman/config"
+	"craftsman/model"
+	"craftsman/router"
 	"fmt"
+	"log"
+	"net/http"
+	"time"
 )
+
+func init() {
+	config.Bootstrap()
+	model.Bootstrap()
+	router.Bootstrap()
+}
 
 func main() {
 	fmt.Println("application starting...")
 
-	db, _ := bootstrap.MysqlConn.DB()
-	defer func() {
-		_ = db.Close()
-	}()
+	endPoint := "0.0.0.0:8011"
+
+	maxHeaderBytes := 1 << 20
+
+	server := &http.Server{
+		Addr:           endPoint,
+		Handler:        router.Router,
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
+		MaxHeaderBytes: maxHeaderBytes,
+	}
+
+	log.Printf("[info] start http server listening %s", endPoint)
+
+	err := server.ListenAndServe()
+
+	if err != nil {
+		fmt.Printf("server err: %s", err)
+	}
 }
