@@ -1,9 +1,15 @@
 package admin
 
-import "github.com/gin-gonic/gin"
+import (
+	"craftsman/bootstrap"
+	"craftsman/model"
+	"craftsman/service"
+	"github.com/gin-gonic/gin"
+)
 
 func Index(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "pong",
-	})
+	var items model.Member
+	bootstrap.MysqlConn.Select("name", "nickname", "email").Find(&items)
+
+	c.JSON(200, service.Success(items))
 }
