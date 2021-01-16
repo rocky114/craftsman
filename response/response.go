@@ -4,23 +4,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Result1 struct {
-	Code int         `json:"code"`
-	Msg  string      `json:"msg"`
-	Data interface{} `json:"data"`
-}
-
-type Gin struct {
+type GinContext struct {
 	C *gin.Context
 }
 
 type Result struct {
 	Code int         `json:"code"`
-	Msg  string      `json:"msg"`
+	Msg  interface{} `json:"msg"`
 	Data interface{} `json:"data"`
 }
 
-func (g *Gin) Response(httpCode, errCode int, data interface{}) {
+func (g *GinContext) Response(httpCode, errCode int, data interface{}) {
 	g.C.JSON(httpCode, Result{
 		Code: errCode,
 		Msg:  GetMsg(errCode),
