@@ -13,4 +13,7 @@ func Bootstrap() {
 	Router.Use(gin.Recovery())
 
 	Router.GET("/members", admin.Index)
+	Router.POST("/members", admin.Create)
+	Router.PUT("/members/:id", admin.Update)
+	Router.DELETE("/members/:id", admin.Delete)
 }

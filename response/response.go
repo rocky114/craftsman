@@ -1,34 +1,37 @@
 package response
 
+import (
+	"github.com/gin-gonic/gin"
+)
+
+type Result1 struct {
+	Code int         `json:"code"`
+	Msg  string      `json:"msg"`
+	Data interface{} `json:"data"`
+}
+
+type Gin struct {
+	C *gin.Context
+}
+
 type Result struct {
 	Code int         `json:"code"`
 	Msg  string      `json:"msg"`
 	Data interface{} `json:"data"`
 }
 
-func Success(data interface{}, msg ...string) *Result {
-	var message string
-	if len(msg) == 1 {
-		message = msg[0]
-	} else {
-		message = "successfully"
-	}
-
-	return &Result{
-		Code: 0,
-		Msg:  message,
+func (g *Gin) Response(httpCode, errCode int, data interface{}) {
+	g.C.JSON(httpCode, Result{
+		Code: errCode,
+		Msg:  GetMsg(errCode),
 		Data: data,
-	}
+	})
 }
 
-func Error(msg string, data ...interface{}) *Result {
-	if len(data) == 0 {
-		data = []interface{}{}
+func GetMsg(code int) string {
+	if msg, ok := message[code]; ok {
+		return msg
 	}
 
-	return &Result{
-		Code: -1,
-		Msg:  msg,
-		Data: data,
-	}
+	return message[Success]
 }
