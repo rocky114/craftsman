@@ -1,41 +1,43 @@
 package admin
 
 import (
+	"craftsman/model"
 	"craftsman/response"
 	"craftsman/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
-type Member struct {
-	Name     string `json:"name" form:"name"`
-	Nickname string `json:"nickname" form:"nickname"`
-	Email    string `json:"email" form:"email"`
-}
-
 func Index(c *gin.Context) {
 	items := service.GetMembers()
 
-	result := response.GinContext{
+	ginContent := response.GinContext{
 		C: c,
 	}
 
-	result.Response(http.StatusOK, response.Success, items)
+	ginContent.Response(http.StatusOK, response.Success, items)
 }
 
 func Create(c *gin.Context) {
-	var json Member
+	var json model.Member
 
-	result := response.GinContext{
+	ginContext := response.GinContext{
 		C: c,
 	}
 
 	if err := c.ShouldBindJSON(&json); err != nil {
-		result.Response(http.StatusBadRequest, response.MemberRequestParamError, nil)
+		ginContext.Response(http.StatusBadRequest, response.RequestParamError, nil)
 		return
 	}
 
-	result.Response(http.StatusOK, response.Success, []struct{}{})
+	result := service.CreateMember(&json)
+
+	if result != nil {
+		ginContext.Response(http.StatusOK, response.MemberCreateFailed, nil)
+		return
+	}
+
+	ginContext.Response(http.StatusOK, response.Success, []struct{}{})
 }
 
 func Update(c *gin.Context) {

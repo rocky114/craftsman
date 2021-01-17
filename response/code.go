@@ -1,8 +1,10 @@
 package response
 
 const (
-	Success = 0
-	Error   = -1
+	Success           = 0
+	Error             = -1
+	RequestParamError = 10000
 
-	MemberRequestParamError = 10001
+	MemberHasExist     = 10001
+	MemberCreateFailed = 10002
 )

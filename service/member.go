@@ -10,3 +10,13 @@ func GetMembers() []map[string]interface{} {
 
 	return items
 }
+
+func CreateMember(member *model.Member) (err error) {
+	result := model.MysqlConn.Create(member)
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
+}
