@@ -8,6 +8,7 @@ import (
 
 type Application struct {
 	Mysql Mysql `json:"mysql" yaml:"mysql"`
+	JWT   Jwt   `json:"jwt" yaml:"jwt"`
 }
 
 var GlobalConfig Application

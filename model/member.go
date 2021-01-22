@@ -2,7 +2,7 @@ package model
 
 type Member struct {
 	IdModel
-	Name      string `json:"name"`
+	Username  string `json:"username"`
 	Password  string `json:"password"`
 	Nickname  string `json:"nickname" gorm:"default:null"`
 	Avatar    string `json:"avatar" gorm:"default:null"`

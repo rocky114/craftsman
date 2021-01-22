@@ -6,7 +6,7 @@ import (
 
 func GetMembers() []map[string]interface{} {
 	var items []map[string]interface{}
-	model.MysqlConn.Model(&model.Member{}).Select("name", "id").Find(&items)
+	model.MysqlConn.Model(&model.Member{}).Select("username", "id").Find(&items)
 
 	return items
 }

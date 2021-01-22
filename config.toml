@@ -9,3 +9,6 @@ username = "root"
 password = "rocky114"
 database = "rocky"
 options = "charset=utf8mb4&parseTime=True&loc=Local"
+
+[jwt]
+secret = "rocky114"
