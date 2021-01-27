@@ -24,5 +24,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	ginContent.Response(http.StatusOK, response.Success, token)
+	result := map[string]string{"token": token}
+
+	ginContent.Response(http.StatusOK, response.Success, result)
 }

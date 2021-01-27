@@ -15,6 +15,10 @@ type Result struct {
 }
 
 func (g *GinContext) Response(httpCode, errCode int, data interface{}) {
+	if data == nil {
+		data = []struct{}{}
+	}
+
 	g.C.JSON(httpCode, Result{
 		Code: errCode,
 		Msg:  GetMsg(errCode),
