@@ -20,7 +20,8 @@ func Login(c *gin.Context) {
 	token, err := service.Authenticate(json)
 
 	if err != nil {
-		ginContent.Response(http.StatusBadRequest, response.RequestParamError, nil)
+		ginContent.Response(http.StatusBadRequest, response.MemberAccountPasswordErr, nil)
+		return
 	}
 
 	ginContent.Response(http.StatusOK, response.Success, token)
