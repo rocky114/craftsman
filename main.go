@@ -19,7 +19,7 @@ func init() {
 func main() {
 	fmt.Println("application starting...")
 
-	endPoint := "0.0.0.0:8011"
+	endPoint := config.GlobalConfig.Server.Addr + ":" + config.GlobalConfig.Server.Port
 
 	maxHeaderBytes := 1 << 20
 
@@ -38,4 +38,6 @@ func main() {
 	if err != nil {
 		fmt.Printf("server err: %s", err)
 	}
+
+	fmt.Println("application shutdown...")
 }
