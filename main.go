@@ -1,12 +1,16 @@
 package main
 
 import (
+	"context"
 	"craftsman/config"
 	"craftsman/model"
 	"craftsman/router"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 )
 
@@ -31,13 +35,24 @@ func main() {
 		MaxHeaderBytes: maxHeaderBytes,
 	}
 
-	log.Printf("[info] start http server listening %s", endPoint)
+	go func() {
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("http server listening %s", endPoint)
+		}
+	}()
 
-	err := server.ListenAndServe()
+	quit := make(chan os.Signal)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
 
-	if err != nil {
-		fmt.Printf("server err: %s", err)
+	fmt.Println("shutting down server...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := server.Shutdown(ctx); err != nil {
+		fmt.Println("server forced to shutdown:", err)
 	}
 
-	fmt.Println("application shutdown...")
+	fmt.Println("application exiting...")
 }
