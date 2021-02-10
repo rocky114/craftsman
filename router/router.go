@@ -12,9 +12,10 @@ func Bootstrap() {
 	Router.Use(gin.Logger())
 	Router.Use(gin.Recovery())
 
+	Router.GET("/captcha", admin.Captcha)
 	Router.POST("/auth/login", admin.Login)
-	Router.GET("/members", admin.Index)
-	Router.POST("/members", admin.Create)
-	Router.PUT("/members/:id", admin.Update)
-	Router.DELETE("/members/:id", admin.Delete)
+	Router.GET("/members", admin.GetMembers)
+	Router.POST("/members", admin.AddMember)
+	Router.PUT("/members/:id", admin.UpdateMember)
+	Router.DELETE("/members/:id", admin.DeleteMember)
 }

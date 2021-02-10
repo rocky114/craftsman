@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func Index(c *gin.Context) {
+func GetMembers(c *gin.Context) {
 	items := service.GetMembers()
 
 	ginContent := response.GinContext{
@@ -18,7 +18,7 @@ func Index(c *gin.Context) {
 	ginContent.Response(http.StatusOK, response.Success, items)
 }
 
-func Create(c *gin.Context) {
+func AddMember(c *gin.Context) {
 	var json model.Member
 
 	ginContext := response.GinContext{
@@ -40,10 +40,10 @@ func Create(c *gin.Context) {
 	ginContext.Response(http.StatusOK, response.Success, []struct{}{})
 }
 
-func Update(c *gin.Context) {
+func UpdateMember(c *gin.Context) {
 
 }
 
-func Delete(c *gin.Context) {
+func DeleteMember(c *gin.Context) {
 
 }
