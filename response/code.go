@@ -1,11 +1,12 @@
 package response
 
 const (
-	Success           = 0
-	Error             = -1
-	RequestParamError = 10000
+	Success               = 0
+	Error                 = -1
+	RequestParamError     = 10000
+	CaptchaGenerateFailed = 10001
 
-	MemberHasExist           = 10001
-	MemberCreateFailed       = 10002
-	MemberAccountPasswordErr = 10003
+	MemberHasExist           = 20001
+	MemberCreateFailed       = 20002
+	MemberAccountPasswordErr = 20003
 )
