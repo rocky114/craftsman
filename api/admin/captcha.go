@@ -3,7 +3,6 @@ package admin
 import (
 	"craftsman/config"
 	"craftsman/response"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/mojocn/base64Captcha"
 	"net/http"
@@ -11,7 +10,6 @@ import (
 
 func Captcha(c *gin.Context) {
 	captchaConfig := config.GlobalConfig.Captcha
-	fmt.Println(captchaConfig.Height, captchaConfig.Width)
 	driver := base64Captcha.NewDriverDigit(captchaConfig.Height, captchaConfig.Width, captchaConfig.Length, 0.7, 80)
 	captcha := base64Captcha.NewCaptcha(driver, base64Captcha.DefaultMemStore)
 	_, b64s, err := captcha.Generate()

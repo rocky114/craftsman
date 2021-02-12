@@ -11,6 +11,7 @@ type Application struct {
 	JWT     Jwt     `json:"jwt" yaml:"jwt"`
 	Server  Server  `json:"server" yaml:"server"`
 	Captcha Captcha `json:"captcha" yaml:"captcha"`
+	Cache   Cache   `json:"cache" yaml:"cache"`
 }
 
 var GlobalConfig Application

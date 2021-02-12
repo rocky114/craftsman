@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"craftsman/cache"
 	"craftsman/config"
 	"craftsman/model"
 	"craftsman/router"
@@ -16,6 +17,7 @@ import (
 
 func init() {
 	config.Bootstrap()
+	cache.Bootstrap()
 	model.Bootstrap()
 	router.Bootstrap()
 }

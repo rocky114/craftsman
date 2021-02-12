@@ -17,3 +17,10 @@ secret = "rocky114"
 width = 240
 height = 80
 length = 5
+
+[cache]
+[cache.redis]
+host = "127.0.0.1"
+port = 6379
+password = ""
+db = 0
