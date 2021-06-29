@@ -9,12 +9,12 @@ type GinContext struct {
 }
 
 type Result struct {
-	Code int         `json:"code"`
+	Code ErrCode     `json:"code"`
 	Msg  interface{} `json:"msg"`
 	Data interface{} `json:"data"`
 }
 
-func (g *GinContext) Response(httpCode, errCode int, data interface{}) {
+func (g *GinContext) Response(httpCode int, errCode ErrCode, data interface{}) {
 	if data == nil {
 		data = []struct{}{}
 	}
@@ -26,7 +26,7 @@ func (g *GinContext) Response(httpCode, errCode int, data interface{}) {
 	})
 }
 
-func GetMsg(code int) string {
+func GetMsg(code ErrCode) string {
 	if msg, ok := message[code]; ok {
 		return msg
 	}
