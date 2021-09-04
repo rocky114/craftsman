@@ -16,7 +16,7 @@ type Application struct {
 
 var GlobalConfig Application
 
-func Bootstrap() {
+func init() {
 	var configFile string
 	flag.StringVarP(&configFile, "config", "c", "config.toml", "choose config file(shorthand)")
 

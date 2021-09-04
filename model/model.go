@@ -20,7 +20,7 @@ type TimeModel struct {
 var MysqlConn *gorm.DB
 var err error
 
-func Bootstrap() {
+func init() {
 	m := config.GlobalConfig.Mysql
 	dsn := m.Username + ":" + m.Password + "@tcp(" + m.Host + ":" + m.Port + ")/" + m.Database + "?" + m.Options
 

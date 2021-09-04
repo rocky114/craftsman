@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
-	"craftsman/cache"
+	_ "craftsman/cache"
 	"craftsman/config"
-	"craftsman/model"
+	_ "craftsman/model"
 	"craftsman/router"
 	"fmt"
 	"log"
@@ -14,13 +14,6 @@ import (
 	"syscall"
 	"time"
 )
-
-func init() {
-	config.Bootstrap()
-	cache.Bootstrap()
-	model.Bootstrap()
-	router.Bootstrap()
-}
 
 func main() {
 	fmt.Println("application starting...")

@@ -7,7 +7,7 @@ import (
 
 var RedisConn *redis.Client
 
-func Bootstrap() {
+func init() {
 	redisConfig := config.GlobalConfig.Cache.Redis
 
 	RedisConn = redis.NewClient(&redis.Options{

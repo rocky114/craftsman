@@ -7,7 +7,7 @@ import (
 
 var Router *gin.Engine
 
-func Bootstrap() {
+func init() {
 	Router = gin.Default()
 	Router.Use(gin.Logger())
 	Router.Use(gin.Recovery())
