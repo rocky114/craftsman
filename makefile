@@ -2,7 +2,7 @@ default:
 	@echo "craftsman"
 
 ## http: 启动http服务
-http:
+run-http:
 	go run main.go
 
 help:
