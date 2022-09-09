@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+	"github.com/rocky114/craftsman/internal/bootstrap"
 )
 
 func main() {
-	_ = gin.Default()
+	bootstrap.StartingHttpService()
 }
