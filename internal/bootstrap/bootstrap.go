@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	_ "github.com/rocky114/craftsman/internal/config"
 )
 
 var Router *gin.Engine
@@ -22,7 +23,7 @@ func StartingHttpService() {
 	defer stop()
 
 	server := &http.Server{
-		Addr:           "",
+		Addr:           ":8080",
 		Handler:        Router,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
