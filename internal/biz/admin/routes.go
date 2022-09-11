@@ -1,7 +1,9 @@
 package admin
 
-import "github.com/rocky114/craftsman/internal/bootstrap"
+import (
+	"github.com/gin-gonic/gin"
+)
 
-func init() {
-	bootstrap.Router.GET("/captcha", GetCaptcha)
+func InitRoute(r *gin.Engine) {
+	r.GET("/captcha", GetCaptcha)
 }

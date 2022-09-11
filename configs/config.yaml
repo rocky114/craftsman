@@ -1,11 +1,14 @@
 mysql:
-  host: 81.68.171.7
+  host: 127.0.0.1
   port: 3306
   username: root
-  password: rocky114
-  database: rocky
+  password: 1234
+  database: test
   options: charset=utf8mb4&parseTime=True&loc=Local
 
 log:
-  path: ../../logs/craftsman.log
+  path: ../../log/craftsman.log
   level: debug
+
+migrate:
+  path: ../../script/sql

@@ -2,20 +2,25 @@ package bootstrap
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"os/signal"
 	"syscall"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	_ "github.com/rocky114/craftsman/internal/config"
+	"github.com/rocky114/craftsman/internal/biz/admin"
+	"github.com/sirupsen/logrus"
 )
 
-var Router *gin.Engine
+var router = gin.Default()
 
 func init() {
-	Router = gin.Default()
+	initConfig()
+	initLog()
+	initDb()
+	initMigrate()
+
+	admin.InitRoute(router)
 }
 
 func StartingHttpService() {
@@ -24,7 +29,7 @@ func StartingHttpService() {
 
 	server := &http.Server{
 		Addr:           ":8080",
-		Handler:        Router,
+		Handler:        router,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
@@ -32,7 +37,7 @@ func StartingHttpService() {
 
 	go func() {
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("listen: %s\n", err)
+			logrus.Fatalf("listen: %s\n", err)
 		}
 	}()
 
@@ -41,8 +46,8 @@ func StartingHttpService() {
 	ctx, cannel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cannel()
 	if err := server.Shutdown(ctx); err != nil {
-		log.Fatal("server forced to shutdown: ", err)
+		logrus.Fatal("server forced to shutdown: ", err)
 	}
 
-	log.Println("server exiting")
+	logrus.Println("server exiting")
 }

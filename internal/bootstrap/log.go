@@ -2,22 +2,26 @@ package bootstrap
 
 import (
 	"fmt"
+	"log"
 	"path/filepath"
 	"runtime"
 	"time"
 
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
-	"github.com/rocky114/craftsman/internal/config"
 	"github.com/sirupsen/logrus"
 )
 
-func init() {
-	writer, _ := rotatelogs.New(
-		config.GlobalConfig.Log.Path+".%Y%m%d",
-		rotatelogs.WithLinkName(config.GlobalConfig.Log.Path),
+func initLog() {
+	writer, err := rotatelogs.New(
+		GlobalConfig.Log.Path+".%Y%m%d",
+		rotatelogs.WithLinkName(GlobalConfig.Log.Path),
 		rotatelogs.WithMaxAge(time.Duration(180)*time.Second),
 		rotatelogs.WithRotationTime(time.Duration(60)*time.Second),
 	)
+
+	if err != nil {
+		log.Fatalf("create rotate file err: %v\n", err)
+	}
 
 	logrus.SetOutput(writer)
 	logrus.SetReportCaller(true)

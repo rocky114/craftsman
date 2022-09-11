@@ -1,4 +1,4 @@
-package config
+package bootstrap
 
 import (
 	"log"
@@ -10,8 +10,9 @@ import (
 var GlobalConfig server
 
 type server struct {
-	Mysql mysqlConf `json:"mysql" yaml:"mysql"`
-	Log   logConf   `json:"log" yaml:"log"`
+	Mysql   mysqlConf   `json:"mysql" yaml:"mysql"`
+	Log     logConf     `json:"log" yaml:"log"`
+	Migrate migrateConf `json:"migrate" yaml:"migrate"`
 }
 
 type mysqlConf struct {
@@ -28,7 +29,11 @@ type logConf struct {
 	Level string `json:"level" yaml:"level"`
 }
 
-func init() {
+type migrateConf struct {
+	Path string `json:"path" yaml:"path"`
+}
+
+func initConfig() {
 	var configFilepath string
 	flag.StringVarP(&configFilepath, "config", "c", "../../configs/config.yaml", "config file")
 	flag.Parse()

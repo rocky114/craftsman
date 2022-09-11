@@ -1,1 +1,4 @@
 package storage
+
+func GetUsers() {
+}
