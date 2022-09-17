@@ -1,0 +1,7 @@
+version: 1
+packages:
+  - path: "../internal/storage"
+    name: "storage"
+    engine: "mysql"
+    schema: "../script/sqlc/user_schema.sql"
+    queries: "../script/sqlc/user.sql"

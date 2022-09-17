@@ -1,41 +1,53 @@
-package bootstrap
+package storage
 
 import (
 	"fmt"
 	"log"
+	"sync"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
+	"github.com/rocky114/craftsman/internal/config"
 	migrate "github.com/rubenv/sql-migrate"
 	"github.com/sirupsen/logrus"
 )
 
-var DbConn *sqlx.DB
+var dbConn *sqlx.DB
 
-func initDb() {
+func InitDatabase() {
 	var err error
-	dbConf := GlobalConfig.Mysql
+
+	dbConf := config.GlobalConfig.Mysql
 	dsn := fmt.Sprintf("%s:%s@(%s:%s)/%s?%s", dbConf.Username, dbConf.Password, dbConf.Host, dbConf.Port, dbConf.Database, dbConf.Options)
-	DbConn, err = sqlx.Open("mysql", dsn)
+	dbConn, err = sqlx.Open("mysql", dsn)
 
 	if err != nil {
 		log.Fatalf("database initial err: %v", err)
 	}
 
-	DbConn.SetMaxIdleConns(10)
-	DbConn.SetMaxOpenConns(100)
+	dbConn.SetMaxIdleConns(10)
+	dbConn.SetMaxOpenConns(100)
 }
 
-func initMigrate() {
-	fmt.Println(DbConn.DriverName())
+func InitMigrate() {
 	migrations := &migrate.FileMigrationSource{
-		Dir: GlobalConfig.Migrate.Path,
+		Dir: config.GlobalConfig.Migrate.Path,
 	}
-	fmt.Println(DbConn)
-	n, err := migrate.Exec(DbConn.DB, "mysql", migrations, migrate.Up)
+	n, err := migrate.Exec(dbConn.DB, "mysql", migrations, migrate.Up)
 	if err != nil {
 		logrus.Errorf("migrate sql err: %v", err)
 	}
 
 	logrus.Infof("migrate sql apply number: %d", n)
+}
+
+var Querier *Queries
+var queriesOnce sync.Once
+
+func GetQueries() *Queries {
+	queriesOnce.Do(func() {
+		Querier = New(dbConn.DB)
+	})
+
+	return Querier
 }

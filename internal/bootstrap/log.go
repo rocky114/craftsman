@@ -8,13 +8,14 @@ import (
 	"time"
 
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
+	"github.com/rocky114/craftsman/internal/config"
 	"github.com/sirupsen/logrus"
 )
 
-func initLog() {
+func init() {
 	writer, err := rotatelogs.New(
-		GlobalConfig.Log.Path+".%Y%m%d",
-		rotatelogs.WithLinkName(GlobalConfig.Log.Path),
+		config.GlobalConfig.Log.Path+".%Y%m%d",
+		rotatelogs.WithLinkName(config.GlobalConfig.Log.Path),
 		rotatelogs.WithMaxAge(time.Duration(180)*time.Second),
 		rotatelogs.WithRotationTime(time.Duration(60)*time.Second),
 	)

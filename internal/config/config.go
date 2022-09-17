@@ -1,4 +1,4 @@
-package bootstrap
+package config
 
 import (
 	"log"
@@ -33,9 +33,9 @@ type migrateConf struct {
 	Path string `json:"path" yaml:"path"`
 }
 
-func initConfig() {
+func init() {
 	var configFilepath string
-	flag.StringVarP(&configFilepath, "config", "c", "../../configs/config.yaml", "config file")
+	flag.StringVarP(&configFilepath, "config", "c", "../../config/config.yaml", "config file")
 	flag.Parse()
 
 	viper.SetConfigFile(configFilepath)
