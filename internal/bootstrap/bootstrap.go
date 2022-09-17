@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rocky114/craftsman/internal/biz/admin"
+	"github.com/rocky114/craftsman/internal/biz/university"
 	_ "github.com/rocky114/craftsman/internal/config"
 	"github.com/rocky114/craftsman/internal/storage"
 	"github.com/sirupsen/logrus"
@@ -17,10 +18,16 @@ import (
 var router = gin.Default()
 
 func init() {
+	InitLog()
+
 	storage.InitDatabase()
 	storage.InitMigrate()
 
-	admin.InitRoute(router)
+	routes := []func(r *gin.Engine){admin.GetRoutes(), university.GetRoutes()}
+
+	for _, fn := range routes {
+		fn(router)
+	}
 }
 
 func StartingHttpService() {

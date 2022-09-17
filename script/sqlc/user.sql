@@ -1,6 +1,5 @@
 -- name: GetUser :one
-SELECT * FROM user
-WHERE id = ? LIMIT 1;
+SELECT * FROM user WHERE id = ? LIMIT 1;
 
 -- name: ListUsers :many
 SELECT * FROM user;
@@ -13,5 +12,4 @@ INSERT INTO user (
 );
 
 -- name: DeleteUser :exec
-DELETE FROM user
-WHERE id = ?;
+DELETE FROM user WHERE id = ?;
