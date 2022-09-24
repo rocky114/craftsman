@@ -28,6 +28,27 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (sql.Res
 	return q.db.ExecContext(ctx, createUser, arg.Username, arg.Password, arg.Email)
 }
 
+const getUser = `-- name: GetUser :one
+select id, username from user where username = ? and password = ?
+`
+
+type GetUserParams struct {
+	Username string
+	Password string
+}
+
+type GetUserRow struct {
+	ID       int32
+	Username string
+}
+
+func (q *Queries) GetUser(ctx context.Context, arg GetUserParams) (GetUserRow, error) {
+	row := q.db.QueryRowContext(ctx, getUser, arg.Username, arg.Password)
+	var i GetUserRow
+	err := row.Scan(&i.ID, &i.Username)
+	return i, err
+}
+
 const listUser = `-- name: ListUser :many
 SELECT id, username, password, tel, email, balance, points, status, original_id, is_admin, create_time, update_time FROM user
 `

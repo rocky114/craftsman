@@ -4,4 +4,4 @@ packages:
     name: "storage"
     engine: "mysql"
     schema: "../script/sqlc/schema.sql"
-    queries: "../script/sqlc/query"
+    queries: "../script/sqlc/sql"

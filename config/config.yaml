@@ -11,4 +11,4 @@ log:
   level: debug
 
 migrate:
-  path: ../../script/sql
+  path: ../../script/migration

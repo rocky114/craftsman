@@ -46,6 +46,27 @@ func CreateUser(c *gin.Context) {
 	c.JSON(http.StatusOK, response.Result{Code: response.OK, Message: ""})
 }
 
-func LoginIn(c *gin.Context) {
+type loginResponse struct {
+	Token string `json:"token"`
+}
 
+func LoginIn(c *gin.Context) {
+	var req storage.GetUserParams
+
+	var token string
+	var err error
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		logrus.Errorf("createUser err: %v", err)
+		c.JSON(http.StatusOK, response.Result{Code: response.Invalid, Message: response.ParameterErr})
+		return
+	}
+
+	if token, err = user.Login(req); err != nil {
+		logrus.Errorf("login err: %v", err)
+		c.JSON(http.StatusOK, response.Result{Code: response.Invalid, Message: response.UnknownErr})
+		return
+	}
+
+	c.JSON(http.StatusOK, response.Result{Code: response.OK, Message: "", Data: loginResponse{Token: token}})
 }
