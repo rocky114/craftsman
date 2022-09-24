@@ -28,12 +28,12 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (sql.Res
 	return q.db.ExecContext(ctx, createUser, arg.Username, arg.Password, arg.Email)
 }
 
-const listUsers = `-- name: ListUsers :many
+const listUser = `-- name: ListUser :many
 SELECT id, username, password, tel, email, balance, points, status, original_id, is_admin, create_time, update_time FROM user
 `
 
-func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
-	rows, err := q.db.QueryContext(ctx, listUsers)
+func (q *Queries) ListUser(ctx context.Context) ([]User, error) {
+	rows, err := q.db.QueryContext(ctx, listUser)
 	if err != nil {
 		return nil, err
 	}

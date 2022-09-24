@@ -5,9 +5,22 @@
 package storage
 
 import (
+	"database/sql"
 	"time"
 )
 
+// 学校基础信息表
+type University struct {
+	ID int32
+	// 学校名称
+	Name string
+	// 学校网址
+	WebsiteAddress sql.NullString
+	CreateTime     time.Time
+	UpdateTime     time.Time
+}
+
+// 用户信息表
 type User struct {
 	ID int32
 	// 名称

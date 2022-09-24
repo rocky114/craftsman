@@ -1,4 +1,4 @@
--- name: ListUsers :many
+-- name: ListUser :many
 SELECT * FROM user;
 
 -- name: CreateUser :execresult
