@@ -5,7 +5,6 @@
 package storage
 
 import (
-	"database/sql"
 	"time"
 )
 
@@ -14,7 +13,7 @@ type User struct {
 	// 名称
 	Username string
 	// 密码
-	Password sql.NullString
+	Password string
 	// 电话
 	Tel string
 	// 邮箱

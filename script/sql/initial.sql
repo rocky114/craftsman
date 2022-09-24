@@ -3,7 +3,7 @@
 CREATE TABLE `user` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(50) NOT NULL DEFAULT '' COMMENT '名称',
-  `password` char(32) DEFAULT NULL COMMENT '密码',
+  `password` char(32) NOT NULL DEFAULT '' COMMENT '密码',
   `tel` char(11) NOT NULL DEFAULT '' COMMENT '电话',
   `email` varchar(100) NOT NULL DEFAULT '' COMMENT '邮箱',
   `balance` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '余额',

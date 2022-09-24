@@ -12,54 +12,20 @@ import (
 
 const createUser = `-- name: CreateUser :execresult
 INSERT INTO user (
-  username, tel
+  username, password, email
 ) VALUES (
-  ?, ?
+  ?, ?, ?
 )
 `
 
 type CreateUserParams struct {
 	Username string
-	Tel      string
+	Password string
+	Email    string
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (sql.Result, error) {
-	return q.db.ExecContext(ctx, createUser, arg.Username, arg.Tel)
-}
-
-const deleteUser = `-- name: DeleteUser :exec
-DELETE FROM user
-WHERE id = ?
-`
-
-func (q *Queries) DeleteUser(ctx context.Context, id int32) error {
-	_, err := q.db.ExecContext(ctx, deleteUser, id)
-	return err
-}
-
-const getUser = `-- name: GetUser :one
-SELECT id, username, password, tel, email, balance, points, status, original_id, is_admin, create_time, update_time FROM user
-WHERE id = ? LIMIT 1
-`
-
-func (q *Queries) GetUser(ctx context.Context, id int32) (User, error) {
-	row := q.db.QueryRowContext(ctx, getUser, id)
-	var i User
-	err := row.Scan(
-		&i.ID,
-		&i.Username,
-		&i.Password,
-		&i.Tel,
-		&i.Email,
-		&i.Balance,
-		&i.Points,
-		&i.Status,
-		&i.OriginalID,
-		&i.IsAdmin,
-		&i.CreateTime,
-		&i.UpdateTime,
-	)
-	return i, err
+	return q.db.ExecContext(ctx, createUser, arg.Username, arg.Password, arg.Email)
 }
 
 const listUsers = `-- name: ListUsers :many
