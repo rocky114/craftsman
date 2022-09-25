@@ -12,7 +12,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func InitLog() {
+func initLog() {
 	writer, err := rotatelogs.New(
 		config.GlobalConfig.Log.Path+".%Y%m%d",
 		rotatelogs.WithLinkName(config.GlobalConfig.Log.Path),

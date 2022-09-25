@@ -18,7 +18,7 @@ import (
 var router = gin.Default()
 
 func init() {
-	InitLog()
+	initLog()
 
 	storage.InitDatabase()
 	storage.InitMigrate()
