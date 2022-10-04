@@ -13,10 +13,14 @@ var (
 	tokenSignatureKey = []byte("rocky114")
 )
 
-func AddUser(req storage.CreateUserParams) error {
+func CreateUser(req storage.CreateUserParams) error {
 	req.Password = crypt.GetMd5Str(req.Password)
 	_, err := storage.GetQueries().CreateUser(context.Background(), req)
 	return err
+}
+
+func ListUser() ([]storage.User, error) {
+	return storage.GetQueries().ListUser(context.Background())
 }
 
 func Login(req storage.GetUserParams) (string, error) {

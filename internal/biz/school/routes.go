@@ -1,4 +1,4 @@
-package university
+package school
 
 import "github.com/gin-gonic/gin"
 

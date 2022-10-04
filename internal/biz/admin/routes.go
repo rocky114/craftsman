@@ -9,6 +9,6 @@ func GetRoutes() func(r *gin.Engine) {
 		r.GET("/captcha", GetCaptcha)
 		r.POST("/login", LoginIn)
 		r.POST("/users", CreateUser)
-		r.GET("/users", GetUsers)
+		r.GET("/users", ListUser)
 	}
 }

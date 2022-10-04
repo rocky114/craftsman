@@ -20,34 +20,41 @@ func GetCaptcha(c *gin.Context) {
 	var ret captchaResponse
 	captchaId, captchaVal, err := captcha.Get()
 	if err != nil {
-		logrus.Errorf("captcha err: %v", err)
-		c.JSON(http.StatusOK, response.Result{Code: response.Invalid, Message: "生成验证码失败", Data: ret})
+		logrus.Errorf("GetCaptcha err: %v", err)
+		c.JSON(http.StatusOK, response.NewFailed(response.ErrUnknown))
 		return
 	}
 
 	ret = captchaResponse{CaptchaId: captchaId, CaptchaVal: captchaVal}
-	c.JSON(http.StatusOK, response.Result{Code: response.OK, Message: "", Data: ret})
+	c.JSON(http.StatusOK, response.NewSuccessed(ret))
 }
 
 func CreateUser(c *gin.Context) {
 	var req storage.CreateUserParams
 	if err := c.ShouldBindJSON(&req); err != nil {
 		logrus.Errorf("createUser err: %v", err)
-		c.JSON(http.StatusOK, response.Result{Code: response.Invalid, Message: response.ParameterErr})
+		c.JSON(http.StatusBadRequest, response.NewFailed(response.ErrInvalidParam))
 		return
 	}
 
-	if err := user.AddUser(req); err != nil {
+	if err := user.CreateUser(req); err != nil {
 		logrus.Errorf("createUser err: %v", err)
-		c.JSON(http.StatusOK, response.Result{Code: response.Invalid, Message: response.UnknownErr})
+		c.JSON(http.StatusOK, response.NewFailed(response.ErrUnknown))
 		return
 	}
 
-	c.JSON(http.StatusOK, response.Result{Code: response.OK, Message: ""})
+	c.JSON(http.StatusOK, response.NewSuccessed([]struct{}{}))
 }
 
-func GetUsers(c *gin.Context) {
+func ListUser(c *gin.Context) {
+	users, err := user.ListUser()
+	if err != nil {
+		logrus.Errorf("ListUsers err: %v", err)
+		c.JSON(http.StatusOK, response.NewFailed(response.ErrUnknown))
+		return
+	}
 
+	c.JSON(http.StatusOK, response.NewSuccessed(users))
 }
 
 type loginResponse struct {
@@ -62,15 +69,15 @@ func LoginIn(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		logrus.Errorf("createUser err: %v", err)
-		c.JSON(http.StatusOK, response.Result{Code: response.Invalid, Message: response.ParameterErr})
+		c.JSON(http.StatusBadRequest, response.NewFailed(response.ErrInvalidParam))
 		return
 	}
 
 	if token, err = user.Login(req); err != nil {
 		logrus.Errorf("login err: %v", err)
-		c.JSON(http.StatusOK, response.Result{Code: response.Invalid, Message: response.UnknownErr})
+		c.JSON(http.StatusOK, response.NewFailed(response.ErrUnknown))
 		return
 	}
 
-	c.JSON(http.StatusOK, response.Result{Code: response.OK, Message: "", Data: loginResponse{Token: token}})
+	c.JSON(http.StatusOK, response.NewSuccessed(loginResponse{Token: token}))
 }
