@@ -21,40 +21,40 @@ func GetCaptcha(c *gin.Context) {
 	captchaId, captchaVal, err := captcha.Get()
 	if err != nil {
 		logrus.Errorf("GetCaptcha err: %v", err)
-		c.JSON(http.StatusOK, response.NewFailed(response.ErrUnknown))
+		c.JSON(http.StatusOK, response.NewFail(response.ErrUnknown))
 		return
 	}
 
 	ret = captchaResponse{CaptchaId: captchaId, CaptchaVal: captchaVal}
-	c.JSON(http.StatusOK, response.NewSuccessed(ret))
+	c.JSON(http.StatusOK, response.NewSuccess(ret))
 }
 
 func CreateUser(c *gin.Context) {
 	var req storage.CreateUserParams
 	if err := c.ShouldBindJSON(&req); err != nil {
 		logrus.Errorf("createUser err: %v", err)
-		c.JSON(http.StatusBadRequest, response.NewFailed(response.ErrInvalidParam))
+		c.JSON(http.StatusBadRequest, response.NewFail(response.ErrInvalidParam))
 		return
 	}
 
 	if err := user.CreateUser(req); err != nil {
 		logrus.Errorf("createUser err: %v", err)
-		c.JSON(http.StatusOK, response.NewFailed(response.ErrUnknown))
+		c.JSON(http.StatusOK, response.NewFail(response.ErrUnknown))
 		return
 	}
 
-	c.JSON(http.StatusOK, response.NewSuccessed([]struct{}{}))
+	c.JSON(http.StatusOK, response.NewSuccess([]struct{}{}))
 }
 
 func ListUser(c *gin.Context) {
 	users, err := user.ListUser()
 	if err != nil {
 		logrus.Errorf("ListUsers err: %v", err)
-		c.JSON(http.StatusOK, response.NewFailed(response.ErrUnknown))
+		c.JSON(http.StatusOK, response.NewFail(response.ErrUnknown))
 		return
 	}
 
-	c.JSON(http.StatusOK, response.NewSuccessed(users))
+	c.JSON(http.StatusOK, response.NewSuccess(users))
 }
 
 type loginResponse struct {
@@ -69,15 +69,15 @@ func LoginIn(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		logrus.Errorf("createUser err: %v", err)
-		c.JSON(http.StatusBadRequest, response.NewFailed(response.ErrInvalidParam))
+		c.JSON(http.StatusBadRequest, response.NewFail(response.ErrInvalidParam))
 		return
 	}
 
 	if token, err = user.Login(req); err != nil {
 		logrus.Errorf("login err: %v", err)
-		c.JSON(http.StatusOK, response.NewFailed(response.ErrUnknown))
+		c.JSON(http.StatusOK, response.NewFail(response.ErrUnknown))
 		return
 	}
 
-	c.JSON(http.StatusOK, response.NewSuccessed(loginResponse{Token: token}))
+	c.JSON(http.StatusOK, response.NewSuccess(loginResponse{Token: token}))
 }
