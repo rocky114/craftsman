@@ -2,7 +2,7 @@ CREATE TABLE `user` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(50) NOT NULL DEFAULT '' COMMENT '名称',
   `password` char(32) NOT NULL DEFAULT '' COMMENT '密码',
-  `tel` char(11) NOT NULL DEFAULT '' COMMENT '电话',
+  `telphone` bigint(11) unsigned NOT NULL DEFAULT '0' COMMENT '电话',
   `email` varchar(100) NOT NULL DEFAULT '' COMMENT '邮箱',
   `balance` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '余额',
   `points` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '积分',
@@ -12,7 +12,7 @@ CREATE TABLE `user` (
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `tel` (`tel`),
+  UNIQUE KEY `tel` (`telphone`),
   KEY `original_id` (`original_id`),
   KEY `email` (`email`) USING HASH
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户信息表';

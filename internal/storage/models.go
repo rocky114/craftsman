@@ -28,7 +28,7 @@ type User struct {
 	// 密码
 	Password string
 	// 电话
-	Tel string
+	Telphone int64
 	// 邮箱
 	Email string
 	// 余额

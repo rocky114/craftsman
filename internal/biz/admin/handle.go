@@ -46,6 +46,10 @@ func CreateUser(c *gin.Context) {
 	c.JSON(http.StatusOK, response.Result{Code: response.OK, Message: ""})
 }
 
+func GetUsers(c *gin.Context) {
+
+}
+
 type loginResponse struct {
 	Token string `json:"token"`
 }

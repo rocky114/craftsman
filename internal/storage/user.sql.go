@@ -12,9 +12,9 @@ import (
 
 const createUser = `-- name: CreateUser :execresult
 INSERT INTO user (
-  username, password, email
+  username, password, email, telphone
 ) VALUES (
-  ?, ?, ?
+  ?, ?, ?, ?
 )
 `
 
@@ -22,14 +22,20 @@ type CreateUserParams struct {
 	Username string
 	Password string
 	Email    string
+	Telphone int64
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (sql.Result, error) {
-	return q.db.ExecContext(ctx, createUser, arg.Username, arg.Password, arg.Email)
+	return q.db.ExecContext(ctx, createUser,
+		arg.Username,
+		arg.Password,
+		arg.Email,
+		arg.Telphone,
+	)
 }
 
 const getUser = `-- name: GetUser :one
-select id, username from user where username = ? and password = ?
+SELECT id, username from user where username = ? and password = ?
 `
 
 type GetUserParams struct {
@@ -50,7 +56,7 @@ func (q *Queries) GetUser(ctx context.Context, arg GetUserParams) (GetUserRow, e
 }
 
 const listUser = `-- name: ListUser :many
-SELECT id, username, password, tel, email, balance, points, status, original_id, is_admin, create_time, update_time FROM user
+SELECT id, username, password, telphone, email, balance, points, status, original_id, is_admin, create_time, update_time FROM user
 `
 
 func (q *Queries) ListUser(ctx context.Context) ([]User, error) {
@@ -66,7 +72,7 @@ func (q *Queries) ListUser(ctx context.Context) ([]User, error) {
 			&i.ID,
 			&i.Username,
 			&i.Password,
-			&i.Tel,
+			&i.Telphone,
 			&i.Email,
 			&i.Balance,
 			&i.Points,

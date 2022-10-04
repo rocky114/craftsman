@@ -9,6 +9,10 @@ import (
 	"github.com/rocky114/craftsman/pkg/crypt"
 )
 
+var (
+	tokenSignatureKey = []byte("rocky114")
+)
+
 func AddUser(req storage.CreateUserParams) error {
 	req.Password = crypt.GetMd5Str(req.Password)
 	_, err := storage.GetQueries().CreateUser(context.Background(), req)
@@ -40,7 +44,7 @@ func getToken(id int32, username string) (string, error) {
 			Issuer:    "rocky",
 		},
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodES256, claim)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
 
-	return token.SignedString("craftman")
+	return token.SignedString(tokenSignatureKey)
 }

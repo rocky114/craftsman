@@ -16,8 +16,8 @@ func initLog() {
 	writer, err := rotatelogs.New(
 		config.GlobalConfig.Log.Path+".%Y%m%d",
 		rotatelogs.WithLinkName(config.GlobalConfig.Log.Path),
-		rotatelogs.WithMaxAge(time.Duration(180)*time.Second),
-		rotatelogs.WithRotationTime(time.Duration(60)*time.Second),
+		rotatelogs.WithMaxAge(time.Duration(24)*time.Hour*7),
+		rotatelogs.WithRotationTime(time.Duration(24)*time.Hour),
 	)
 
 	if err != nil {

@@ -2,11 +2,11 @@
 SELECT * FROM user;
 
 -- name: GetUser :one
-select id, username from user where username = ? and password = ?;
+SELECT id, username from user where username = ? and password = ?;
 
 -- name: CreateUser :execresult
 INSERT INTO user (
-  username, password, email
+  username, password, email, telphone
 ) VALUES (
-  ?, ?, ?
+  ?, ?, ?, ?
 );
