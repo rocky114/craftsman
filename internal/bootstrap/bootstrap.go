@@ -10,7 +10,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rocky114/craftsman/internal/biz/admin"
 	"github.com/rocky114/craftsman/internal/biz/school"
-	_ "github.com/rocky114/craftsman/internal/config"
+	"github.com/rocky114/craftsman/internal/config"
+	"github.com/rocky114/craftsman/internal/log"
 	"github.com/rocky114/craftsman/internal/storage"
 	"github.com/sirupsen/logrus"
 )
@@ -18,8 +19,8 @@ import (
 var router = gin.Default()
 
 func init() {
-	initLog()
-
+	config.InitConfig()
+	log.InitLog()
 	storage.InitDatabase()
 	storage.InitMigrate()
 

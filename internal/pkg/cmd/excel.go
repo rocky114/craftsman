@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/rocky114/craftsman/internal/pkg/common"
 	"github.com/rocky114/craftsman/internal/pkg/excel"
 	"github.com/rocky114/craftsman/internal/storage"
 	"github.com/spf13/cobra"
@@ -26,7 +27,7 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		ctx := context.Background()
-		for _, school := range excel.GetSchools(fmt.Sprintf("%s/%s", rootDir, "assets/W020211027623974108131.xlsx")) {
+		for _, school := range excel.GetSchools(fmt.Sprintf("%s/%s", common.GetRootDir(), "assets/W020211027623974108131.xlsx")) {
 			res, err := storage.GetQueries().CreateSchool(ctx, school)
 			if err != nil {
 				log.Fatalf("insert school err: %v", err)

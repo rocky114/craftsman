@@ -1,4 +1,4 @@
-package bootstrap
+package log
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func initLog() {
+func InitLog() {
 	writer, err := rotatelogs.New(
 		config.GlobalConfig.Log.Path+".%Y%m%d",
 		rotatelogs.WithLinkName(config.GlobalConfig.Log.Path),
