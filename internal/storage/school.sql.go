@@ -39,11 +39,16 @@ func (q *Queries) CreateSchool(ctx context.Context, arg CreateSchoolParams) (sql
 }
 
 const listSchool = `-- name: ListSchool :many
-SELECT id, name, code, department, location, level, website, remark, create_time, update_time FROM school
+SELECT id, name, code, department, location, level, website, remark, create_time, update_time FROM school limit ? offset ?
 `
 
-func (q *Queries) ListSchool(ctx context.Context) ([]School, error) {
-	rows, err := q.db.QueryContext(ctx, listSchool)
+type ListSchoolParams struct {
+	Limit  int32
+	Offset int32
+}
+
+func (q *Queries) ListSchool(ctx context.Context, arg ListSchoolParams) ([]School, error) {
+	rows, err := q.db.QueryContext(ctx, listSchool, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}

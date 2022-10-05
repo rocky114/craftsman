@@ -1,5 +1,5 @@
 -- name: ListSchool :many
-SELECT * FROM school;
+SELECT * FROM school limit ? offset ?;
 
 -- name: CreateSchool :execresult
 INSERT INTO school (
