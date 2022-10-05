@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/rocky114/craftsman/internal/pkg/crypt"
 	"github.com/rocky114/craftsman/internal/storage"
-	"github.com/rocky114/craftsman/pkg/crypt"
 )
 
 var (

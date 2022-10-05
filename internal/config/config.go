@@ -1,7 +1,9 @@
 package config
 
 import (
+	"fmt"
 	"log"
+	"os"
 
 	flag "github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -33,9 +35,12 @@ type migrateConf struct {
 	Path string `json:"path" yaml:"path"`
 }
 
+var rootDir string
+
 func init() {
+	rootDir, _ = os.Getwd()
 	var configFilepath string
-	flag.StringVarP(&configFilepath, "config", "c", "../../config/config.yaml", "config file")
+	flag.StringVarP(&configFilepath, "config", "c", fmt.Sprintf("%s/%s", rootDir, "config/config.yaml"), "config file")
 	flag.Parse()
 
 	viper.SetConfigFile(configFilepath)

@@ -17,10 +17,15 @@ CREATE TABLE `user` (
   KEY `email` (`email`) USING HASH
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户信息表';
 
-CREATE TABLE `university` (
+CREATE TABLE `school` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL DEFAULT '' COMMENT '学校名称',
-  `website_address` char(32) DEFAULT NULL COMMENT '学校网址',
+  `code` varchar(20) NOT NULL DEFAULT '' COMMENT '学校标识码',
+  `department` varchar(30) NOT NULL DEFAULT '' COMMENT '主管部门',
+  `location` varchar(50) NOT NULL DEFAULT '' COMMENT '所在地',
+  `level` varchar(20) NOT NULL DEFAULT '' COMMENT '办学层次',
+  `website` char(32) NOT NULL DEFAULT '' COMMENT '学校网址',
+  `remark` varchar(100) NOT NULL DEFAULT '' COMMENT '备注',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)

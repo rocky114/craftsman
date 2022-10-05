@@ -4,10 +4,10 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/rocky114/craftsman/internal/pkg/captcha"
 	"github.com/rocky114/craftsman/internal/response"
 	"github.com/rocky114/craftsman/internal/service/user"
 	"github.com/rocky114/craftsman/internal/storage"
-	"github.com/rocky114/craftsman/pkg/captcha"
 	"github.com/sirupsen/logrus"
 )
 
