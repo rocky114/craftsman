@@ -10,6 +10,17 @@ import (
 	"database/sql"
 )
 
+const countSchools = `-- name: CountSchools :one
+SELECT COUNT(*) FROM school
+`
+
+func (q *Queries) CountSchools(ctx context.Context) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countSchools)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createSchool = `-- name: CreateSchool :execresult
 INSERT INTO school (
   name, code, department, location, level, remark
@@ -38,17 +49,17 @@ func (q *Queries) CreateSchool(ctx context.Context, arg CreateSchoolParams) (sql
 	)
 }
 
-const listSchool = `-- name: ListSchool :many
+const listSchools = `-- name: ListSchools :many
 SELECT id, name, code, department, location, level, website, remark, create_time, update_time FROM school limit ? offset ?
 `
 
-type ListSchoolParams struct {
+type ListSchoolsParams struct {
 	Limit  int32
 	Offset int32
 }
 
-func (q *Queries) ListSchool(ctx context.Context, arg ListSchoolParams) ([]School, error) {
-	rows, err := q.db.QueryContext(ctx, listSchool, arg.Limit, arg.Offset)
+func (q *Queries) ListSchools(ctx context.Context, arg ListSchoolsParams) ([]School, error) {
+	rows, err := q.db.QueryContext(ctx, listSchools, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}

@@ -1,5 +1,8 @@
--- name: ListSchool :many
+-- name: ListSchools :many
 SELECT * FROM school limit ? offset ?;
+
+-- name: CountSchools :one
+SELECT COUNT(*) FROM school;
 
 -- name: CreateSchool :execresult
 INSERT INTO school (

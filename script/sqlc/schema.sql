@@ -24,7 +24,7 @@ CREATE TABLE `school` (
   `department` varchar(30) NOT NULL DEFAULT '' COMMENT '主管部门',
   `location` varchar(50) NOT NULL DEFAULT '' COMMENT '所在地',
   `level` varchar(20) NOT NULL DEFAULT '' COMMENT '办学层次',
-  `website` char(32) NOT NULL DEFAULT '' COMMENT '学校网址',
+  `website` varchar(200) NOT NULL DEFAULT '' COMMENT '学校网址',
   `remark` varchar(100) NOT NULL DEFAULT '' COMMENT '备注',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
