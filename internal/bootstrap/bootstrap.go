@@ -16,24 +16,24 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var router = gin.Default()
-
 func init() {
 	config.InitConfig()
 	log.InitLog()
 	storage.InitDatabase()
 	storage.InitMigrate()
-
-	routes := []func(r *gin.Engine){admin.GetRoutes(), school.GetRoutes()}
-
-	for _, fn := range routes {
-		fn(router)
-	}
 }
 
 func StartingHttpService() {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
+
+	var router = gin.New()
+	router.Use(cors())
+	routes := []func(r *gin.Engine){admin.GetRoutes(), school.GetRoutes()}
+
+	for _, fn := range routes {
+		fn(router)
+	}
 
 	server := &http.Server{
 		Addr:           ":8080",

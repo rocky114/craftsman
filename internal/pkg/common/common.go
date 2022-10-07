@@ -1,6 +1,7 @@
 package common
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 )
@@ -8,6 +9,8 @@ import (
 var rootDir string
 
 func init() {
+	dir, _ := os.Executable()
+	fmt.Println(dir)
 	rootDir, _ = os.Getwd()
 	rootDir = filepath.Dir(filepath.Dir(rootDir))
 }

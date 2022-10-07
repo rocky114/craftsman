@@ -12,15 +12,15 @@ import (
 )
 
 type ListSchoolRequest struct {
-	Page int32 `json:"page"`
-	Size int32 `json:"size"`
+	Page int32 `json:"page" form:"page"`
+	Size int32 `json:"size" form:"size"`
 }
 
 func ListSchool(c *gin.Context) {
 	var req ListSchoolRequest
 	var err error
 
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if err := c.ShouldBindQuery(&req); err != nil {
 		logrus.Errorf("ListSchool err: %v", err)
 		c.JSON(http.StatusBadRequest, response.NewFail(response.ErrInvalidParam))
 		return
