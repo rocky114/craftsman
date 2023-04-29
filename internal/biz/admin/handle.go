@@ -61,19 +61,24 @@ type loginResponse struct {
 	Token string `json:"token"`
 }
 
+type loginInReq struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
 func LoginIn(c *gin.Context) {
-	var req storage.GetUserParams
+	var req loginInReq
 
 	var token string
 	var err error
 
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if err = c.ShouldBindJSON(&req); err != nil {
 		logrus.Errorf("createUser err: %v", err)
 		c.JSON(http.StatusBadRequest, response.NewFail(response.ErrInvalidParam))
 		return
 	}
 
-	if token, err = user.Login(req); err != nil {
+	if token, err = user.Login(storage.GetUserParams(req)); err != nil {
 		logrus.Errorf("login err: %v", err)
 		c.JSON(http.StatusOK, response.NewFail(response.ErrUnknown))
 		return

@@ -1,18 +1,13 @@
 package common
 
 import (
-	"fmt"
 	"os"
-	"path/filepath"
 )
 
 var rootDir string
 
 func init() {
-	dir, _ := os.Executable()
-	fmt.Println(dir)
 	rootDir, _ = os.Getwd()
-	rootDir = filepath.Dir(filepath.Dir(rootDir))
 }
 
 func GetRootDir() string {
