@@ -30,22 +30,32 @@ func GetAdmissionMajorScoreSuda() error {
 			colleges = append(colleges, element.Attr("value"))
 		})
 
-		//url := fmt.Sprintf("https://zsb.suda.edu.cn/search.aspx?nf=2022&sf=10&xy=1", years[0], provinces[0], colleges[0])
-		if err := detailCollector.Visit("https://zsb.suda.edu.cn/search.aspx?nf=2022&sf=10&xy=1"); err != nil {
-			logrus.Errorf("scrape suzhou university err: %v", err)
+		for _, year := range years {
+			for _, province := range provinces {
+				for _, college := range colleges {
+					url := fmt.Sprintf("https://zsb.suda.edu.cn/search.aspx?nf=%s&sf=%s&xy=%s", year, province, college)
+					if err := detailCollector.Visit(url); err != nil {
+						logrus.Errorf("scrape suzhou university err: %v", err)
+					}
+				}
+			}
 		}
 	})
 
 	detailCollector.OnHTML(`table[id=ctl00_ContentPlaceHolder1_GridView1]`, func(element *colly.HTMLElement) {
 		element.ForEach(`tr`, func(i int, element *colly.HTMLElement) {
 			admissionTime := element.ChildText("td:nth-of-type(1)")
+			if admissionTime == "年份" || admissionTime == "" {
+				return
+			}
+
 			province := element.ChildText("td:nth-of-type(2)")
 			major := element.ChildText("td:nth-of-type(3)")
 			duration := cast.ToInt32(element.ChildText("td:nth-of-type(4)"))
 			subjectType := element.ChildText("td:nth-of-type(5)")
-			maxScore := cast.ToInt32(element.ChildText("td:nth-of-type(6)"))
-			minScore := cast.ToInt32(element.ChildText("td:nth-of-type(7)"))
-			averageScore := cast.ToInt32(element.ChildText("td:nth-of-type(8)"))
+			maxScore := cast.ToInt32(cast.ToFloat32(element.ChildText("td:nth-of-type(6)")))
+			minScore := cast.ToInt32(cast.ToFloat32(element.ChildText("td:nth-of-type(7)")))
+			averageScore := cast.ToInt32(cast.ToFloat32(element.ChildText("td:nth-of-type(8)")))
 
 			if err := storage.GetQueries().CreateAdmissionMajor(context.Background(), storage.CreateAdmissionMajorParams{
 				Major:         major,
