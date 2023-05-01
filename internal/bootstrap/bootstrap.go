@@ -20,7 +20,6 @@ func init() {
 	config.InitConfig()
 	log.InitLog()
 	storage.InitDatabase()
-	storage.InitMigrate()
 }
 
 func StartingHttpService() {
@@ -51,8 +50,8 @@ func StartingHttpService() {
 
 	<-ctx.Done()
 
-	ctx, cannel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cannel()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 	if err := server.Shutdown(ctx); err != nil {
 		logrus.Fatal("server forced to shutdown: ", err)
 	}

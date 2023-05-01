@@ -1,0 +1,70 @@
+package scraper
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/spf13/cast"
+
+	"github.com/rocky114/craftsman/internal/storage"
+	"github.com/sirupsen/logrus"
+
+	"github.com/gocolly/colly/v2"
+)
+
+func GetAdmissionMajorScoreSuda() error {
+	c := colly.NewCollector(colly.CacheDir("./web"))
+
+	detailCollector := c.Clone()
+
+	c.OnHTML(`table[id=TABLE3] > tbody > tr:first-of-type`, func(element *colly.HTMLElement) {
+		var years, provinces, colleges []string
+		element.ForEach(`select[id=ctl00_ContentPlaceHolder1_DropDownList1] > option`, func(i int, element *colly.HTMLElement) {
+			years = append(years, element.Attr("value"))
+		})
+		element.ForEach(`select[id=ctl00_ContentPlaceHolder1_DropDownList2] > option`, func(i int, element *colly.HTMLElement) {
+			provinces = append(provinces, element.Attr("value"))
+		})
+
+		element.ForEach(`select[id=ctl00_ContentPlaceHolder1_DropDownList3] > option`, func(i int, element *colly.HTMLElement) {
+			colleges = append(colleges, element.Attr("value"))
+		})
+
+		//url := fmt.Sprintf("https://zsb.suda.edu.cn/search.aspx?nf=2022&sf=10&xy=1", years[0], provinces[0], colleges[0])
+		if err := detailCollector.Visit("https://zsb.suda.edu.cn/search.aspx?nf=2022&sf=10&xy=1"); err != nil {
+			logrus.Errorf("scrape suzhou university err: %v", err)
+		}
+	})
+
+	detailCollector.OnHTML(`table[id=ctl00_ContentPlaceHolder1_GridView1]`, func(element *colly.HTMLElement) {
+		element.ForEach(`tr`, func(i int, element *colly.HTMLElement) {
+			admissionTime := element.ChildText("td:nth-of-type(1)")
+			province := element.ChildText("td:nth-of-type(2)")
+			major := element.ChildText("td:nth-of-type(3)")
+			duration := cast.ToInt32(element.ChildText("td:nth-of-type(4)"))
+			subjectType := element.ChildText("td:nth-of-type(5)")
+			maxScore := cast.ToInt32(element.ChildText("td:nth-of-type(6)"))
+			minScore := cast.ToInt32(element.ChildText("td:nth-of-type(7)"))
+			averageScore := cast.ToInt32(element.ChildText("td:nth-of-type(8)"))
+
+			if err := storage.GetQueries().CreateAdmissionMajor(context.Background(), storage.CreateAdmissionMajorParams{
+				Major:         major,
+				Province:      province,
+				SubjectType:   subjectType,
+				AdmissionTime: admissionTime,
+				Duration:      duration,
+				MaxScore:      maxScore,
+				MinScore:      minScore,
+				AverageScore:  averageScore,
+			}); err != nil {
+				logrus.Errorf("create admission major err: %v", err)
+			}
+		})
+	})
+
+	c.OnRequest(func(request *colly.Request) {
+		fmt.Println("visiting", request.URL.String())
+	})
+
+	return c.Visit("https://zsb.suda.edu.cn/markHistory.aspx")
+}

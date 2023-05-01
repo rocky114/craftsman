@@ -1,3 +1,6 @@
 main
-.vscode/*
 log/*
+ad/*
+web/*
+.vscode/*
+.idea

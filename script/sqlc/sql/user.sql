@@ -6,7 +6,7 @@ SELECT id, username from user where username = ? and password = ?;
 
 -- name: CreateUser :execresult
 INSERT INTO user (
-  username, password, email, telphone
+  username, password, email, telephone
 ) VALUES (
   ?, ?, ?, ?
 );
