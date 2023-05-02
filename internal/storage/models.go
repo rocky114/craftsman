@@ -11,6 +11,8 @@ import (
 // 录取专业
 type AdmissionMajor struct {
 	ID int32
+	// 学校
+	College string
 	// 专业
 	Major string
 	// 选考

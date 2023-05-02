@@ -33,6 +33,7 @@ CREATE TABLE `school` (
 
 CREATE TABLE `admission_major` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `college` varchar(100) NOT NULL DEFAULT '' COMMENT '学校',
   `major` varchar(250) NOT NULL DEFAULT '' COMMENT '专业',
   `select_exam` varchar(100) NOT NULL DEFAULT '' COMMENT '选考',
   `province` varchar(50) NOT NULL DEFAULT '' COMMENT '省份',

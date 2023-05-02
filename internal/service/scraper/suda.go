@@ -68,6 +68,7 @@ func ScrapeAdmissionMajorScoreSuda() error {
 			}
 
 			if err := storage.GetQueries().CreateAdmissionMajor(context.Background(), storage.CreateAdmissionMajorParams{
+				College:       "苏州大学",
 				Major:         major[0],
 				SelectExam:    selectExam,
 				Province:      province,

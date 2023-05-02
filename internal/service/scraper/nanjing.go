@@ -114,6 +114,7 @@ func ScrapeAdmissionMajorScoreNanjing() error {
 
 		for _, item := range params.Data.ZsSsgradeList {
 			if err := storage.GetQueries().CreateAdmissionMajor(context.Background(), storage.CreateAdmissionMajorParams{
+				College:       "南京大学",
 				Province:      item.Ssmc,
 				SubjectType:   item.Klmc,
 				AdmissionTime: item.Nf,
