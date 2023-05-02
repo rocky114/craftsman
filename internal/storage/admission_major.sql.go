@@ -11,14 +11,15 @@ import (
 
 const createAdmissionMajor = `-- name: CreateAdmissionMajor :exec
 INSERT INTO admission_major (
-    major, province, subject_type, admission_time, duration, max_score, min_score, average_score
+    major, select_exam, province, subject_type, admission_time, duration, max_score, min_score, average_score
 ) VALUES (
-    ?, ?, ?, ?, ?, ?, ?, ?
+    ?, ?, ?, ?, ?, ?, ?, ?, ?
 )
 `
 
 type CreateAdmissionMajorParams struct {
 	Major         string
+	SelectExam    string
 	Province      string
 	SubjectType   string
 	AdmissionTime string
@@ -31,6 +32,7 @@ type CreateAdmissionMajorParams struct {
 func (q *Queries) CreateAdmissionMajor(ctx context.Context, arg CreateAdmissionMajorParams) error {
 	_, err := q.db.ExecContext(ctx, createAdmissionMajor,
 		arg.Major,
+		arg.SelectExam,
 		arg.Province,
 		arg.SubjectType,
 		arg.AdmissionTime,

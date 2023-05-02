@@ -13,6 +13,8 @@ type AdmissionMajor struct {
 	ID int32
 	// 专业
 	Major string
+	// 选考
+	SelectExam string
 	// 省份
 	Province string
 	// 科类

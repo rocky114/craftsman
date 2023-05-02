@@ -34,6 +34,7 @@ CREATE TABLE `school` (
 CREATE TABLE `admission_major` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `major` varchar(250) NOT NULL DEFAULT '' COMMENT '专业',
+  `select_exam` varchar(100) NOT NULL DEFAULT '' COMMENT '选考',
   `province` varchar(50) NOT NULL DEFAULT '' COMMENT '省份',
   `subject_type` varchar(100) NOT NULL DEFAULT '' COMMENT '科类',
   `admission_time` char(4) NOT NULL COMMENT '录取时间',

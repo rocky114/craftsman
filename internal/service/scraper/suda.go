@@ -3,6 +3,7 @@ package scraper
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cast"
 
@@ -12,7 +13,7 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
-func GetAdmissionMajorScoreSuda() error {
+func ScrapeAdmissionMajorScoreSuda() error {
 	c := colly.NewCollector(colly.CacheDir("./web"))
 
 	detailCollector := c.Clone()
@@ -29,6 +30,10 @@ func GetAdmissionMajorScoreSuda() error {
 		element.ForEach(`select[id=ctl00_ContentPlaceHolder1_DropDownList3] > option`, func(i int, element *colly.HTMLElement) {
 			colleges = append(colleges, element.Attr("value"))
 		})
+
+		/*if err := detailCollector.Visit("https://zsb.suda.edu.cn/search.aspx?nf=2022&sf=10&xy=1"); err != nil {
+			logrus.Errorf("scrape suzhou university err: %v", err)
+		}*/
 
 		for _, year := range years {
 			for _, province := range provinces {
@@ -50,7 +55,7 @@ func GetAdmissionMajorScoreSuda() error {
 			}
 
 			province := element.ChildText("td:nth-of-type(2)")
-			major := element.ChildText("td:nth-of-type(3)")
+			major := strings.SplitN(element.ChildText("td:nth-of-type(3)"), "--", 2)
 			duration := cast.ToInt32(element.ChildText("td:nth-of-type(4)"))
 			subjectType := element.ChildText("td:nth-of-type(5)")
 			maxScore := cast.ToInt32(cast.ToFloat32(element.ChildText("td:nth-of-type(6)")))
@@ -58,7 +63,8 @@ func GetAdmissionMajorScoreSuda() error {
 			averageScore := cast.ToInt32(cast.ToFloat32(element.ChildText("td:nth-of-type(8)")))
 
 			if err := storage.GetQueries().CreateAdmissionMajor(context.Background(), storage.CreateAdmissionMajorParams{
-				Major:         major,
+				Major:         major[0],
+				SelectExam:    major[1],
 				Province:      province,
 				SubjectType:   subjectType,
 				AdmissionTime: admissionTime,

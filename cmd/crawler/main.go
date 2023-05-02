@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	if err := scraper.GetAdmissionMajorScoreSuda(); err != nil {
+	if err := scraper.ScrapeAdmissionMajorScoreSuda(); err != nil {
 		fmt.Println(err)
 	}
 
