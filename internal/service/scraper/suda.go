@@ -62,9 +62,14 @@ func ScrapeAdmissionMajorScoreSuda() error {
 			minScore := cast.ToInt32(cast.ToFloat32(element.ChildText("td:nth-of-type(7)")))
 			averageScore := cast.ToInt32(cast.ToFloat32(element.ChildText("td:nth-of-type(8)")))
 
+			selectExam := ""
+			if len(major) == 2 {
+				selectExam = major[1]
+			}
+
 			if err := storage.GetQueries().CreateAdmissionMajor(context.Background(), storage.CreateAdmissionMajorParams{
 				Major:         major[0],
-				SelectExam:    major[1],
+				SelectExam:    selectExam,
 				Province:      province,
 				SubjectType:   subjectType,
 				AdmissionTime: admissionTime,
