@@ -37,17 +37,25 @@ type nanjingParamResp struct {
 type nanjingAdmissionScoreResp struct {
 	Data struct {
 		ZsSsgradeList []struct {
-			Klmc     string  `json:"klmc"`
-			Nf       string  `json:"nf"`
-			Ssmc     string  `json:"ssmc"`
-			MinScore float32 `json:"minScore"`
+			Klmc     string `json:"klmc"`
+			Nf       string `json:"nf"`
+			Ssmc     string `json:"ssmc"`
+			MinScore string `json:"minScore"`
 		}
 	}
 }
 
 var nanjingLogin nanjingLoginResp
 
-func ScrapeAdmissionMajorScoreNanjing() error {
+type CrawlerNanjingdaxue struct {
+	crawler
+}
+
+func NewCrawlerNanjingdaxue() *CrawlerNanjingdaxue {
+	return &CrawlerNanjingdaxue{crawler{university: "南京大学"}}
+}
+
+func (s *CrawlerNanjingdaxue) ScrapeAdmissionMajorScore() error {
 	c := colly.NewCollector(colly.CacheDir("./web"))
 	c.OnRequest(func(request *colly.Request) {
 		request.Headers.Set("X-Requested-Time", cast.ToString(time.Now().UnixMilli()))
@@ -114,11 +122,11 @@ func ScrapeAdmissionMajorScoreNanjing() error {
 
 		for _, item := range params.Data.ZsSsgradeList {
 			if err := storage.GetQueries().CreateAdmissionMajor(context.Background(), storage.CreateAdmissionMajorParams{
-				College:       "南京大学",
-				Province:      item.Ssmc,
-				SubjectType:   item.Klmc,
-				AdmissionTime: item.Nf,
-				MinScore:      cast.ToInt32(item.MinScore),
+				University:    NullString(s.university),
+				Province:      NullString(item.Ssmc),
+				AdmissionType: NullString(item.Klmc),
+				AdmissionTime: NullString(item.Nf),
+				MinScore:      NullString(item.MinScore),
 			}); err != nil {
 				logrus.Errorf("create admission major err: %v", err)
 			}

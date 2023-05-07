@@ -5,15 +5,21 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/spf13/cast"
-
 	"github.com/rocky114/craftsman/internal/storage"
 	"github.com/sirupsen/logrus"
 
 	"github.com/gocolly/colly/v2"
 )
 
-func ScrapeAdmissionMajorScoreSuda() error {
+type CrawlerSuzhoudaxue struct {
+	crawler
+}
+
+func NewCrawlerSuzhoudaxue() *CrawlerSuzhoudaxue {
+	return &CrawlerSuzhoudaxue{crawler{university: "苏州大学"}}
+}
+
+func (s *CrawlerSuzhoudaxue) ScrapeAdmissionMajorScore() error {
 	c := colly.NewCollector(colly.CacheDir("./web"))
 
 	detailCollector := c.Clone()
@@ -56,11 +62,11 @@ func ScrapeAdmissionMajorScoreSuda() error {
 
 			province := element.ChildText("td:nth-of-type(2)")
 			major := strings.SplitN(element.ChildText("td:nth-of-type(3)"), "--", 2)
-			duration := cast.ToInt32(element.ChildText("td:nth-of-type(4)"))
+			duration := element.ChildText("td:nth-of-type(4)")
 			subjectType := element.ChildText("td:nth-of-type(5)")
-			maxScore := cast.ToInt32(cast.ToFloat32(element.ChildText("td:nth-of-type(6)")))
-			minScore := cast.ToInt32(cast.ToFloat32(element.ChildText("td:nth-of-type(7)")))
-			averageScore := cast.ToInt32(cast.ToFloat32(element.ChildText("td:nth-of-type(8)")))
+			maxScore := element.ChildText("td:nth-of-type(6)")
+			minScore := element.ChildText("td:nth-of-type(7)")
+			averageScore := element.ChildText("td:nth-of-type(8)")
 
 			selectExam := ""
 			if len(major) == 2 {
@@ -68,16 +74,16 @@ func ScrapeAdmissionMajorScoreSuda() error {
 			}
 
 			if err := storage.GetQueries().CreateAdmissionMajor(context.Background(), storage.CreateAdmissionMajorParams{
-				College:       "苏州大学",
-				Major:         major[0],
-				SelectExam:    selectExam,
-				Province:      province,
-				SubjectType:   subjectType,
-				AdmissionTime: admissionTime,
-				Duration:      duration,
-				MaxScore:      maxScore,
-				MinScore:      minScore,
-				AverageScore:  averageScore,
+				College:       NullString(s.university),
+				Major:         NullString(major[0]),
+				SelectExam:    NullString(selectExam),
+				Province:      NullString(province),
+				AdmissionType: NullString(subjectType),
+				AdmissionTime: NullString(admissionTime),
+				Duration:      NullString(duration),
+				MaxScore:      NullString(maxScore),
+				MinScore:      NullString(minScore),
+				AverageScore:  NullString(averageScore),
 			}); err != nil {
 				logrus.Errorf("create admission major err: %v", err)
 			}
