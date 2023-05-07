@@ -7,41 +7,63 @@ package storage
 
 import (
 	"context"
+	"database/sql"
 )
 
 const createAdmissionMajor = `-- name: CreateAdmissionMajor :exec
 INSERT INTO admission_major (
-    college, major, select_exam, province, subject_type, admission_time, duration, max_score, min_score, average_score
+    university,
+    college,
+    major,
+    select_exam,
+    province,
+    admission_type,
+    admission_time,
+    admission_number,
+    duration,
+    max_score,
+    min_score,
+    average_score,
+    province_control_score_line,
+    score_rank
 ) VALUES (
-    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
 )
 `
 
 type CreateAdmissionMajorParams struct {
-	College       string
-	Major         string
-	SelectExam    string
-	Province      string
-	SubjectType   string
-	AdmissionTime string
-	Duration      int32
-	MaxScore      int32
-	MinScore      int32
-	AverageScore  int32
+	University               sql.NullString
+	College                  sql.NullString
+	Major                    sql.NullString
+	SelectExam               sql.NullString
+	Province                 sql.NullString
+	AdmissionType            sql.NullString
+	AdmissionTime            sql.NullString
+	AdmissionNumber          sql.NullString
+	Duration                 sql.NullString
+	MaxScore                 sql.NullString
+	MinScore                 sql.NullString
+	AverageScore             sql.NullString
+	ProvinceControlScoreLine sql.NullString
+	ScoreRank                sql.NullString
 }
 
 func (q *Queries) CreateAdmissionMajor(ctx context.Context, arg CreateAdmissionMajorParams) error {
 	_, err := q.db.ExecContext(ctx, createAdmissionMajor,
+		arg.University,
 		arg.College,
 		arg.Major,
 		arg.SelectExam,
 		arg.Province,
-		arg.SubjectType,
+		arg.AdmissionType,
 		arg.AdmissionTime,
+		arg.AdmissionNumber,
 		arg.Duration,
 		arg.MaxScore,
 		arg.MinScore,
 		arg.AverageScore,
+		arg.ProvinceControlScoreLine,
+		arg.ScoreRank,
 	)
 	return err
 }

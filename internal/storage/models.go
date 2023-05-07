@@ -5,38 +5,47 @@
 package storage
 
 import (
+	"database/sql"
 	"time"
 )
 
 // 录取专业
 type AdmissionMajor struct {
 	ID int32
-	// 学校
-	College string
+	// 大学
+	University sql.NullString
+	// 学院
+	College sql.NullString
 	// 专业
-	Major string
+	Major sql.NullString
 	// 选考
-	SelectExam string
+	SelectExam sql.NullString
 	// 省份
-	Province string
-	// 科类
-	SubjectType string
-	// 录取时间
-	AdmissionTime string
+	Province sql.NullString
+	// 招生类型
+	AdmissionType sql.NullString
+	// 招生年份
+	AdmissionTime sql.NullString
+	// 招生人数
+	AdmissionNumber sql.NullString
 	// 学制
-	Duration int32
+	Duration sql.NullString
 	// 最高分
-	MaxScore int32
+	MaxScore sql.NullString
 	// 最低分
-	MinScore int32
+	MinScore sql.NullString
 	// 平均分
-	AverageScore int32
-	CreateTime   time.Time
-	UpdateTime   time.Time
+	AverageScore sql.NullString
+	// 省控制分数线
+	ProvinceControlScoreLine sql.NullString
+	// 分数排名
+	ScoreRank  sql.NullString
+	CreateTime time.Time
+	UpdateTime time.Time
 }
 
 // 学校基础信息表
-type School struct {
+type University struct {
 	ID int32
 	// 学校名称
 	Name string
@@ -48,34 +57,12 @@ type School struct {
 	Location string
 	// 办学层次
 	Level string
-	// 学校网址
+	// 历史录取分数地址
 	Website string
-	// 备注
-	Remark     string
-	CreateTime time.Time
-	UpdateTime time.Time
-}
-
-// 用户信息表
-type User struct {
-	ID int32
-	// 名称
-	Username string
-	// 密码
-	Password string
-	// 电话
-	Telephone int64
-	// 邮箱
-	Email string
-	// 余额
-	Balance int32
-	// 积分
-	Points int32
-	// 1: 冻结, 2: 删除
-	Status int32
-	// 来源用户ID
-	OriginalID int32
-	IsAdmin    int32
-	CreateTime time.Time
-	UpdateTime time.Time
+	// 办学性质【公办，民办】
+	Property string
+	// 最后一次招生时间
+	LastAdmissionTime string
+	CreateTime        time.Time
+	UpdateTime        time.Time
 }
