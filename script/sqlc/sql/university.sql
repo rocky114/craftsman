@@ -6,7 +6,10 @@ SELECT COUNT(*) FROM university;
 
 -- name: CreateUniversity :exec
 INSERT INTO university (
-  name, code, department, location, level, property
+  name, code, department, province, city, school_level, property
 ) VALUES (
-  ?, ?, ?, ?, ?, ?
+  ?, ?, ?, ?, ?, ?, ?
 );
+
+-- name: UpdateUniversityLastAdmissionTime :exec
+UPDATE university SET last_admission_time = ? where code = ?

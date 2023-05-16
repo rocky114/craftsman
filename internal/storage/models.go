@@ -53,10 +53,12 @@ type University struct {
 	Code string
 	// 主管部门
 	Department string
+	// 省份
+	Province string
 	// 所在地
-	Location string
+	City string
 	// 办学层次
-	Level string
+	SchoolLevel string
 	// 历史录取分数地址
 	Website string
 	// 办学性质【公办，民办】
