@@ -1,4 +1,4 @@
-package scraper
+package crawler
 
 import (
 	"context"
@@ -47,15 +47,18 @@ type nanjingAdmissionScoreResp struct {
 
 var nanjingLogin nanjingLoginResp
 
-type CrawlerNanjingdaxue struct {
-	crawler
+func init() {
+	collection["4132010284"] = &nanjingUniversity{university{
+		code: "4132010284",
+		name: "南京大学",
+	}}
 }
 
-func NewCrawlerNanjingdaxue() *CrawlerNanjingdaxue {
-	return &CrawlerNanjingdaxue{crawler{university: "南京大学"}}
+type nanjingUniversity struct {
+	university
 }
 
-func (s *CrawlerNanjingdaxue) ScrapeAdmissionMajorScore() error {
+func (s *nanjingUniversity) crawl() error {
 	c := colly.NewCollector(colly.CacheDir("./web"))
 	c.OnRequest(func(request *colly.Request) {
 		request.Headers.Set("X-Requested-Time", cast.ToString(time.Now().UnixMilli()))
@@ -122,7 +125,7 @@ func (s *CrawlerNanjingdaxue) ScrapeAdmissionMajorScore() error {
 
 		for _, item := range params.Data.ZsSsgradeList {
 			if err := storage.GetQueries().CreateAdmissionMajor(context.Background(), storage.CreateAdmissionMajorParams{
-				University:    NullString(s.university),
+				University:    NullString(s.name),
 				Province:      NullString(item.Ssmc),
 				AdmissionType: NullString(item.Klmc),
 				AdmissionTime: NullString(item.Nf),

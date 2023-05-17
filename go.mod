@@ -31,7 +31,6 @@ require (
 	github.com/go-playground/validator/v10 v10.11.0 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/goccy/go-json v0.9.11 // indirect
-	github.com/gocolly/colly v1.2.0 // indirect
 	github.com/gocolly/colly/v2 v2.1.0 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect

@@ -1,4 +1,4 @@
-package scraper
+package crawler
 
 import (
 	"context"
@@ -11,15 +11,18 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
-type CrawlerSuzhoudaxue struct {
-	crawler
+type suzhouUniversity struct {
+	university
 }
 
-func NewCrawlerSuzhoudaxue() *CrawlerSuzhoudaxue {
-	return &CrawlerSuzhoudaxue{crawler{university: "苏州大学"}}
+func init() {
+	collection["4132010285"] = &suzhouUniversity{university{
+		name: "苏州大学",
+		code: "4132010285",
+	}}
 }
 
-func (s *CrawlerSuzhoudaxue) ScrapeAdmissionMajorScore() error {
+func (u *suzhouUniversity) ScrapeAdmissionMajorScore() error {
 	c := colly.NewCollector(colly.CacheDir("./web"))
 
 	detailCollector := c.Clone()
@@ -74,7 +77,7 @@ func (s *CrawlerSuzhoudaxue) ScrapeAdmissionMajorScore() error {
 			}
 
 			if err := storage.GetQueries().CreateAdmissionMajor(context.Background(), storage.CreateAdmissionMajorParams{
-				College:       NullString(s.university),
+				College:       NullString(u.name),
 				Major:         NullString(major[0]),
 				SelectExam:    NullString(selectExam),
 				Province:      NullString(province),
