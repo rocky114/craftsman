@@ -32,7 +32,7 @@ func Crawl(code string) error {
 func ContainAdmissionTime(admissionTime string) bool {
 	currentTime := time.Now()
 	years := []string{
-		currentTime.AddDate(-1, 0, 0).Format("2006-01-02"),
+		currentTime.AddDate(-2, 0, 0).Format("2006-01-02"),
 		currentTime.AddDate(-1, 0, 0).Format("2006-01-02"),
 	}
 
