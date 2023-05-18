@@ -7,7 +7,6 @@ package storage
 
 import (
 	"context"
-	"database/sql"
 )
 
 const createAdmissionMajor = `-- name: CreateAdmissionMajor :exec
@@ -32,20 +31,20 @@ INSERT INTO admission_major (
 `
 
 type CreateAdmissionMajorParams struct {
-	University               sql.NullString
-	College                  sql.NullString
-	Major                    sql.NullString
-	SelectExam               sql.NullString
-	Province                 sql.NullString
-	AdmissionType            sql.NullString
-	AdmissionTime            sql.NullString
-	AdmissionNumber          sql.NullString
-	Duration                 sql.NullString
-	MaxScore                 sql.NullString
-	MinScore                 sql.NullString
-	AverageScore             sql.NullString
-	ProvinceControlScoreLine sql.NullString
-	ScoreRank                sql.NullString
+	University               string
+	College                  string
+	Major                    string
+	SelectExam               string
+	Province                 string
+	AdmissionType            string
+	AdmissionTime            string
+	AdmissionNumber          string
+	Duration                 string
+	MaxScore                 string
+	MinScore                 string
+	AverageScore             string
+	ProvinceControlScoreLine string
+	ScoreRank                string
 }
 
 func (q *Queries) CreateAdmissionMajor(ctx context.Context, arg CreateAdmissionMajorParams) error {

@@ -5,7 +5,6 @@
 package storage
 
 import (
-	"database/sql"
 	"time"
 )
 
@@ -13,33 +12,33 @@ import (
 type AdmissionMajor struct {
 	ID int32
 	// 大学
-	University sql.NullString
+	University string
 	// 学院
-	College sql.NullString
+	College string
 	// 专业
-	Major sql.NullString
+	Major string
 	// 选考
-	SelectExam sql.NullString
+	SelectExam string
 	// 省份
-	Province sql.NullString
+	Province string
 	// 招生类型
-	AdmissionType sql.NullString
+	AdmissionType string
 	// 招生年份
-	AdmissionTime sql.NullString
+	AdmissionTime string
 	// 招生人数
-	AdmissionNumber sql.NullString
+	AdmissionNumber string
 	// 学制
-	Duration sql.NullString
+	Duration string
 	// 最高分
-	MaxScore sql.NullString
+	MaxScore string
 	// 最低分
-	MinScore sql.NullString
+	MinScore string
 	// 平均分
-	AverageScore sql.NullString
+	AverageScore string
 	// 省控制分数线
-	ProvinceControlScoreLine sql.NullString
+	ProvinceControlScoreLine string
 	// 分数排名
-	ScoreRank  sql.NullString
+	ScoreRank  string
 	CreateTime time.Time
 	UpdateTime time.Time
 }

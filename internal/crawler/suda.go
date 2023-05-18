@@ -77,16 +77,16 @@ func (u *suzhouUniversity) ScrapeAdmissionMajorScore() error {
 			}
 
 			if err := storage.GetQueries().CreateAdmissionMajor(context.Background(), storage.CreateAdmissionMajorParams{
-				College:       NullString(u.name),
-				Major:         NullString(major[0]),
-				SelectExam:    NullString(selectExam),
-				Province:      NullString(province),
-				AdmissionType: NullString(subjectType),
-				AdmissionTime: NullString(admissionTime),
-				Duration:      NullString(duration),
-				MaxScore:      NullString(maxScore),
-				MinScore:      NullString(minScore),
-				AverageScore:  NullString(averageScore),
+				College:       u.name,
+				Major:         major[0],
+				SelectExam:    selectExam,
+				Province:      province,
+				AdmissionType: subjectType,
+				AdmissionTime: admissionTime,
+				Duration:      duration,
+				MaxScore:      maxScore,
+				MinScore:      minScore,
+				AverageScore:  averageScore,
 			}); err != nil {
 				logrus.Errorf("create admission major err: %v", err)
 			}

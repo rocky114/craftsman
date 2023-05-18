@@ -1,14 +1,10 @@
 package crawler
 
 import (
-	"database/sql"
 	"errors"
 	"fmt"
+	"time"
 )
-
-func NullString(str string) sql.NullString {
-	return sql.NullString{String: str, Valid: true}
-}
 
 var collection = make(map[string]impl)
 
@@ -31,4 +27,20 @@ func Crawl(code string) error {
 	}
 
 	return fmt.Errorf("can't find code: %s", code)
+}
+
+func ContainAdmissionTime(admissionTime string) bool {
+	currentTime := time.Now()
+	years := []string{
+		currentTime.AddDate(-1, 0, 0).Format("2006-01-02"),
+		currentTime.AddDate(-1, 0, 0).Format("2006-01-02"),
+	}
+
+	for _, year := range years {
+		if admissionTime == year {
+			return true
+		}
+	}
+
+	return false
 }

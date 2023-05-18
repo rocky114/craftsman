@@ -125,11 +125,11 @@ func (s *nanjingUniversity) crawl() error {
 
 		for _, item := range params.Data.ZsSsgradeList {
 			if err := storage.GetQueries().CreateAdmissionMajor(context.Background(), storage.CreateAdmissionMajorParams{
-				University:    NullString(s.name),
-				Province:      NullString(item.Ssmc),
-				AdmissionType: NullString(item.Klmc),
-				AdmissionTime: NullString(item.Nf),
-				MinScore:      NullString(item.MinScore),
+				University:    s.name,
+				Province:      item.Ssmc,
+				AdmissionType: item.Klmc,
+				AdmissionTime: item.Nf,
+				MinScore:      item.MinScore,
 			}); err != nil {
 				logrus.Errorf("create admission major err: %v", err)
 			}
