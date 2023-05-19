@@ -6,20 +6,20 @@ import (
 	"github.com/rocky114/craftsman/internal/storage"
 )
 
-type ListSchoolResponse struct {
-	Count int64            `json:"count"`
-	Rows  []storage.School `json:"rows"`
+type ListUniversitiesResponse struct {
+	Total int64                `json:"total"`
+	Items []storage.University `json:"items"`
 }
 
-func ListSchool(req storage.ListSchoolsParams) (*ListSchoolResponse, error) {
-	schools, err := storage.GetQueries().ListSchools(context.Background(), req)
+func ListSchool(req storage.ListUniversitiesParams) (*ListUniversitiesResponse, error) {
+	schools, err := storage.GetQueries().ListUniversities(context.Background(), req)
 	if err != nil {
 		return nil, err
 	}
-	count, err := storage.GetQueries().CountSchools(context.Background())
+	count, err := storage.GetQueries().CountUniversities(context.Background())
 	if err != nil {
 		return nil, err
 	}
 
-	return &ListSchoolResponse{Count: count, Rows: schools}, nil
+	return &ListUniversitiesResponse{Total: count, Items: schools}, nil
 }

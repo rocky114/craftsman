@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rocky114/craftsman/internal/biz/admin"
 	"github.com/rocky114/craftsman/internal/biz/school"
 	"github.com/rocky114/craftsman/internal/config"
 	"github.com/rocky114/craftsman/internal/log"
@@ -28,7 +27,7 @@ func StartingHttpService() {
 
 	var router = gin.New()
 	router.Use(cors())
-	routes := []func(r *gin.Engine){admin.GetRoutes(), school.GetRoutes()}
+	routes := []func(r *gin.Engine){school.GetRoutes()}
 
 	for _, fn := range routes {
 		fn(router)

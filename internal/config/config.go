@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/rocky114/craftsman/internal/pkg/common"
+	"github.com/rocky114/craftsman/internal/pkg/path"
+
 	flag "github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
@@ -37,7 +38,7 @@ type migrateConf struct {
 
 func InitConfig() {
 	var configFilepath string
-	flag.StringVarP(&configFilepath, "config", "c", fmt.Sprintf("%s/%s", common.GetRootDir(), "config/config.yaml"), "config file")
+	flag.StringVarP(&configFilepath, "config", "c", fmt.Sprintf("%s/%s", path.GetRootPath(), "config/config.yaml"), "config file")
 	flag.Parse()
 
 	viper.SetConfigFile(configFilepath)

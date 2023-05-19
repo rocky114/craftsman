@@ -27,7 +27,7 @@ func ListSchool(c *gin.Context) {
 	}
 
 	limit, offset := common.GetLimitAndOffset(req.Page, req.Size)
-	res, err := school.ListSchool(storage.ListSchoolsParams{Limit: limit, Offset: offset})
+	res, err := school.ListSchool(storage.ListUniversitiesParams{Limit: limit, Offset: offset})
 	if err != nil {
 		logrus.Errorf("ListSchool err: %v", err)
 		c.JSON(http.StatusOK, response.NewFail(response.ErrUnknown))
