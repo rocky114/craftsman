@@ -1,9 +1,12 @@
 package crawler
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"time"
+
+	"github.com/rocky114/craftsman/internal/storage"
 )
 
 var collection = make(map[string]impl)
@@ -21,12 +24,20 @@ func (u *university) crawl() error {
 	return errors.New("crawl interface not implemented")
 }
 
-func Crawl(code string) error {
-	if crawler, ok := collection[code]; ok {
+func Crawl(ctx context.Context, code string) error {
+	if crawler, ok := collection[code]; !ok {
+		return fmt.Errorf("can't find code: %s", code)
+	} else {
+		if lastAdmissionTime, err := storage.GetQueries().GetUniversityLastAdmissionTime(ctx, code); err != nil {
+			return err
+		} else {
+			if lastAdmissionTime == time.Now().AddDate(-1, 0, 0).Format("2006") {
+				return nil
+			}
+		}
+
 		return crawler.crawl()
 	}
-
-	return fmt.Errorf("can't find code: %s", code)
 }
 
 func ContainAdmissionTime(admissionTime string) bool {

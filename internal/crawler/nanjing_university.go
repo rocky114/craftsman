@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/rocky114/craftsman/internal/pkg/path"
+
 	"github.com/rocky114/craftsman/internal/storage"
 
 	"github.com/sirupsen/logrus"
@@ -59,7 +61,7 @@ type nanjingUniversity struct {
 }
 
 func (s *nanjingUniversity) crawl() error {
-	c := colly.NewCollector(colly.CacheDir("./web"))
+	c := colly.NewCollector(colly.CacheDir(path.GetTmpPath()))
 	c.OnRequest(func(request *colly.Request) {
 		request.Headers.Set("X-Requested-Time", cast.ToString(time.Now().UnixMilli()))
 		request.Headers.Set("X-Requested-With", "XMLHttpRequest")
