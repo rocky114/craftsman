@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/sirupsen/logrus"
+
 	"github.com/rocky114/craftsman/internal/storage"
 )
 
@@ -13,12 +15,17 @@ var collection = make(map[string]impl)
 type impl interface {
 	crawl(ctx context.Context) error
 	getLastAdmissionTime() string
+	getUniversityName() string
 }
 
 type university struct {
 	name              string
 	code              string
 	lastAdmissionTime string
+}
+
+func (u *university) getUniversityName() string {
+	return u.name
 }
 
 func (u *university) getLastAdmissionTime() string {
@@ -37,6 +44,7 @@ func Crawl(ctx context.Context, code string) error {
 			return err
 		} else {
 			if lastAdmissionTime == time.Now().AddDate(-1, 0, 0).Format("2006") {
+				logrus.Infof("%s university %s admission major data already the latest", crawler.getUniversityName(), lastAdmissionTime)
 				return nil
 			}
 		}

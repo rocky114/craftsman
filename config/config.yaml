@@ -7,7 +7,6 @@ mysql:
   options: charset=utf8mb4&parseTime=True&loc=Local
 
 log:
-  path: ../../log/craftsman.log
   level: debug
 
 migrate:

@@ -26,5 +26,9 @@ func GetConfigFile(filename string) string {
 }
 
 func GetTmpPath() string {
-	return fmt.Sprintf("%s/tmp", GetRootPath())
+	return fmt.Sprintf("%s/tmp/", GetRootPath())
+}
+
+func GetLogPath() string {
+	return fmt.Sprintf("%s/log/", GetRootPath())
 }

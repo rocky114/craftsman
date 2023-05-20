@@ -7,15 +7,16 @@ import (
 	"runtime"
 	"time"
 
+	"github.com/rocky114/craftsman/internal/pkg/path"
+
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
-	"github.com/rocky114/craftsman/internal/config"
 	"github.com/sirupsen/logrus"
 )
 
 func InitLog() {
 	writer, err := rotatelogs.New(
-		config.GlobalConfig.Log.Path+".%Y%m%d",
-		rotatelogs.WithLinkName(config.GlobalConfig.Log.Path),
+		fmt.Sprintf("%s%s", path.GetLogPath(), "log.%Y%m%d"),
+		rotatelogs.WithLinkName(fmt.Sprintf("%s%s", path.GetLogPath(), "craftsman.log")),
 		rotatelogs.WithMaxAge(time.Duration(24)*time.Hour*7),
 		rotatelogs.WithRotationTime(time.Duration(24)*time.Hour),
 	)

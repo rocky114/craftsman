@@ -4,9 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/rocky114/craftsman/internal/crawler"
-
 	_ "github.com/rocky114/craftsman/internal/bootstrap"
+	"github.com/rocky114/craftsman/internal/crawler"
 )
 
 func main() {
