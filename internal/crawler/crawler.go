@@ -2,7 +2,6 @@ package crawler
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
@@ -12,16 +11,22 @@ import (
 var collection = make(map[string]impl)
 
 type impl interface {
-	crawl() error
+	crawl(ctx context.Context) error
+	getLastAdmissionTime() string
 }
 
 type university struct {
-	name string
-	code string
+	name              string
+	code              string
+	lastAdmissionTime string
 }
 
-func (u *university) crawl() error {
-	return errors.New("crawl interface not implemented")
+func (u *university) getLastAdmissionTime() string {
+	return u.lastAdmissionTime
+}
+
+func (u *university) crawl(ctx context.Context) error {
+	return fmt.Errorf("university: %s not implment crawl interface", u.name)
 }
 
 func Crawl(ctx context.Context, code string) error {
@@ -36,15 +41,24 @@ func Crawl(ctx context.Context, code string) error {
 			}
 		}
 
-		return crawler.crawl()
+		if err := crawler.crawl(ctx); err != nil {
+			return err
+		}
+
+		param := storage.UpdateUniversityLastAdmissionTimeParams{
+			LastAdmissionTime: crawler.getLastAdmissionTime(),
+			Code:              code,
+		}
+
+		return storage.GetQueries().UpdateUniversityLastAdmissionTime(ctx, param)
 	}
 }
 
-func ContainAdmissionTime(admissionTime string) bool {
+func containAdmissionTime(admissionTime string) bool {
 	currentTime := time.Now()
 	years := []string{
-		currentTime.AddDate(-2, 0, 0).Format("2006-01-02"),
-		currentTime.AddDate(-1, 0, 0).Format("2006-01-02"),
+		currentTime.AddDate(-2, 0, 0).Format("2006"),
+		currentTime.AddDate(-1, 0, 0).Format("2006"),
 	}
 
 	for _, year := range years {

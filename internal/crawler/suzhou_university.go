@@ -22,7 +22,7 @@ func init() {
 	}}
 }
 
-func (u *suzhouUniversity) ScrapeAdmissionMajorScore() error {
+func (u *suzhouUniversity) crawl(ctx context.Context) error {
 	c := colly.NewCollector(colly.CacheDir("./web"))
 
 	detailCollector := c.Clone()

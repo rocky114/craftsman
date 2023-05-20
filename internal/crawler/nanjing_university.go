@@ -39,10 +39,11 @@ type nanjingParamResp struct {
 type nanjingAdmissionScoreResp struct {
 	Data struct {
 		ZsSsgradeList []struct {
-			Klmc     string `json:"klmc"`
-			Nf       string `json:"nf"`
-			Ssmc     string `json:"ssmc"`
-			MinScore string `json:"minScore"`
+			Klmc     string  `json:"klmc"`
+			Zslx     string  `json:"zslx"`
+			Nf       string  `json:"nf"`
+			Ssmc     string  `json:"ssmc"`
+			MinScore float32 `json:"minScore"`
 		}
 	}
 }
@@ -60,7 +61,7 @@ type nanjingUniversity struct {
 	university
 }
 
-func (s *nanjingUniversity) crawl() error {
+func (u *nanjingUniversity) crawl(ctx context.Context) error {
 	c := colly.NewCollector(colly.CacheDir(path.GetTmpPath()))
 	c.OnRequest(func(request *colly.Request) {
 		request.Headers.Set("X-Requested-Time", cast.ToString(time.Now().UnixMilli()))
@@ -99,6 +100,7 @@ func (s *nanjingUniversity) crawl() error {
 
 		for province, items := range params.Data.SsmcNfKlmcSexCampusZslxMap {
 			for _, item := range items {
+				u.lastAdmissionTime = item.Nf
 				req := map[string]string{
 					"ssmc": province,
 					"zsnf": item.Nf,
@@ -126,12 +128,17 @@ func (s *nanjingUniversity) crawl() error {
 		}
 
 		for _, item := range params.Data.ZsSsgradeList {
-			if err := storage.GetQueries().CreateAdmissionMajor(context.Background(), storage.CreateAdmissionMajorParams{
-				University:    s.name,
+			if !containAdmissionTime(item.Nf) {
+				continue
+			}
+
+			if err := storage.GetQueries().CreateAdmissionMajor(ctx, storage.CreateAdmissionMajorParams{
+				University:    u.name,
 				Province:      item.Ssmc,
-				AdmissionType: item.Klmc,
+				AdmissionType: item.Zslx,
+				SelectExam:    item.Klmc,
 				AdmissionTime: item.Nf,
-				MinScore:      item.MinScore,
+				MinScore:      cast.ToString(item.MinScore),
 			}); err != nil {
 				logrus.Errorf("create admission major err: %v", err)
 			}
