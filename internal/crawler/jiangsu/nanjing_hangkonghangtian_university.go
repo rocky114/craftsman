@@ -1,10 +1,12 @@
-package crawler
+package jiangsu
 
 import (
 	"context"
 	"fmt"
 	"sort"
 	"strings"
+
+	"github.com/rocky114/craftsman/internal/crawler"
 
 	"github.com/rocky114/craftsman/internal/pkg/path"
 
@@ -14,18 +16,18 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
-type suzhouUniversity struct {
-	university
+type nanjingAerospaceUniversity struct {
+	crawler.University
 }
 
 func init() {
-	collection["4132010285"] = &suzhouUniversity{university{
-		name: "苏州大学",
-		code: "4132010285",
+	crawler.Collection["4132010285"] = &suzhouUniversity{crawler.University{
+		Name: "东南大学",
+		Code: "4132010286",
 	}}
 }
 
-func (u *suzhouUniversity) crawl(ctx context.Context) error {
+func (u *nanjingAerospaceUniversity) crawl(ctx context.Context) error {
 	c := colly.NewCollector(colly.CacheDir(path.GetTmpPath()))
 
 	detailCollector := c.Clone()
@@ -59,7 +61,7 @@ func (u *suzhouUniversity) crawl(ctx context.Context) error {
 		}
 
 		sort.Strings(years)
-		u.lastAdmissionTime = years[len(years)-1]
+		u.LastAdmissionTime = years[len(years)-1]
 	})
 
 	detailCollector.OnHTML(`table[id=ctl00_ContentPlaceHolder1_GridView1]`, func(element *colly.HTMLElement) {
@@ -82,7 +84,7 @@ func (u *suzhouUniversity) crawl(ctx context.Context) error {
 			}
 
 			if err := storage.GetQueries().CreateAdmissionMajor(context.Background(), storage.CreateAdmissionMajorParams{
-				University:    u.name,
+				University:    u.Name,
 				Major:         major[0],
 				SelectExam:    selectExam,
 				Province:      province,

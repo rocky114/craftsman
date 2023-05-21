@@ -1,4 +1,4 @@
-package crawler
+package jiangsu
 
 import (
 	"context"
@@ -51,14 +51,14 @@ type nanjingAdmissionScoreResp struct {
 var nanjingLogin nanjingLoginResp
 
 func init() {
-	collection["4132010284"] = &nanjingUniversity{university{
+	crawler.collection["4132010284"] = &nanjingUniversity{crawler.university{
 		code: "4132010284",
 		name: "南京大学",
 	}}
 }
 
 type nanjingUniversity struct {
-	university
+	crawler.university
 }
 
 func (u *nanjingUniversity) crawl(ctx context.Context) error {
@@ -128,7 +128,7 @@ func (u *nanjingUniversity) crawl(ctx context.Context) error {
 		}
 
 		for _, item := range params.Data.ZsSsgradeList {
-			if !containAdmissionTime(item.Nf) {
+			if !crawler.containAdmissionTime(item.Nf) {
 				continue
 			}
 
