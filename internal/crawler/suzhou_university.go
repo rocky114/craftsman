@@ -3,7 +3,10 @@ package crawler
 import (
 	"context"
 	"fmt"
+	"sort"
 	"strings"
+
+	"github.com/rocky114/craftsman/internal/pkg/path"
 
 	"github.com/rocky114/craftsman/internal/storage"
 	"github.com/sirupsen/logrus"
@@ -23,7 +26,7 @@ func init() {
 }
 
 func (u *suzhouUniversity) crawl(ctx context.Context) error {
-	c := colly.NewCollector(colly.CacheDir("./web"))
+	c := colly.NewCollector(colly.CacheDir(path.GetTmpPath()))
 
 	detailCollector := c.Clone()
 
@@ -54,6 +57,9 @@ func (u *suzhouUniversity) crawl(ctx context.Context) error {
 				}
 			}
 		}
+
+		sort.Strings(years)
+		u.lastAdmissionTime = years[len(years)-1]
 	})
 
 	detailCollector.OnHTML(`table[id=ctl00_ContentPlaceHolder1_GridView1]`, func(element *colly.HTMLElement) {
@@ -66,22 +72,20 @@ func (u *suzhouUniversity) crawl(ctx context.Context) error {
 			province := element.ChildText("td:nth-of-type(2)")
 			major := strings.SplitN(element.ChildText("td:nth-of-type(3)"), "--", 2)
 			duration := element.ChildText("td:nth-of-type(4)")
-			subjectType := element.ChildText("td:nth-of-type(5)")
+			selectExam := element.ChildText("td:nth-of-type(5)")
 			maxScore := element.ChildText("td:nth-of-type(6)")
 			minScore := element.ChildText("td:nth-of-type(7)")
 			averageScore := element.ChildText("td:nth-of-type(8)")
 
-			selectExam := ""
 			if len(major) == 2 {
-				selectExam = major[1]
+				selectExam = fmt.Sprintf("%s(%s)", selectExam, strings.Split(major[1], "，")[0])
 			}
 
 			if err := storage.GetQueries().CreateAdmissionMajor(context.Background(), storage.CreateAdmissionMajorParams{
-				College:       u.name,
+				University:    u.name,
 				Major:         major[0],
 				SelectExam:    selectExam,
 				Province:      province,
-				AdmissionType: subjectType,
 				AdmissionTime: admissionTime,
 				Duration:      duration,
 				MaxScore:      maxScore,
@@ -91,10 +95,6 @@ func (u *suzhouUniversity) crawl(ctx context.Context) error {
 				logrus.Errorf("create admission major err: %v", err)
 			}
 		})
-	})
-
-	c.OnRequest(func(request *colly.Request) {
-		fmt.Println("visiting", request.URL.String())
 	})
 
 	return c.Visit("https://zsb.suda.edu.cn/markHistory.aspx")
