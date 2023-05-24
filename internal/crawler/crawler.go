@@ -10,7 +10,7 @@ import (
 	"github.com/rocky114/craftsman/internal/storage"
 )
 
-var Collection = make(map[string]impl)
+var collection = make(map[string]impl)
 
 type impl interface {
 	crawl(ctx context.Context) error
@@ -18,26 +18,26 @@ type impl interface {
 	getUniversityName() string
 }
 
-type University struct {
-	Name              string
-	Code              string
-	LastAdmissionTime string
+type university struct {
+	name              string
+	code              string
+	lastAdmissionTime string
 }
 
-func (u *University) getUniversityName() string {
-	return u.Name
+func (u *university) getUniversityName() string {
+	return u.name
 }
 
-func (u *University) getLastAdmissionTime() string {
-	return u.LastAdmissionTime
+func (u *university) getLastAdmissionTime() string {
+	return u.lastAdmissionTime
 }
 
-func (u *University) crawl(ctx context.Context) error {
-	return fmt.Errorf("university: %s not implment crawl interface", u.Name)
+func (u *university) crawl(ctx context.Context) error {
+	return fmt.Errorf("university: %s not implment crawl interface", u.name)
 }
 
 func Crawl(ctx context.Context, code string) error {
-	if crawler, ok := Collection[code]; !ok {
+	if crawler, ok := collection[code]; !ok {
 		return fmt.Errorf("can't find code: %s", code)
 	} else {
 		if lastAdmissionTime, err := storage.GetQueries().GetUniversityLastAdmissionTime(ctx, code); err != nil {
@@ -62,7 +62,7 @@ func Crawl(ctx context.Context, code string) error {
 	}
 }
 
-func ContainAdmissionTime(admissionTime string) bool {
+func containAdmissionTime(admissionTime string) bool {
 	currentTime := time.Now()
 	years := []string{
 		currentTime.AddDate(-2, 0, 0).Format("2006"),

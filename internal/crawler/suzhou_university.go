@@ -1,12 +1,10 @@
-package jiangsu
+package crawler
 
 import (
 	"context"
 	"fmt"
 	"sort"
 	"strings"
-
-	"github.com/rocky114/craftsman/internal/crawler"
 
 	"github.com/rocky114/craftsman/internal/pkg/path"
 
@@ -17,13 +15,13 @@ import (
 )
 
 type suzhouUniversity struct {
-	crawler.University
+	university
 }
 
 func init() {
-	crawler.Collection["4132010285"] = &suzhouUniversity{crawler.University{
-		Name: "苏州大学",
-		Code: "4132010285",
+	collection["4132010285"] = &suzhouUniversity{university{
+		name: "苏州大学",
+		code: "4132010285",
 	}}
 }
 
@@ -50,7 +48,7 @@ func (u *suzhouUniversity) crawl(ctx context.Context) error {
 		}*/
 
 		for _, year := range years {
-			if !crawler.ContainAdmissionTime(year) {
+			if !containAdmissionTime(year) {
 				return
 			}
 
@@ -65,7 +63,7 @@ func (u *suzhouUniversity) crawl(ctx context.Context) error {
 		}
 
 		sort.Strings(years)
-		u.LastAdmissionTime = years[len(years)-1]
+		u.lastAdmissionTime = years[len(years)-1]
 	})
 
 	detailCollector.OnHTML(`table[id=ctl00_ContentPlaceHolder1_GridView1]`, func(element *colly.HTMLElement) {
@@ -88,7 +86,7 @@ func (u *suzhouUniversity) crawl(ctx context.Context) error {
 			}
 
 			if err := storage.GetQueries().CreateAdmissionMajor(context.Background(), storage.CreateAdmissionMajorParams{
-				University:    u.Name,
+				University:    u.name,
 				Major:         major[0],
 				SelectExam:    selectExam,
 				Province:      province,
