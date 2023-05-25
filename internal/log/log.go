@@ -2,7 +2,9 @@ package log
 
 import (
 	"fmt"
+	"io"
 	"log"
+	"os"
 	"time"
 
 	"github.com/rocky114/craftsman/internal/pkg/path"
@@ -23,8 +25,9 @@ func InitLog() {
 		log.Fatalf("create rotate file err: %v\n", err)
 	}
 
-	logrus.SetOutput(writer)
-	logrus.SetReportCaller(true)
+	logrus.SetOutput(io.MultiWriter(writer, os.Stderr))
+	logrus.SetFormatter(new(logrus.JSONFormatter))
+	//logrus.SetReportCaller(true)
 	/*logrus.SetFormatter(&logrus.TextFormatter{
 		CallerPrettyfier: func(f *runtime.Frame) (function string, file string) {
 			return f.Function, filepath.Base(f.File) + fmt.Sprintf(":%d", f.Line)
