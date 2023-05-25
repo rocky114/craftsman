@@ -3,7 +3,6 @@ package crawler
 import (
 	"context"
 	"fmt"
-	"sort"
 	"strings"
 
 	"github.com/rocky114/craftsman/internal/pkg/path"
@@ -61,9 +60,6 @@ func (u *suzhouUniversity) crawl(ctx context.Context) error {
 				}
 			}
 		}
-
-		sort.Strings(years)
-		u.lastAdmissionTime = years[len(years)-1]
 	})
 
 	detailCollector.OnHTML(`table[id=ctl00_ContentPlaceHolder1_GridView1]`, func(element *colly.HTMLElement) {
@@ -97,7 +93,10 @@ func (u *suzhouUniversity) crawl(ctx context.Context) error {
 				AverageScore:  averageScore,
 			}); err != nil {
 				logrus.Errorf("create admission major err: %v", err)
+				return
 			}
+
+			u.lastAdmissionTime = admissionTime
 		})
 	})
 

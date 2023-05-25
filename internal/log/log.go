@@ -3,8 +3,6 @@ package log
 import (
 	"fmt"
 	"log"
-	"path/filepath"
-	"runtime"
 	"time"
 
 	"github.com/rocky114/craftsman/internal/pkg/path"
@@ -27,12 +25,12 @@ func InitLog() {
 
 	logrus.SetOutput(writer)
 	logrus.SetReportCaller(true)
-	logrus.SetFormatter(&logrus.TextFormatter{
+	/*logrus.SetFormatter(&logrus.TextFormatter{
 		CallerPrettyfier: func(f *runtime.Frame) (function string, file string) {
 			return f.Function, filepath.Base(f.File) + fmt.Sprintf(":%d", f.Line)
 		},
 		SortingFunc: func(s []string) {
 			s[0], s[1], s[2], s[3], s[4] = "time", "level", "func", "file", "msg"
 		},
-	})
+	})*/
 }

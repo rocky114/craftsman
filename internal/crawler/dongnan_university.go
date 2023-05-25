@@ -59,38 +59,35 @@ func (u *dongnanUniversity) crawl(ctx context.Context) error {
 		})
 	})
 
-	detailCollector.OnHTML(`div[id=wp_news_w6]`, func(element *colly.HTMLElement) {
-		element.ForEach(`ul li`, func(i int, element *colly.HTMLElement) {
-			admissionTime := element.ChildText("td:nth-of-type(1)")
-			if admissionTime == "年份" || admissionTime == "" {
-				return
-			}
+	detailCollector.OnHTML(`div.article`, func(element *colly.HTMLElement) {
+		title := element.ChildText("h1")
+		admissionTime, province, major, maxScore, minScore := title[0:4], "", "", "", ""
 
-			province := element.ChildText("td:nth-of-type(2)")
-			major := strings.SplitN(element.ChildText("td:nth-of-type(3)"), "--", 2)
-			duration := element.ChildText("td:nth-of-type(4)")
-			selectExam := element.ChildText("td:nth-of-type(5)")
-			maxScore := element.ChildText("td:nth-of-type(6)")
-			minScore := element.ChildText("td:nth-of-type(7)")
-			averageScore := element.ChildText("td:nth-of-type(8)")
-
-			if len(major) == 2 {
-				selectExam = fmt.Sprintf("%s(%s)", selectExam, strings.Split(major[1], "，")[0])
+		element.ForEach(`table tr`, func(i int, element *colly.HTMLElement) {
+			if i == 0 {
+				province = element.ChildText("td:nth-of-type(1)")
+				major = element.ChildText("td:nth-of-type(2)")
+				maxScore = element.ChildText("td:nth-of-type(3)")
+				minScore = element.ChildText("td:nth-of-type(4)")
+			} else {
+				major = element.ChildText("td:nth-of-type(1)")
+				maxScore = element.ChildText("td:nth-of-type(2)")
+				minScore = element.ChildText("td:nth-of-type(3)")
 			}
 
 			if err := storage.GetQueries().CreateAdmissionMajor(context.Background(), storage.CreateAdmissionMajorParams{
 				University:    u.name,
-				Major:         major[0],
-				SelectExam:    selectExam,
+				Major:         major,
 				Province:      province,
 				AdmissionTime: admissionTime,
-				Duration:      duration,
 				MaxScore:      maxScore,
 				MinScore:      minScore,
-				AverageScore:  averageScore,
 			}); err != nil {
 				logrus.Errorf("create admission major err: %v", err)
+				return
 			}
+
+			u.lastAdmissionTime = admissionTime
 		})
 	})
 

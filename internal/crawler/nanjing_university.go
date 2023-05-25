@@ -100,7 +100,10 @@ func (u *nanjingUniversity) crawl(ctx context.Context) error {
 
 		for province, items := range params.Data.SsmcNfKlmcSexCampusZslxMap {
 			for _, item := range items {
-				u.lastAdmissionTime = item.Nf
+				if !containAdmissionTime(item.Nf) {
+					continue
+				}
+
 				req := map[string]string{
 					"ssmc": province,
 					"zsnf": item.Nf,
@@ -128,10 +131,6 @@ func (u *nanjingUniversity) crawl(ctx context.Context) error {
 		}
 
 		for _, item := range params.Data.ZsSsgradeList {
-			if !containAdmissionTime(item.Nf) {
-				continue
-			}
-
 			if err := storage.GetQueries().CreateAdmissionMajor(ctx, storage.CreateAdmissionMajorParams{
 				University:    u.name,
 				Province:      item.Ssmc,
@@ -141,7 +140,10 @@ func (u *nanjingUniversity) crawl(ctx context.Context) error {
 				MinScore:      cast.ToString(item.MinScore),
 			}); err != nil {
 				logrus.Errorf("create admission major err: %v", err)
+				return
 			}
+
+			u.lastAdmissionTime = item.Nf
 		}
 	})
 
