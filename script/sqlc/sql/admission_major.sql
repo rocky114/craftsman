@@ -17,3 +17,6 @@ INSERT INTO admission_major (
 ) VALUES (
     ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
 );
+
+-- name: GetAdmissionTimeByUniversityName :one
+SELECT admission_time FROM admission_major WHERE university = ?;

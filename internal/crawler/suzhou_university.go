@@ -93,10 +93,7 @@ func (u *suzhouUniversity) crawl(ctx context.Context) error {
 				AverageScore:  averageScore,
 			}); err != nil {
 				logrus.Errorf("create admission major err: %v", err)
-				return
 			}
-
-			u.lastAdmissionTime = admissionTime
 		})
 	})
 

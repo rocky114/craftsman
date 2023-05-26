@@ -140,10 +140,7 @@ func (u *nanjingUniversity) crawl(ctx context.Context) error {
 				MinScore:      cast.ToString(item.MinScore),
 			}); err != nil {
 				logrus.Errorf("create admission major err: %v", err)
-				return
 			}
-
-			u.lastAdmissionTime = item.Nf
 		}
 	})
 

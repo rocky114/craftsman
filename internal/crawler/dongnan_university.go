@@ -84,10 +84,7 @@ func (u *dongnanUniversity) crawl(ctx context.Context) error {
 				MinScore:      minScore,
 			}); err != nil {
 				logrus.Errorf("create admission major err: %v", err)
-				return
 			}
-
-			u.lastAdmissionTime = admissionTime
 		})
 	})
 

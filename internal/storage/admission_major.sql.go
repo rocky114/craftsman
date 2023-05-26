@@ -66,3 +66,14 @@ func (q *Queries) CreateAdmissionMajor(ctx context.Context, arg CreateAdmissionM
 	)
 	return err
 }
+
+const getAdmissionTimeByUniversityName = `-- name: GetAdmissionTimeByUniversityName :one
+SELECT admission_time FROM admission_major WHERE university = ?
+`
+
+func (q *Queries) GetAdmissionTimeByUniversityName(ctx context.Context, university string) (string, error) {
+	row := q.db.QueryRowContext(ctx, getAdmissionTimeByUniversityName, university)
+	var admission_time string
+	err := row.Scan(&admission_time)
+	return admission_time, err
+}

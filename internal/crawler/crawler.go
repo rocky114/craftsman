@@ -32,10 +32,6 @@ func (u *university) getLastAdmissionTime() string {
 	return u.lastAdmissionTime
 }
 
-func (u *university) resetAdmissionTime() {
-	u.lastAdmissionTime = ""
-}
-
 func (u *university) crawl(ctx context.Context) error {
 	return fmt.Errorf("university: %s not implment crawl interface", u.name)
 }
@@ -44,26 +40,17 @@ func Crawl(ctx context.Context, code string, admissionTime string) error {
 	if crawler, ok := collection[code]; !ok {
 		return fmt.Errorf("can't find code: %s", code)
 	} else {
-		if lastAdmissionTime, err := storage.GetQueries().GetUniversityLastAdmissionTime(ctx, code); err != nil {
+		if lastAdmissionTime, err := storage.GetQueries().GetAdmissionTimeByUniversityName(ctx, crawler.getUniversityName()); err != nil {
 			return err
 		} else {
-			if lastAdmissionTime == time.Now().AddDate(-1, 0, 0).Format("2006") {
-				logrus.Infof("%s university %s admission major data already the latest", crawler.getUniversityName(), lastAdmissionTime)
+			if lastAdmissionTime == admissionTime {
+				logrus.Infof("%s university %s admission major data already exist", crawler.getUniversityName(), lastAdmissionTime)
 				return nil
 			}
 		}
 
 		if err := crawler.crawl(ctx); err != nil {
 			return err
-		}
-
-		if admissionTime == crawler.getLastAdmissionTime() {
-			param := storage.UpdateUniversityLastAdmissionTimeParams{
-				LastAdmissionTime: admissionTime,
-				Code:              code,
-			}
-
-			return storage.GetQueries().UpdateUniversityLastAdmissionTime(ctx, param)
 		}
 
 		return nil

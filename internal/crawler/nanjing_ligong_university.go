@@ -3,7 +3,6 @@ package crawler
 import (
 	"context"
 	"fmt"
-	"sort"
 	"strings"
 
 	"github.com/rocky114/craftsman/internal/pkg/path"
@@ -57,9 +56,6 @@ func (u *nanjingLigongUniversity) crawl(ctx context.Context) error {
 				}
 			}
 		}
-
-		sort.Strings(years)
-		u.lastAdmissionTime = years[len(years)-1]
 	})
 
 	detailCollector.OnHTML(`table[id=ctl00_ContentPlaceHolder1_GridView1]`, func(element *colly.HTMLElement) {
