@@ -2,6 +2,7 @@ package crawler
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 
 	"github.com/sirupsen/logrus"
@@ -51,10 +52,10 @@ func Crawl(ctx context.Context, code string, admissionTime string) error {
 			University:    crawler.getUniversityName(),
 			AdmissionTime: admissionTime,
 		}
-		if admissionMajor, err := storage.GetQueries().GetAdmissionMajorByUniversityAndTime(ctx, params); err != nil {
+		if result, err := storage.GetQueries().GetAdmissionMajorByUniversityAndTime(ctx, params); err != nil && err != sql.ErrNoRows {
 			return err
 		} else {
-			if admissionMajor.AdmissionTime == admissionTime {
+			if result.AdmissionTime == admissionTime {
 				logrus.Infof("%s university %s admission major data already exist", crawler.getUniversityName(), admissionTime)
 				return nil
 			}
@@ -66,10 +67,10 @@ func Crawl(ctx context.Context, code string, admissionTime string) error {
 			return err
 		}
 
-		if admissionMajor, err := storage.GetQueries().GetAdmissionMajorByUniversityAndTime(ctx, params); err != nil {
+		if result, err := storage.GetQueries().GetAdmissionMajorByUniversityAndTime(ctx, params); err != nil {
 			logrus.Errorf("get admission major university %s admission_time %s err: %v", crawler.getUniversityName(), admissionTime, err)
 		} else {
-			if admissionMajor.AdmissionTime == admissionTime {
+			if result.AdmissionTime == admissionTime {
 				params := storage.UpdateUniversityLastAdmissionTimeParams{
 					LastAdmissionTime: admissionTime,
 					Code:              code,
