@@ -3,7 +3,6 @@ package crawler
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/sirupsen/logrus"
 
@@ -14,22 +13,30 @@ var collection = make(map[string]impl)
 
 type impl interface {
 	crawl(ctx context.Context) error
-	getLastAdmissionTime() string
+	setAdmissionTime(admissionTime string)
 	getUniversityName() string
 }
 
 type university struct {
-	name              string
-	code              string
-	lastAdmissionTime string
+	name          string
+	code          string
+	admissionTime string
 }
 
 func (u *university) getUniversityName() string {
 	return u.name
 }
 
-func (u *university) getLastAdmissionTime() string {
-	return u.lastAdmissionTime
+func (u *university) containAdmissionTime(admissionTime string) bool {
+	if u.admissionTime == admissionTime {
+		return true
+	}
+
+	return false
+}
+
+func (u *university) setAdmissionTime(admissionTime string) {
+	u.admissionTime = admissionTime
 }
 
 func (u *university) crawl(ctx context.Context) error {
@@ -40,34 +47,39 @@ func Crawl(ctx context.Context, code string, admissionTime string) error {
 	if crawler, ok := collection[code]; !ok {
 		return fmt.Errorf("can't find code: %s", code)
 	} else {
-		if lastAdmissionTime, err := storage.GetQueries().GetAdmissionTimeByUniversityName(ctx, crawler.getUniversityName()); err != nil {
+		params := storage.GetAdmissionMajorByUniversityAndTimeParams{
+			University:    crawler.getUniversityName(),
+			AdmissionTime: admissionTime,
+		}
+		if admissionMajor, err := storage.GetQueries().GetAdmissionMajorByUniversityAndTime(ctx, params); err != nil {
 			return err
 		} else {
-			if lastAdmissionTime == admissionTime {
-				logrus.Infof("%s university %s admission major data already exist", crawler.getUniversityName(), lastAdmissionTime)
+			if admissionMajor.AdmissionTime == admissionTime {
+				logrus.Infof("%s university %s admission major data already exist", crawler.getUniversityName(), admissionTime)
 				return nil
 			}
 		}
+
+		crawler.setAdmissionTime(admissionTime)
 
 		if err := crawler.crawl(ctx); err != nil {
 			return err
 		}
 
+		if admissionMajor, err := storage.GetQueries().GetAdmissionMajorByUniversityAndTime(ctx, params); err != nil {
+			logrus.Errorf("get admission major university %s admission_time %s err: %v", crawler.getUniversityName(), admissionTime, err)
+		} else {
+			if admissionMajor.AdmissionTime == admissionTime {
+				params := storage.UpdateUniversityLastAdmissionTimeParams{
+					LastAdmissionTime: admissionTime,
+					Code:              code,
+				}
+				if err = storage.GetQueries().UpdateUniversityLastAdmissionTime(ctx, params); err != nil {
+					logrus.Errorf("update university %s las_admission_time err: %v", crawler.getUniversityName(), err)
+				}
+			}
+		}
+
 		return nil
 	}
-}
-
-func containAdmissionTime(admissionTime string) bool {
-	currentTime := time.Now()
-	years := []string{
-		currentTime.AddDate(-1, 0, 0).Format("2006"),
-	}
-
-	for _, year := range years {
-		if admissionTime == year {
-			return true
-		}
-	}
-
-	return false
 }

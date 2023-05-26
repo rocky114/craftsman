@@ -51,17 +51,6 @@ func (q *Queries) CreateUniversity(ctx context.Context, arg CreateUniversityPara
 	return err
 }
 
-const getUniversityLastAdmissionTime = `-- name: GetUniversityLastAdmissionTime :one
-SELECT last_admission_time FROM university WHERE code = ?
-`
-
-func (q *Queries) GetUniversityLastAdmissionTime(ctx context.Context, code string) (string, error) {
-	row := q.db.QueryRowContext(ctx, getUniversityLastAdmissionTime, code)
-	var last_admission_time string
-	err := row.Scan(&last_admission_time)
-	return last_admission_time, err
-}
-
 const listUniversities = `-- name: ListUniversities :many
 SELECT id, name, code, department, province, city, school_level, website, property, last_admission_time, create_time, update_time FROM university limit ? offset ?
 `

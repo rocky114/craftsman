@@ -44,7 +44,7 @@ func (u *dongnanUniversity) crawl(ctx context.Context) error {
 	listCollector.OnHTML(`div[id=wp_news_w6]`, func(element *colly.HTMLElement) {
 		element.ForEach(`ul li`, func(i int, element *colly.HTMLElement) {
 			title := element.ChildText("span:nth-of-type(1) a")
-			if !containAdmissionTime(title[0:4]) {
+			if !u.containAdmissionTime(title[0:4]) {
 				return
 			}
 

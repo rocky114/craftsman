@@ -100,7 +100,7 @@ func (u *nanjingUniversity) crawl(ctx context.Context) error {
 
 		for province, items := range params.Data.SsmcNfKlmcSexCampusZslxMap {
 			for _, item := range items {
-				if !containAdmissionTime(item.Nf) {
+				if !u.containAdmissionTime(item.Nf) {
 					continue
 				}
 

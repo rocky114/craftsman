@@ -67,12 +67,46 @@ func (q *Queries) CreateAdmissionMajor(ctx context.Context, arg CreateAdmissionM
 	return err
 }
 
-const getAdmissionTimeByUniversityName = `-- name: GetAdmissionTimeByUniversityName :one
-SELECT admission_time FROM admission_major WHERE university = ?
+const getAdmissionMajorByUniversityAndTime = `-- name: GetAdmissionMajorByUniversityAndTime :one
+SELECT id, university, college, major, select_exam, province, admission_type, admission_time, admission_number, duration, max_score, min_score, average_score, province_control_score_line, score_rank, create_time, update_time FROM admission_major WHERE university = ? and admission_time = ? limit 1
 `
 
-func (q *Queries) GetAdmissionTimeByUniversityName(ctx context.Context, university string) (string, error) {
-	row := q.db.QueryRowContext(ctx, getAdmissionTimeByUniversityName, university)
+type GetAdmissionMajorByUniversityAndTimeParams struct {
+	University    string
+	AdmissionTime string
+}
+
+func (q *Queries) GetAdmissionMajorByUniversityAndTime(ctx context.Context, arg GetAdmissionMajorByUniversityAndTimeParams) (AdmissionMajor, error) {
+	row := q.db.QueryRowContext(ctx, getAdmissionMajorByUniversityAndTime, arg.University, arg.AdmissionTime)
+	var i AdmissionMajor
+	err := row.Scan(
+		&i.ID,
+		&i.University,
+		&i.College,
+		&i.Major,
+		&i.SelectExam,
+		&i.Province,
+		&i.AdmissionType,
+		&i.AdmissionTime,
+		&i.AdmissionNumber,
+		&i.Duration,
+		&i.MaxScore,
+		&i.MinScore,
+		&i.AverageScore,
+		&i.ProvinceControlScoreLine,
+		&i.ScoreRank,
+		&i.CreateTime,
+		&i.UpdateTime,
+	)
+	return i, err
+}
+
+const getLastAdmissionTimeByUniversity = `-- name: GetLastAdmissionTimeByUniversity :one
+SELECT admission_time FROM admission_major WHERE university = ? order by admission_time desc limit 1
+`
+
+func (q *Queries) GetLastAdmissionTimeByUniversity(ctx context.Context, university string) (string, error) {
+	row := q.db.QueryRowContext(ctx, getLastAdmissionTimeByUniversity, university)
 	var admission_time string
 	err := row.Scan(&admission_time)
 	return admission_time, err

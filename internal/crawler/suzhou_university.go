@@ -47,7 +47,7 @@ func (u *suzhouUniversity) crawl(ctx context.Context) error {
 		}*/
 
 		for _, year := range years {
-			if !containAdmissionTime(year) {
+			if !u.containAdmissionTime(year) {
 				return
 			}
 

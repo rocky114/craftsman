@@ -18,5 +18,8 @@ INSERT INTO admission_major (
     ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
 );
 
--- name: GetAdmissionTimeByUniversityName :one
-SELECT admission_time FROM admission_major WHERE university = ?;
+-- name: GetAdmissionMajorByUniversityAndTime :one
+SELECT * FROM admission_major WHERE university = ? and admission_time = ? limit 1;
+
+-- name: GetLastAdmissionTimeByUniversity :one
+SELECT admission_time FROM admission_major WHERE university = ? order by admission_time desc limit 1;
