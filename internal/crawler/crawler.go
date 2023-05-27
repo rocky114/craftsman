@@ -2,7 +2,6 @@ package crawler
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 
 	"github.com/sirupsen/logrus"
@@ -48,17 +47,8 @@ func Crawl(ctx context.Context, code string, admissionTime string) error {
 	if crawler, ok := collection[code]; !ok {
 		return fmt.Errorf("can't find code: %s", code)
 	} else {
-		params := storage.GetAdmissionMajorByUniversityAndTimeParams{
-			University:    crawler.getUniversityName(),
-			AdmissionTime: admissionTime,
-		}
-		if result, err := storage.GetQueries().GetAdmissionMajorByUniversityAndTime(ctx, params); err != nil && err != sql.ErrNoRows {
-			return err
-		} else {
-			if result.AdmissionTime == admissionTime {
-				logrus.Infof("%s university %s admission major data already exist", crawler.getUniversityName(), admissionTime)
-				return nil
-			}
+		if !storage.IsNotFoundAdmissionMajor(ctx, crawler.getUniversityName(), admissionTime) {
+			return nil
 		}
 
 		crawler.setAdmissionTime(admissionTime)
@@ -67,12 +57,12 @@ func Crawl(ctx context.Context, code string, admissionTime string) error {
 			return err
 		}
 
-		if result, err := storage.GetQueries().GetAdmissionMajorByUniversityAndTime(ctx, params); err != nil {
+		if lastAdmissionTime, err := storage.GetQueries().GetLastAdmissionTimeByUniversity(ctx, crawler.getUniversityName()); err != nil {
 			logrus.Errorf("get admission major university %s admission_time %s err: %v", crawler.getUniversityName(), admissionTime, err)
 		} else {
-			if result.AdmissionTime == admissionTime {
+			if admissionTime == lastAdmissionTime {
 				params := storage.UpdateUniversityLastAdmissionTimeParams{
-					LastAdmissionTime: admissionTime,
+					LastAdmissionTime: lastAdmissionTime,
 					Code:              code,
 				}
 				if err = storage.GetQueries().UpdateUniversityLastAdmissionTime(ctx, params); err != nil {
