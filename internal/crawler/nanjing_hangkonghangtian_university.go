@@ -93,5 +93,6 @@ func (u *nanjingAerospaceUniversity) crawl(ctx context.Context) error {
 		})
 	})
 
+	//https://zsservice.nuaa.edu.cn/nuaaweb/lslqfs.htm?province=%E4%B8%8A%E6%B5%B7
 	return c.Visit("https://zsb.suda.edu.cn/markHistory.aspx")
 }

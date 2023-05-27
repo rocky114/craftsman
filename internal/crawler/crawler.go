@@ -58,7 +58,7 @@ func Crawl(ctx context.Context, code string, admissionTime string) error {
 		}
 
 		if lastAdmissionTime, err := storage.GetQueries().GetLastAdmissionTimeByUniversity(ctx, crawler.getUniversityName()); err != nil {
-			logrus.Errorf("get admission major university %s admission_time %s err: %v", crawler.getUniversityName(), admissionTime, err)
+			logrus.Errorf("GetLastAdmissionTimeByUniversity university %s admission_time %s err: %v", crawler.getUniversityName(), admissionTime, err)
 		} else {
 			if admissionTime == lastAdmissionTime {
 				params := storage.UpdateUniversityLastAdmissionTimeParams{
@@ -66,7 +66,7 @@ func Crawl(ctx context.Context, code string, admissionTime string) error {
 					Code:              code,
 				}
 				if err = storage.GetQueries().UpdateUniversityLastAdmissionTime(ctx, params); err != nil {
-					logrus.Errorf("update university %s las_admission_time err: %v", crawler.getUniversityName(), err)
+					logrus.Errorf("UpdateUniversityLastAdmissionTime university %s err: %v", crawler.getUniversityName(), err)
 				}
 			}
 		}
