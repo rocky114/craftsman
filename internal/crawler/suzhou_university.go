@@ -25,7 +25,7 @@ func init() {
 }
 
 func (u *suzhouUniversity) crawl(ctx context.Context) error {
-	c := colly.NewCollector(colly.CacheDir(path.GetTmpPath()))
+	c := colly.NewCollector(colly.CacheDir(path.GetTmpPath("suzhouUniversity")))
 
 	detailCollector := c.Clone()
 
@@ -42,10 +42,6 @@ func (u *suzhouUniversity) crawl(ctx context.Context) error {
 			colleges = append(colleges, element.Attr("value"))
 		})
 
-		/*if err := detailCollector.Visit("https://zsb.suda.edu.cn/search.aspx?nf=2022&sf=10&xy=1"); err != nil {
-			logrus.Errorf("scrape suzhou university err: %v", err)
-		}*/
-
 		for _, year := range years {
 			if !u.containAdmissionTime(year) {
 				return
@@ -55,7 +51,7 @@ func (u *suzhouUniversity) crawl(ctx context.Context) error {
 				for _, college := range colleges {
 					url := fmt.Sprintf("https://zsb.suda.edu.cn/search.aspx?nf=%s&sf=%s&xy=%s", year, province, college)
 					if err := detailCollector.Visit(url); err != nil {
-						logrus.Errorf("scrape suzhou university err: %v", err)
+						logrus.Errorf("%s crawl %s err: %v", u.name, url, err)
 					}
 				}
 			}

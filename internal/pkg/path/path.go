@@ -5,6 +5,7 @@ import (
 	"os"
 	"path"
 	"runtime"
+	"strings"
 )
 
 func GetRootPathByCaller() string {
@@ -25,8 +26,12 @@ func GetConfigFile(filename string) string {
 	return fmt.Sprintf("%s/config/%s", GetRootPath(), filename)
 }
 
-func GetTmpPath() string {
-	return fmt.Sprintf("%s/tmp/", GetRootPath())
+func GetTmpPath(dirs ...string) string {
+	subDir := ""
+	if len(dirs) > 0 {
+		subDir = strings.Join(dirs, "/")
+	}
+	return fmt.Sprintf("%s/tmp/%s", GetRootPath(), subDir)
 }
 
 func GetLogPath() string {
