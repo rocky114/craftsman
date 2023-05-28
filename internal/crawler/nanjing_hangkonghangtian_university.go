@@ -24,6 +24,8 @@ func init() {
 	}}
 }
 
+// todo: 暂无2022数据
+
 func (u *nanjingAerospaceUniversity) crawl(ctx context.Context) error {
 	c := colly.NewCollector(colly.CacheDir(path.GetTmpPath()))
 

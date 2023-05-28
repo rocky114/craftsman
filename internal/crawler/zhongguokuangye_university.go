@@ -9,20 +9,19 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
-type jiangsukejiUniversity struct {
+type zhongguokuangyeUniversity struct {
 	university
 }
 
 func init() {
-	collection["4132010289"] = &jiangsukejiUniversity{university{
-		name: "江苏科技大学",
-		code: "4132010289",
+	collection["4132010290"] = &zhongguokuangyeUniversity{university{
+		name: "中国矿业大学",
+		code: "4132010290",
 	}}
 }
 
-// todo: 需要使用ocr进行图像识别
-
-func (u *jiangsukejiUniversity) crawl(ctx context.Context) error {
+// todo: 暂无2022数据
+func (u *zhongguokuangyeUniversity) crawl(ctx context.Context) error {
 	c := colly.NewCollector(colly.CacheDir(path.GetTmpPath("jiangsukejiUniversity")))
 	c.SetRequestTimeout(60 * time.Second)
 
@@ -30,5 +29,5 @@ func (u *jiangsukejiUniversity) crawl(ctx context.Context) error {
 
 	})
 
-	return c.Visit("http://zs.just.edu.cn/1603/list.htm")
+	return c.Visit("https://zs.cumt.edu.cn/lnfs_16011/list1.htm")
 }
