@@ -1,6 +1,6 @@
-package crawler
+package types
 
-var provinces = []string{
+var Provinces = []string{
 	"新疆",
 	"西藏",
 	"内蒙古",

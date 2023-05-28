@@ -48,8 +48,11 @@ func Crawl(ctx context.Context, code string, admissionTime string) error {
 		return fmt.Errorf("can't find code: %s", code)
 	} else {
 		if !storage.IsNotFoundAdmissionMajor(ctx, crawler.getUniversityName(), admissionTime) {
+			logrus.Infof("university %s admission score already existed", crawler.getUniversityName())
 			return nil
 		}
+
+		logrus.Infof("crawl university %s admission score", crawler.getUniversityName())
 
 		crawler.setAdmissionTime(admissionTime)
 

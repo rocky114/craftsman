@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
+	"strings"
 
-	"github.com/spf13/cast"
+	"github.com/rocky114/craftsman/internal/types"
 
 	"github.com/rocky114/craftsman/internal/pkg/path"
 
@@ -27,118 +29,60 @@ func init() {
 	}}
 }
 
+type nanjingligongUniversityResp struct {
+	Rows []struct {
+		Province         string `json:"province"`
+		ProfessionalName string `json:"professional_name"`
+		ClassName        string `json:"class_name"`
+		Year3            string `json:"year3"`
+	} `json:"rows"`
+}
+
 func (u *nanjingLigongUniversity) crawl(ctx context.Context) error {
 	c := colly.NewCollector(colly.CacheDir(path.GetTmpPath()))
 
-	paramCollector := c.Clone()
 	detailCollector := c.Clone()
 
-	c.OnHTML(`table[id=TABLE3] > tbody > tr:first-of-type`, func(element *colly.HTMLElement) {
-		var years, provinces, colleges []string
-		element.ForEach(`select[id=ctl00_ContentPlaceHolder1_DropDownList1] > option`, func(i int, element *colly.HTMLElement) {
-			years = append(years, element.Attr("value"))
-		})
-		element.ForEach(`select[id=ctl00_ContentPlaceHolder1_DropDownList2] > option`, func(i int, element *colly.HTMLElement) {
-			provinces = append(provinces, element.Attr("value"))
-		})
-
-		element.ForEach(`select[id=ctl00_ContentPlaceHolder1_DropDownList3] > option`, func(i int, element *colly.HTMLElement) {
-			colleges = append(colleges, element.Attr("value"))
-		})
-
-		/*if err := detailCollector.Visit("https://zsb.suda.edu.cn/search.aspx?nf=2022&sf=10&xy=1"); err != nil {
-			logrus.Errorf("scrape suzhou university err: %v", err)
-		}*/
-
-		for _, year := range years {
-			if !u.containAdmissionTime(year) {
-				return
-			}
-
-			for _, province := range provinces {
-				for _, college := range colleges {
-					url := fmt.Sprintf("https://zsb.suda.edu.cn/search.aspx?nf=%s&sf=%s&xy=%s", year, province, college)
-					if err := detailCollector.Visit(url); err != nil {
-						logrus.Errorf("scrape suzhou university err: %v", err)
-					}
-				}
-			}
-		}
-	})
-
-	paramCollector.OnResponse(func(response *colly.Response) {
-		if response.StatusCode != http.StatusOK {
-			logrus.Errorf("university %s crawl code: %d", u.name, response.StatusCode)
+	c.OnHTML(`div.gyright h3[id=title]`, func(element *colly.HTMLElement) {
+		title := []rune(strings.TrimSpace(element.Text))
+		admissionTime := string(title[6:10])
+		if !u.containAdmissionTime(admissionTime) {
 			return
 		}
 
-		var params nanjingParamResp
-		if err := json.Unmarshal(response.Body, &params); err != nil {
-			logrus.Errorf("nanjing scrape unmarshal param err: %v", response.StatusCode)
-			return
-		}
-
-		for province, items := range params.Data.SsmcNfKlmcSexCampusZslxMap {
-			for _, item := range items {
-				if !u.containAdmissionTime(item.Nf) {
-					continue
-				}
-
-				req := map[string]string{
-					"ssmc": province,
-					"zsnf": item.Nf,
-					"klmc": item.Klmc,
-					"zslx": item.Zslx,
-				}
-
-				if err := detailCollector.Post("https://bkzs.nju.edu.cn/f/ajax_lnfs", req); err != nil {
-					logrus.Errorf("nanjing scrape detail err: %v", response.StatusCode)
-				}
+		for _, province := range types.Provinces {
+			addr := fmt.Sprintf("http://zsb.njust.edu.cn/lqScore/initDateWebCon?pageSize=100&rowoffset=0&val1=%s", url.QueryEscape(province))
+			if err := detailCollector.Visit(addr); err != nil {
+				logrus.Errorf("nanjingLigongUniversity admission score err: %v", err)
 			}
 		}
 	})
 
 	detailCollector.OnResponse(func(response *colly.Response) {
 		if response.StatusCode != http.StatusOK {
-			logrus.Errorf("nanjing scrape detail response status code: %d", response.StatusCode)
+			logrus.Errorf("nanjingLigongUniversity http code: %d", response.StatusCode)
 			return
 		}
 
-		var params nanjingAdmissionScoreResp
-		if err := json.Unmarshal(response.Body, &params); err != nil {
-			logrus.Errorf("nanjing scrape unmarshal detail err: %v", response.StatusCode)
+		var resp nanjingligongUniversityResp
+		if err := json.Unmarshal(response.Body, &resp); err != nil {
+			logrus.Errorf("nanjingLigongUniversity unmarshal detail err: %v", response.StatusCode)
 			return
 		}
 
-		for _, item := range params.Data.ZsSsgradeList {
+		for _, item := range resp.Rows {
 			if err := storage.GetQueries().CreateAdmissionMajor(ctx, storage.CreateAdmissionMajorParams{
 				University:    u.name,
-				Province:      item.Ssmc,
-				AdmissionType: item.Zslx,
-				SelectExam:    item.Klmc,
-				AdmissionTime: item.Nf,
-				MinScore:      cast.ToString(item.MinScore),
+				Province:      item.Province,
+				Major:         item.ProfessionalName,
+				AdmissionType: item.ClassName,
+				AdmissionTime: u.admissionTime,
+				MinScore:      item.Year3,
 			}); err != nil {
 				logrus.Errorf("create admission major err: %v", err)
 			}
 		}
 	})
 
-	c.OnResponse(func(response *colly.Response) {
-		if response.StatusCode != http.StatusOK {
-			logrus.Errorf("nanjing scrape response status code: %d", response.StatusCode)
-			return
-		}
-
-		if err := json.Unmarshal(response.Body, &nanjingLogin); err != nil {
-			logrus.Errorf("nanjing scrape unmarshal login err: %v", response.StatusCode)
-			return
-		}
-
-		if err := paramCollector.Post("https://bkzs.nju.edu.cn/f/ajax_lnfs_param", nil); err != nil {
-			logrus.Errorf("nanjing scrape params err: %v", response.StatusCode)
-		}
-	})
-
-	return c.Post("https://zs.nuaa.edu.cn/lnlqfs/list.psp", nil)
+	return c.Visit("http://zsb.njust.edu.cn/lqjh_fsx")
 }
