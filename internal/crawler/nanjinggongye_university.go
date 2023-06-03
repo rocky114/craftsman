@@ -18,18 +18,19 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
-type nanjingGongYeUniversity struct {
+type nanjinggongyeUniversity struct {
 	university
 }
 
 func init() {
-	collection["4132010291"] = &nanjingGongYeUniversity{university{
+	collection["4132010291"] = &nanjinggongyeUniversity{university{
 		name: "南京工业大学",
 		code: "4132010291",
 	}}
 }
 
-type nanjingGongYeUniversityResp struct {
+// todo: cann't open page
+type nanjinggongyeUniversityResp struct {
 	Rows []struct {
 		Province         string `json:"province"`
 		ProfessionalName string `json:"professional_name"`
@@ -38,7 +39,7 @@ type nanjingGongYeUniversityResp struct {
 	} `json:"rows"`
 }
 
-func (u *nanjingGongYeUniversity) crawl(ctx context.Context) error {
+func (u *nanjinggongyeUniversity) crawl(ctx context.Context) error {
 	c := colly.NewCollector(colly.CacheDir(path.GetTmpPath()))
 
 	detailCollector := c.Clone()
