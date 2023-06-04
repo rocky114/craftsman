@@ -3,12 +3,7 @@ package crawler
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"net/url"
-	"strings"
-
-	"github.com/rocky114/craftsman/internal/types"
 
 	"github.com/rocky114/craftsman/internal/pkg/path"
 
@@ -29,61 +24,55 @@ func init() {
 	}}
 }
 
-// todo: cann't open page
 type nanjinggongyeUniversityResp struct {
 	Rows []struct {
-		Province         string `json:"province"`
-		ProfessionalName string `json:"professional_name"`
-		ClassName        string `json:"class_name"`
-		Year3            string `json:"year3"`
+		NF   string `json:"NF"`
+		SFMC string `json:"SFMC"`
+		KL   string `json:"KL"`
+		PC   string `json:"PC"`
+		LQQK string `json:"LQQK"`
+		SX   string `json:"SX"`
+		XX   string `json:"XX"`
 	} `json:"rows"`
 }
 
 func (u *nanjinggongyeUniversity) crawl(ctx context.Context) error {
 	c := colly.NewCollector(colly.CacheDir(path.GetTmpPath()))
 
-	detailCollector := c.Clone()
-
-	c.OnHTML(`div.gyright h3[id=title]`, func(element *colly.HTMLElement) {
-		title := []rune(strings.TrimSpace(element.Text))
-		admissionTime := string(title[6:10])
-		if !u.containAdmissionTime(admissionTime) {
-			return
-		}
-
-		for _, province := range types.Provinces {
-			addr := fmt.Sprintf("http://zsb.njust.edu.cn/lqScore/initDateWebCon?pageSize=100&rowoffset=0&val1=%s", url.QueryEscape(province))
-			if err := detailCollector.Visit(addr); err != nil {
-				logrus.Errorf("nanjingLigongUniversity admission score err: %v", err)
-			}
-		}
-	})
-
-	detailCollector.OnResponse(func(response *colly.Response) {
+	c.OnResponse(func(response *colly.Response) {
 		if response.StatusCode != http.StatusOK {
-			logrus.Errorf("nanjingLigongUniversity http code: %d", response.StatusCode)
+			logrus.Errorf("nanjinggongyeUniversity http code: %d", response.StatusCode)
 			return
 		}
 
-		var resp nanjingligongUniversityResp
+		var resp nanjinggongyeUniversityResp
 		if err := json.Unmarshal(response.Body, &resp); err != nil {
-			logrus.Errorf("nanjingLigongUniversity unmarshal detail err: %v", response.StatusCode)
+			logrus.Errorf("nanjinggongyeUniversity unmarshal err: %v", response.StatusCode)
 			return
 		}
 
 		for _, item := range resp.Rows {
 			if err := storage.GetQueries().CreateAdmissionMajor(ctx, storage.CreateAdmissionMajorParams{
-				University:    u.name,
-				Province:      item.Province,
-				Major:         item.ProfessionalName,
-				AdmissionType: item.ClassName,
-				AdmissionTime: u.admissionTime,
-				MinScore:      item.Year3,
+				University:               u.name,
+				Province:                 item.SFMC,
+				AdmissionType:            item.PC,
+				AdmissionTime:            u.admissionTime,
+				AdmissionNumber:          item.LQQK,
+				SelectExam:               item.KL,
+				MinScore:                 item.XX,
+				ProvinceControlScoreLine: item.SX,
 			}); err != nil {
 				logrus.Errorf("create admission major err: %v", err)
 			}
 		}
 	})
 
-	return c.Visit("http://zsb.njust.edu.cn/lqjh_fsx")
+	params := map[string]string{
+		"limit":           "200",
+		"offset":          "0",
+		"sortOrder":       "desc",
+		"chaxun1nianfen":  u.admissionTime,
+		"chaxun1shengfen": "",
+	}
+	return c.Post("https://zhaosheng.njtech.edu.cn/index/Menu.ashx?acdo=chaxunlnlist", params)
 }
