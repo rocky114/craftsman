@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/rocky114/craftsman/internal/storage"
+	"github.com/xuri/excelize/v2"
+
 	"github.com/sirupsen/logrus"
 
 	"github.com/rocky114/craftsman/internal/pkg/path"
@@ -67,8 +70,50 @@ func (u *changzhouUniversity) crawl(ctx context.Context) error {
 	})
 
 	c.OnScraped(func(response *colly.Response) {
-		fmt.Println(len(excelFiles))
+		for _, excelFile := range excelFiles {
+			u.CreateAdmissionMajor(ctx, excelFile)
+		}
 	})
 
 	return c.Visit("https://cdzs.cczu.edu.cn//lnfswsjw/list.htm")
+}
+
+func (u *changzhouUniversity) CreateAdmissionMajor(ctx context.Context, file string) {
+	f, err := excelize.OpenFile(file)
+	if err != nil {
+		logrus.Errorf("CreateAdmissionMajor err: %v", err)
+		return
+	}
+
+	defer func() {
+		if err = f.Close(); err != nil {
+			logrus.Errorf("CreateAdmissionMajor err: %v", err)
+		}
+	}()
+
+	rows, err := f.GetRows("Sheet1")
+	if err != nil {
+		logrus.Errorf("CreateAdmissionMajor err: %v", err)
+		return
+	}
+
+	for i, row := range rows {
+		if i == 0 {
+			continue
+		}
+
+		if err = storage.GetQueries().CreateAdmissionMajor(ctx, storage.CreateAdmissionMajorParams{
+			University:      u.name,
+			Province:        row[0],
+			Major:           row[3],
+			AdmissionType:   row[2],
+			AdmissionNumber: row[4],
+			SelectExam:      row[1],
+			MaxScore:        row[5],
+			MinScore:        row[6],
+			AdmissionTime:   u.admissionTime,
+		}); err != nil {
+			logrus.Errorf("create admission major err: %v", err)
+		}
+	}
 }
