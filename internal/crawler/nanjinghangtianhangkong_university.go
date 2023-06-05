@@ -49,7 +49,7 @@ func (u *nanjinghangtianhangkongUniversity) crawl(ctx context.Context) error {
 
 		var resp nanjinghangtianhangkongUniversityResp
 		if err := json.Unmarshal(response.Body, &resp); err != nil {
-			logrus.Errorf("nanjinghangtianhangkongUniversity unmarshal err: %v", response.StatusCode)
+			logrus.Errorf("nanjinghangtianhangkongUniversity unmarshal err: %v", err)
 			return
 		}
 
