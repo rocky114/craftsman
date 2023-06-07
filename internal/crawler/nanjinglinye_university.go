@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/rocky114/craftsman/internal/storage"
@@ -58,7 +59,7 @@ func (u *nanjinglinyeUniversity) crawl(ctx context.Context) error {
 		for _, item := range resp.Data {
 			if err := storage.GetQueries().CreateAdmissionMajor(ctx, storage.CreateAdmissionMajorParams{
 				University:               u.name,
-				Province:                 item.ProvinceName,
+				Province:                 u.trimProvinceSuffix(item.ProvinceName),
 				Major:                    item.MajorName,
 				AdmissionType:            item.Batch,
 				SelectExam:               item.Kind,
@@ -85,4 +86,12 @@ func (u *nanjinglinyeUniversity) crawl(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+func (u *nanjinglinyeUniversity) trimProvinceSuffix(province string) string {
+	for _, item := range []string{"壮族自治区", "回族自治区", "维吾尔自治区", "省", "市", "自治区"} {
+		province = strings.TrimSuffix(province, item)
+	}
+
+	return province
 }
