@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/rocky114/craftsman/internal/storage"
+
 	"github.com/sirupsen/logrus"
 
 	"github.com/rocky114/craftsman/internal/pkg/path"
@@ -24,7 +26,7 @@ func init() {
 }
 
 func (u *jiangsuUniversity) crawl(ctx context.Context) error {
-	c := colly.NewCollector(colly.CacheDir(path.GetTmpPath()))
+	c := colly.NewCollector(colly.UserAgent(userAgent), colly.CacheDir(path.GetTmpPath()))
 
 	provinceCollector := c.Clone()
 	detailCollector := c.Clone()
@@ -52,42 +54,83 @@ func (u *jiangsuUniversity) crawl(ctx context.Context) error {
 		})
 	})
 
-	detailCollector.OnHTML(`div.content_neirong div.right`, func(element *colly.HTMLElement) {
-		title := strings.TrimPrefix(element.ChildText("div.right_title2 p.p2"), fmt.Sprintf("江苏大学%s", u.admissionTime))
-		province := string([]rune(title)[2:4])
+	detailCollector.OnHTML(`div.content_neirong`, func(element *colly.HTMLElement) {
+		province := element.ChildText("div.site div a:nth-of-type(3)")
 
+		head := map[int]string{}
+		element.ForEach("div.right_content2 table tr.firstRow td", func(i int, element *colly.HTMLElement) {
+			head[i] = element.Text
+		})
+
+		mergeSelectExam, mergeAdmissionType := "", ""
+		isMergeCell := false
+
+		element.ForEach("div.right_content2 table tr", func(i int, element *colly.HTMLElement) {
+			if element.ChildAttr("td:nth-of-type(1)", "rowspan") != "" {
+				isMergeCell = true
+			}
+		})
 		element.ForEach("div.right_content2 table tr", func(i int, element *colly.HTMLElement) {
 			if i == 0 {
 				return
 			}
 
+			childMergeCell := element.ChildAttr("td:nth-of-type(1)", "rowspan") == ""
 			admissionType, major, selectExam, admissionNumber, maxScore, minScore, averageScore := "", "", "", "", "", "", ""
 
-			if province == "江苏" {
-				admissionType = element.ChildText("td:nth-of-type(1)")
-				selectExam = element.ChildText("td:nth-of-type(2)")[2:]
-				major = element.ChildText("td:nth-of-type(3)")
-				admissionNumber = element.ChildText("td:nth-of-type(4)")
-				maxScore = element.ChildText("td:nth-of-type(5)")
-				minScore = element.ChildText("td:nth-of-type(6)")
-				averageScore = element.ChildText("td:nth-of-type(7)")
-			} else if province == "广东" || province == "湖南" {
-				selectExam = element.ChildText("td:nth-of-type(1)")
-				major = element.ChildText("td:nth-of-type(2)")
-				admissionNumber = element.ChildText("td:nth-of-type(3)")
-				maxScore = element.ChildText("td:nth-of-type(4)")
-				minScore = element.ChildText("td:nth-of-type(5)")
-				averageScore = element.ChildText("td:nth-of-type(6)")
-			} else {
-				admissionType = element.ChildText("td:nth-of-type(1)")
-				major = element.ChildText("td:nth-of-type(2)")
-				admissionNumber = element.ChildText("td:nth-of-type(3)")
-				maxScore = element.ChildText("td:nth-of-type(4)")
-				minScore = element.ChildText("td:nth-of-type(5)")
-				averageScore = element.ChildText("td:nth-of-type(6)")
+			element.ForEach("td", func(i int, element *colly.HTMLElement) {
+				if isMergeCell && childMergeCell {
+					i = i + 1
+				}
+
+				switch head[i] {
+				case "批次":
+					admissionType = element.Text
+				case "专业组":
+					selectExam = element.Text[2:]
+				case "专业":
+					major = element.Text
+				case "录取人数":
+					admissionNumber = element.Text
+				case "最高分":
+					maxScore = element.Text
+				case "最低分":
+					minScore = element.Text
+				case "平均分":
+					averageScore = element.Text
+				case "选考要求":
+					selectExam = element.Text
+				case "首选科目":
+					selectExam = element.Text
+				case "选考科目":
+					selectExam = element.Text
+				}
+
+				if isMergeCell && !childMergeCell {
+					mergeSelectExam = selectExam
+					mergeAdmissionType = admissionType
+				}
+			})
+
+			if isMergeCell {
+				selectExam = mergeSelectExam
+				admissionType = mergeAdmissionType
 			}
 
-			fmt.Println(province, admissionType, major, selectExam, admissionNumber, maxScore, minScore, averageScore)
+			if err := storage.GetQueries().CreateAdmissionMajor(context.Background(), storage.CreateAdmissionMajorParams{
+				University:      u.name,
+				Major:           major,
+				Province:        province,
+				AdmissionTime:   u.admissionTime,
+				MaxScore:        maxScore,
+				MinScore:        minScore,
+				AverageScore:    averageScore,
+				AdmissionNumber: admissionNumber,
+				SelectExam:      selectExam,
+				AdmissionType:   admissionType,
+			}); err != nil {
+				logrus.Errorf("create admission major err: %v", err)
+			}
 		})
 	})
 
