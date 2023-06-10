@@ -2,7 +2,6 @@ package crawler
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/rocky114/craftsman/internal/storage"
 
@@ -25,11 +24,9 @@ func init() {
 }
 
 func (u *nanjingxinxigongchengUniversity) crawl(ctx context.Context) error {
-	c := colly.NewCollector(colly.CacheDir(path.GetTmpPath()))
+	c := colly.NewCollector(colly.UserAgent(userAgent), colly.CacheDir(path.GetTmpPath()))
 
-	detailCollector := c.Clone()
-
-	detailCollector.OnHTML(`div.con_wrap table.seaech_list`, func(element *colly.HTMLElement) {
+	c.OnHTML(`div.con_wrap table.seaech_list`, func(element *colly.HTMLElement) {
 		element.ForEach("tr", func(i int, element *colly.HTMLElement) {
 			if i == 0 {
 				return
@@ -46,8 +43,6 @@ func (u *nanjingxinxigongchengUniversity) crawl(ctx context.Context) error {
 			minScore := element.ChildText("td:nth-of-type(10)")
 			maxScore := element.ChildText("td:nth-of-type(11)")
 			averageScore := element.ChildText("td:nth-of-type(12)")
-
-			//fmt.Println(admissionTime, province, college, major, selectExam, admissionType, admissionNumber, provinceControlScoreLine, minScore, maxScore, averageScore)
 
 			if err := storage.GetQueries().CreateAdmissionMajor(ctx, storage.CreateAdmissionMajorParams{
 				University:               u.name,
@@ -68,16 +63,5 @@ func (u *nanjingxinxigongchengUniversity) crawl(ctx context.Context) error {
 		})
 	})
 
-	c.OnResponse(func(response *colly.Response) {
-		if response.StatusCode != http.StatusOK {
-			logrus.Errorf("%s university http code: %d", u.name, response.StatusCode)
-			return
-		}
-
-		if err := detailCollector.Post("https://zs.nuist.edu.cn/wnfs.jsp?wbtreeid=1011", map[string]string{"nf": u.admissionTime}); err != nil {
-			logrus.Errorf("nanjingxinxigongchengUniversity err: %v", err)
-		}
-	})
-
-	return c.Visit("https://zs.nuist.edu.cn/wnfs.jsp?wbtreeid=1011")
+	return c.Post("https://zs.nuist.edu.cn/wnfs.jsp?wbtreeid=1011", map[string]string{"nf": u.admissionTime})
 }
