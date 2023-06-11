@@ -1289,8 +1289,6 @@ func init() {
 	}
 }
 
-var currentIndex int
-
 func (u *jiangnanUniversity) crawl(ctx context.Context) error {
 	c := colly.NewCollector(colly.UserAgent(userAgent), colly.CacheDir(path.GetTmpPath()))
 
