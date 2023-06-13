@@ -58,5 +58,5 @@ func (u *nanjingnongyeUniversity) crawl(ctx context.Context) error {
 		time.Sleep(3 * time.Second)
 	}
 
-	return c.Visit("https://zsxx.jou.edu.cn/wnlq.htm")
+	return nil
 }
