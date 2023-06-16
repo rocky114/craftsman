@@ -73,7 +73,6 @@ func (u *jiangsuligongUniversity) crawl(ctx context.Context) error {
 	})
 
 	for _, province := range types.Provinces {
-		province = "江苏"
 		params := map[string]string{
 			"returnInfos": `[{"field":"title","name":"title"},{"field":"f2","name":"f2"},{"field":"f4","name":"f4"},{"field":"f5","name":"f5"},{"field":"f6","name":"f6"},{"field":"f7","name":"f7"},{"field":"f8","name":"f8"},{"field":"f9","name":"f9"}]`,
 			"rows":        "200",
@@ -85,8 +84,6 @@ func (u *jiangsuligongUniversity) crawl(ctx context.Context) error {
 		if err := c.Post("http://zs.jstu.edu.cn/_wp3services/generalQuery?queryObj=articles", params); err != nil {
 			logrus.Errorf("jiangsuligongUniversity err: %v", err)
 		}
-
-		break
 	}
 
 	return nil
