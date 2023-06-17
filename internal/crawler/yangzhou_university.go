@@ -3,6 +3,14 @@ package crawler
 import (
 	"context"
 	"fmt"
+	"os"
+	"time"
+
+	"github.com/sirupsen/logrus"
+
+	"github.com/rocky114/craftsman/internal/pkg/path"
+
+	"github.com/tebeka/selenium"
 
 	"github.com/gocolly/colly/v2"
 )
@@ -70,4 +78,53 @@ func (u *yangzhouUniversity) crawl(ctx context.Context) error {
 	})
 
 	return c.Visit("https://zhaoban.yzu.edu.cn/bkcx/lncx.htm")
+}
+
+const (
+	port = 8080
+)
+
+func Selenium() {
+	opts := []selenium.ServiceOption{
+		selenium.Output(os.Stderr), // Output debug information to STDERR.
+	}
+	//selenium.SetDebug(true)
+	service, err := selenium.NewChromeDriverService(fmt.Sprintf("%s/assets/brower/chromedriver", path.GetRootPath()), port, opts...)
+	if err != nil {
+		logrus.Errorf("err: %v", err) // panic is used only as an example and is not otherwise recommended.
+		return
+	}
+	defer service.Stop()
+
+	// Connect to the WebDriver instance running locally.
+	caps := selenium.Capabilities{"browserName": "chrome"}
+	wd, err := selenium.NewRemote(caps, fmt.Sprintf("http://localhost:%d/wd/hub", port))
+	if err != nil {
+		logrus.Errorf("err: %v", err)
+		return
+	}
+	defer wd.Quit()
+
+	fmt.Println(wd.SessionID())
+
+	wd.ExecuteScript("window.open(%q)", []interface{}{"https://www.yzu.edu.cn/index.htm"})
+
+	time.Sleep(time.Minute * 5)
+	return
+	// Navigate to the simple playground interface.
+	if err = wd.Get("https://www.yzu.edu.cn/index.htm"); err != nil {
+		logrus.Errorf("err: %v", err)
+		return
+	}
+
+	time.Sleep(time.Minute * 5)
+	return
+
+	for {
+		cookie, err := wd.GetCookie("JRthf9qDHS8VP")
+		fmt.Println("=======")
+		fmt.Println(cookie.Name, cookie.Value, err)
+
+		time.Sleep(time.Second * 2)
+	}
 }
