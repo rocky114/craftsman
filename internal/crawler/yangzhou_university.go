@@ -39,9 +39,7 @@ func (u *yangzhouUniversity) crawl(ctx context.Context) error {
 		request.Headers.Add("Host", "zhaoban.yzu.edu.cn")
 		request.Headers.Add("Cookie", cookie)
 	})
-	detailCollector.OnResponse(func(response *colly.Response) {
-		fmt.Println(string(response.Body), "----")
-	})
+
 	c.OnHTML(`div.ny div.right ul.newsList`, func(element *colly.HTMLElement) {
 		element.ForEach("li", func(i int, element *colly.HTMLElement) {
 			title := element.ChildAttr("a", "title")
@@ -55,7 +53,7 @@ func (u *yangzhouUniversity) crawl(ctx context.Context) error {
 			}
 
 			if fmt.Sprintf("%s年扬州大学江苏省外录取信息", u.admissionTime) == title {
-				fmt.Println(title)
+				//fmt.Println(title)
 			}
 		})
 	})
@@ -63,7 +61,6 @@ func (u *yangzhouUniversity) crawl(ctx context.Context) error {
 	detailCollector.OnHTML("div.ny div.right div.v_news_content table tbody", func(element *colly.HTMLElement) {
 		province, admissionType, major, selectExam, admissionNumber, maxScore, minScore, averageScore := "江苏", "", "", "", "", "", "", ""
 
-		fmt.Println("===")
 		element.ForEach("tr", func(i int, element *colly.HTMLElement) {
 			if i == 0 {
 				return

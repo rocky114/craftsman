@@ -49,35 +49,27 @@ func (u *university) crawl(ctx context.Context) error {
 	return fmt.Errorf("university: %s not implment crawl interface", u.name)
 }
 
-func Crawl(ctx context.Context, code string, admissionTime string) error {
+func Crawl(ctx context.Context, code string, admissionTime string) (err error) {
 	if crawler, ok := collection[code]; !ok {
 		return fmt.Errorf("can't find code: %s", code)
 	} else {
-		if !storage.IsNotFoundAdmissionMajor(ctx, crawler.getUniversityName(), admissionTime) {
-			logrus.Infof("%s admission score already existed", crawler.getUniversityName())
-			return nil
-		}
-
-		logrus.Infof("crawl %s admission score", crawler.getUniversityName())
+		logrus.Infof("crawl university: %s, time: %s running", crawler.getUniversityName(), admissionTime)
+		defer func() {
+			logrus.Infof("crawl university: %s, time: %s finishing", crawler.getUniversityName(), admissionTime)
+		}()
 
 		crawler.setAdmissionTime(admissionTime)
 
-		if err := crawler.crawl(ctx); err != nil {
+		if err = crawler.crawl(ctx); err != nil {
 			return err
 		}
 
-		if lastAdmissionTime, err := storage.GetQueries().GetLastAdmissionTimeByUniversity(ctx, crawler.getUniversityName()); err != nil {
-			logrus.Errorf("GetLastAdmissionTimeByUniversity university %s admission_time %s err: %v", crawler.getUniversityName(), admissionTime, err)
-		} else {
-			if admissionTime == lastAdmissionTime {
-				params := storage.UpdateUniversityLastAdmissionTimeParams{
-					LastAdmissionTime: lastAdmissionTime,
-					Code:              code,
-				}
-				if err = storage.GetQueries().UpdateUniversityLastAdmissionTime(ctx, params); err != nil {
-					logrus.Errorf("UpdateUniversityLastAdmissionTime university %s err: %v", crawler.getUniversityName(), err)
-				}
-			}
+		params := storage.UpdateUniversityLastAdmissionTimeParams{
+			LastAdmissionTime: admissionTime,
+			Code:              code,
+		}
+		if err = storage.GetQueries().UpdateUniversityLastAdmissionTime(ctx, params); err != nil {
+			logrus.Errorf("UpdateUniversityLastAdmissionTime university %s err: %v", crawler.getUniversityName(), err)
 		}
 
 		return nil

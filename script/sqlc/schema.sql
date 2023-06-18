@@ -34,5 +34,5 @@ CREATE TABLE `admission_major` (
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_identify` (`university`,`admission_time`,`admission_type`,`select_exam`,`major`)
+  UNIQUE KEY `university_major` (`university`,`admission_time`,`province`,`major`,`select_exam`,`admission_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='录取专业';

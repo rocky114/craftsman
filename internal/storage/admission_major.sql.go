@@ -10,7 +10,7 @@ import (
 )
 
 const createAdmissionMajor = `-- name: CreateAdmissionMajor :exec
-INSERT INTO admission_major (
+INSERT IGNORE INTO admission_major (
     university,
     college,
     major,
