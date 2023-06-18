@@ -3,14 +3,13 @@ package crawler
 import (
 	"context"
 	"fmt"
-	"os"
-	"time"
+	"strings"
+
+	"github.com/rocky114/craftsman/internal/storage"
 
 	"github.com/sirupsen/logrus"
 
 	"github.com/rocky114/craftsman/internal/pkg/path"
-
-	"github.com/tebeka/selenium"
 
 	"github.com/gocolly/colly/v2"
 )
@@ -26,105 +25,75 @@ func init() {
 	}}
 }
 
-// todo: cookie
-
 func (u *yangzhouUniversity) crawl(ctx context.Context) error {
-	c := colly.NewCollector(colly.UserAgent(userAgent), colly.AllowURLRevisit())
+	cookie := "JRthf9qDHS8VO=5J5.RiK.gXGcF0iwHgZl2NQiMi1jI6l8yq59s_gw5hHJzUHqy3MjRdxgnJi8tC_tS97JYjypx.bE.FqR1EM2Dwq; _ga=GA1.1.1592715626.1687073902; _ga_2BJJGL0MED=GS1.1.1687073901.1.0.1687073901.0.0.0; JRthf9qDHS8VP=5RE_0MK1izD0qqqDEuUkWoqtZIFIOTPcZPpvNQJwtPy7cC3QBdljKCQ6O7jax1h4Px949cC4vsM5xdWw5nCjbbybmOezpMLAu.IPmJajVu16aJy0dpegN2EzgOc03nRF9o.tC2N8FUbdsEH9b1I8.IPWrf_3InSm1M7JvBLFEMpdaT5HEZrpwBevXG6RQv7hZAUKfV.EpGHvBNadFYKOm540AZfv0Z4UUPrnaBZCJW2XPyTsAv0IsXa7zVMlU2xavbGZ6m7_yaYakxpDOxTti7PkEIpF4V4z5ujDrapmxYn.A"
+	c := colly.NewCollector(colly.UserAgent(userAgent), colly.CacheDir(path.GetTmpPath("yangzhouUniversity")))
+	c.OnRequest(func(request *colly.Request) {
+		request.Headers.Add("Host", "zhaoban.yzu.edu.cn")
+		request.Headers.Add("Cookie", cookie)
+	})
 
-	c.OnHTML(`div.right ul.newsList`, func(element *colly.HTMLElement) {
+	detailCollector := c.Clone()
+
+	detailCollector.OnRequest(func(request *colly.Request) {
+		request.Headers.Add("Host", "zhaoban.yzu.edu.cn")
+		request.Headers.Add("Cookie", cookie)
+	})
+	detailCollector.OnResponse(func(response *colly.Response) {
+		fmt.Println(string(response.Body), "----")
+	})
+	c.OnHTML(`div.ny div.right ul.newsList`, func(element *colly.HTMLElement) {
 		element.ForEach("li", func(i int, element *colly.HTMLElement) {
-			title := element.Text
+			title := element.ChildAttr("a", "title")
 			if fmt.Sprintf("%s年扬州大学江苏省录取信息", u.admissionTime) == title {
-				fmt.Println(title)
+				addr := strings.TrimPrefix(element.ChildAttr("a", "href"), "../")
+
+				fmt.Println(fmt.Sprintf("https://zhaoban.yzu.edu.cn/%s", addr))
+				if err := detailCollector.Visit(fmt.Sprintf("https://zhaoban.yzu.edu.cn/%s", addr)); err != nil {
+					logrus.Errorf("yangzhouUniversity err: %v", err)
+				}
 			}
 
 			if fmt.Sprintf("%s年扬州大学江苏省外录取信息", u.admissionTime) == title {
 				fmt.Println(title)
 			}
 		})
+	})
 
-		/*element.ForEach("tr", func(i int, element *colly.HTMLElement) {
-			title := element.ChildText("td:nth-of-type(1)")
-			if title == "合计" || title == "序号" || title == "" {
+	detailCollector.OnHTML("div.ny div.right div.v_news_content table tbody", func(element *colly.HTMLElement) {
+		province, admissionType, major, selectExam, admissionNumber, maxScore, minScore, averageScore := "江苏", "", "", "", "", "", "", ""
+
+		fmt.Println("===")
+		element.ForEach("tr", func(i int, element *colly.HTMLElement) {
+			if i == 0 {
 				return
 			}
 
+			length := element.DOM.Find("td").Length()
+			admissionType = element.ChildText("td:nth-of-type(1)")
+			selectExam = element.ChildText("td:nth-of-type(2)")
+			major = element.ChildText("td:nth-of-type(4)")
+			admissionNumber = element.ChildText(fmt.Sprintf("td:nth-of-type(%d)", length-4))
+			maxScore = element.ChildText(fmt.Sprintf("td:nth-of-type(%d)", length-3))
+			minScore = element.ChildText(fmt.Sprintf("td:nth-of-type(%d)", length-2))
+			averageScore = element.ChildText(fmt.Sprintf("td:nth-of-type(%d)", length-1))
+
 			if err := storage.GetQueries().CreateAdmissionMajor(context.Background(), storage.CreateAdmissionMajorParams{
-				University:               u.name,
-				AdmissionType:            element.ChildText("td:nth-of-type(2)"),
-				SelectExam:               element.ChildText("td:nth-of-type(3)"),
-				Major:                    element.ChildText("td:nth-of-type(4)"),
-				AdmissionNumber:          element.ChildText("td:nth-of-type(5)"),
-				Province:                 requests[currentIndex].province,
-				AdmissionTime:            u.admissionTime,
-				MaxScore:                 element.ChildText("td:nth-of-type(6)"),
-				MinScore:                 element.ChildText("td:nth-of-type(7)"),
-				ProvinceControlScoreLine: element.ChildText("td:nth-of-type(8)"),
+				University:      u.name,
+				AdmissionTime:   u.admissionTime,
+				Major:           major,
+				Province:        province,
+				AdmissionType:   admissionType,
+				SelectExam:      selectExam,
+				AdmissionNumber: admissionNumber,
+				MinScore:        minScore,
+				MaxScore:        maxScore,
+				AverageScore:    averageScore,
 			}); err != nil {
 				logrus.Errorf("create admission major err: %v", err)
 			}
-		})*/
-	})
-
-	c.OnRequest(func(request *colly.Request) {
-		request.Headers.Add("Host", "zhaoban.yzu.edu.cn")
-		//request.Headers.Add("Referer", "https://zhaoban.yzu.edu.cn/bkcx/lncx.htm")
-		request.Headers.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
-		request.Headers.Add("Cookie", "JRthf9qDHS8VO=5Ff9LK33buBH9mZKz7RwH6YpRyWblWW1xetE7YS_h0XgngSG.xDAySO2YHr1Vt.dlNzhuLBH0xL1Ycha4X1aMpa; _ga=GA1.1.993161105.1686474751; JSESSIONID=9E70CC5FDCAF81B81CD85A90E490E741; _ga_2BJJGL0MED=GS1.1.1686482458.3.1.1686482459.0.0.0; JRthf9qDHS8VP=5REKXDC1m.f7qqqDEjOkwGaS.2Hds1bcRyFBnmAhPd7GDdJ77wNHzgG8wTuSztsjI6oYY1HI3lvr2Wcx.CvzzaEesu5HBXv9XQr5tKzfpUqar3i.QpwiDAfUmm3GKFLxASol8lLAGSEYGWm7BUewWPNaSzP9bCO3bbj_21ynPjlwIgCvXngaVrHBUiw8yiXUbWGwyywkOBxuO5Hl0KS18ALn4OKKf8_WtbvstX6GKu2wJQ2itlVAE4mEOEBPDro9QGn7zF8XhyL27ENyUyC_J0mbfRfGKYQhxO1W3du8PEn8A")
-	})
-
-	c.OnResponse(func(response *colly.Response) {
-		fmt.Println("000---000")
+		})
 	})
 
 	return c.Visit("https://zhaoban.yzu.edu.cn/bkcx/lncx.htm")
-}
-
-const (
-	port = 8080
-)
-
-func Selenium() {
-	opts := []selenium.ServiceOption{
-		selenium.Output(os.Stderr), // Output debug information to STDERR.
-	}
-	//selenium.SetDebug(true)
-	service, err := selenium.NewChromeDriverService(fmt.Sprintf("%s/assets/brower/chromedriver", path.GetRootPath()), port, opts...)
-	if err != nil {
-		logrus.Errorf("err: %v", err) // panic is used only as an example and is not otherwise recommended.
-		return
-	}
-	defer service.Stop()
-
-	// Connect to the WebDriver instance running locally.
-	caps := selenium.Capabilities{"browserName": "chrome"}
-	wd, err := selenium.NewRemote(caps, fmt.Sprintf("http://localhost:%d/wd/hub", port))
-	if err != nil {
-		logrus.Errorf("err: %v", err)
-		return
-	}
-	defer wd.Quit()
-
-	fmt.Println(wd.SessionID())
-
-	wd.ExecuteScript("window.open(%q)", []interface{}{"https://www.yzu.edu.cn/index.htm"})
-
-	time.Sleep(time.Minute * 5)
-	return
-	// Navigate to the simple playground interface.
-	if err = wd.Get("https://www.yzu.edu.cn/index.htm"); err != nil {
-		logrus.Errorf("err: %v", err)
-		return
-	}
-
-	time.Sleep(time.Minute * 5)
-	return
-
-	for {
-		cookie, err := wd.GetCookie("JRthf9qDHS8VP")
-		fmt.Println("=======")
-		fmt.Println(cookie.Name, cookie.Value, err)
-
-		time.Sleep(time.Second * 2)
-	}
 }
