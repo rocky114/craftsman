@@ -1,0 +1,23 @@
+app:
+  name: "My Echo App"
+  env: "development"  # development/staging/production
+  port: "8080"
+  debug: true
+
+database:
+  url: "postgres://user:password@localhost:5432/mydb?sslmode=disable"
+  max_open_conns: 25
+  max_idle_conns: 5
+  conn_max_lifetime: "5m"
+
+jwt:
+  secret: "your-256-bit-secret"
+  expiration: "24h"  # 1 day
+
+logging:
+  level: "debug"
+  format: "json"
+
+web:
+  static_dir: "./internal/web/static"
+  template_dir: "./internal/web/templates"
