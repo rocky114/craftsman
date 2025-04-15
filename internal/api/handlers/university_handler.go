@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"github.com/rocky114/craftman/internal/database/sqlc"
+	"github.com/rocky114/craftman/internal/utils"
 	"net/http"
 	"strconv"
 
@@ -36,8 +37,7 @@ func (h *UniversityHandler) CreateUniversity(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	//id, _ := result.LastInsertId()
-	return c.JSON(http.StatusCreated, map[string]int64{"id": 0})
+	return utils.Success(c)
 }
 
 func (h *UniversityHandler) GetUniversity(c echo.Context) error {
@@ -51,7 +51,7 @@ func (h *UniversityHandler) GetUniversity(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusNotFound, "user not found")
 	}
 
-	return c.JSON(http.StatusOK, item)
+	return utils.SuccessWithData(c, item)
 }
 
 func (h *UniversityHandler) ListUniversities(c echo.Context) error {
@@ -60,7 +60,7 @@ func (h *UniversityHandler) ListUniversities(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, items)
+	return utils.SuccessWithData(c, items)
 }
 
 func (h *UniversityHandler) DeleteUniversity(c echo.Context) error {
@@ -74,5 +74,5 @@ func (h *UniversityHandler) DeleteUniversity(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	return c.NoContent(http.StatusNoContent)
+	return utils.Success(c)
 }
