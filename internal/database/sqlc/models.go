@@ -5,6 +5,7 @@
 package sqlc
 
 import (
+	"database/sql"
 	"time"
 )
 
@@ -19,4 +20,54 @@ type University struct {
 	AdmissionWebsite string    `json:"admission_website"`
 	CreateTime       time.Time `json:"create_time"`
 	UpdateTime       time.Time `json:"update_time"`
+}
+
+// 高校录取查询条件表
+type UniversityAdmissionQueryCondition struct {
+	// 主键ID
+	ID int32 `json:"id"`
+	// 学校名称
+	UniversityName string `json:"university_name"`
+	// 查询URL
+	Url string `json:"url"`
+	// 查询年份
+	Year string `json:"year"`
+	// 省份
+	Province string `json:"province"`
+	// 录取类型(统招计划/专项计划等)
+	AdmissionType string `json:"admission_type"`
+	// 创建时间
+	CreateTime sql.NullTime `json:"create_time"`
+}
+
+// 大学历史录取分数线
+type UniversityAdmissionScore struct {
+	ID uint32 `json:"id"`
+	// 关联院校表
+	UniversityID uint32 `json:"university_id"`
+	// 录取年份（如2024）
+	Year string `json:"year"`
+	// 省份 江苏
+	Province string `json:"province"`
+	// 类型: 普通类/高校专项/地方专项
+	AdmissionType string `json:"admission_type"`
+	// 科类: 历史+不限
+	AcademicCategory string `json:"academic_category"`
+	// 专业名称 计算机
+	MajorName string `json:"major_name"`
+	// 招生名额
+	EnrollmentQuota string `json:"enrollment_quota"`
+	// 投档分 600
+	MinAdmissionScore string `json:"min_admission_score"`
+	// 最低投档位次
+	MinAdmissionRank string `json:"min_admission_rank"`
+	// 最高分
+	HighestScore string `json:"highest_score"`
+	// 排名 200000名次
+	HighestScoreRank string `json:"highest_score_rank"`
+	// 最低分
+	LowestScore string `json:"lowest_score"`
+	// 排名 200000名次
+	LowestScoreRank string    `json:"lowest_score_rank"`
+	CreateTime      time.Time `json:"create_time"`
 }
