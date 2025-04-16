@@ -1,4 +1,4 @@
-CREATE TABLE `university_admission_query_condition` (
+CREATE TABLE `admission_query_condition` (
     `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
     `university_name` varchar(100) NOT NULL COMMENT '学校名称',
     `url` varchar(500) NOT NULL COMMENT '查询URL',

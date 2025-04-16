@@ -9,6 +9,7 @@ import (
 
 func RegisterRoutes(e *echo.Echo, store *database.Store) {
 	universityHandler := handlers.NewUniversityHandler(store.Queries)
+	admissionScoreHandler := handlers.NewAdmissionScrapeHandler(store.Queries)
 
 	e.GET("/health", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, map[string]string{"status": "ok"})
@@ -19,4 +20,8 @@ func RegisterRoutes(e *echo.Echo, store *database.Store) {
 	universityGroup.GET("", universityHandler.ListUniversities)
 	universityGroup.GET("/:id", universityHandler.GetUniversity)
 	universityGroup.DELETE("/:id", universityHandler.DeleteUniversity)
+
+	universityAdmissionScrapeGroup := e.Group("/api/university/admission/score")
+	universityAdmissionScrapeGroup.POST("", admissionScoreHandler.CreateAdmissionScore)
+
 }

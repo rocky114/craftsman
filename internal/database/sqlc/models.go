@@ -9,21 +9,8 @@ import (
 	"time"
 )
 
-// 学校基础信息表
-type University struct {
-	ID uint32 `json:"id"`
-	// 学校名称
-	Name string `json:"name"`
-	// 省份
-	Province string `json:"province"`
-	// 招生网址
-	AdmissionWebsite string    `json:"admission_website"`
-	CreateTime       time.Time `json:"create_time"`
-	UpdateTime       time.Time `json:"update_time"`
-}
-
 // 高校录取查询条件表
-type UniversityAdmissionQueryCondition struct {
+type AdmissionQueryCondition struct {
 	// 主键ID
 	ID int32 `json:"id"`
 	// 学校名称
@@ -41,12 +28,12 @@ type UniversityAdmissionQueryCondition struct {
 }
 
 // 大学历史录取分数线
-type UniversityAdmissionScore struct {
+type AdmissionScore struct {
 	ID uint32 `json:"id"`
-	// 关联院校表
-	UniversityID uint32 `json:"university_id"`
 	// 录取年份（如2024）
 	Year string `json:"year"`
+	// 关联院校表
+	UniversityName string `json:"university_name"`
 	// 省份 江苏
 	Province string `json:"province"`
 	// 类型: 普通类/高校专项/地方专项
@@ -70,4 +57,17 @@ type UniversityAdmissionScore struct {
 	// 排名 200000名次
 	LowestScoreRank string    `json:"lowest_score_rank"`
 	CreateTime      time.Time `json:"create_time"`
+}
+
+// 学校基础信息表
+type University struct {
+	ID uint32 `json:"id"`
+	// 学校名称
+	Name string `json:"name"`
+	// 省份
+	Province string `json:"province"`
+	// 招生网址
+	AdmissionWebsite string    `json:"admission_website"`
+	CreateTime       time.Time `json:"create_time"`
+	UpdateTime       time.Time `json:"update_time"`
 }
