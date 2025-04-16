@@ -20,10 +20,9 @@ type AppConfig struct {
 }
 
 type DatabaseConfig struct {
-	URL             string        `yaml:"url"`
-	MaxOpenConns    int           `yaml:"max_open_conns"`
-	MaxIdleConns    int           `yaml:"max_idle_conns"`
-	ConnMaxLifetime time.Duration `yaml:"conn_max_lifetime"`
+	URL          string `yaml:"url"`
+	MaxOpenConns int    `yaml:"max_open_conns"`
+	MaxIdleConns int    `yaml:"max_idle_conns"`
 }
 
 type JWTConfig struct {
