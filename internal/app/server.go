@@ -17,13 +17,13 @@ import (
 )
 
 type Application struct {
-	echo  *echo.Echo
-	cfg   *config.Config
-	store *database.Store
+	echo *echo.Echo
+	cfg  *config.Config
+	repo *database.Repository
 }
 
 func NewApplication(cfg *config.Config) (*Application, error) {
-	store, err := database.NewStore(cfg.Database)
+	repo, err := database.NewRepository(cfg.Database)
 	if err != nil {
 		return nil, err
 	}
@@ -35,12 +35,12 @@ func NewApplication(cfg *config.Config) (*Application, error) {
 	e.Use(middleware.Recover())
 
 	// 注册路由
-	api.RegisterRoutes(e, store)
+	api.RegisterRoutes(e, repo, cfg)
 
 	return &Application{
-		echo:  e,
-		store: store,
-		cfg:   cfg,
+		echo: e,
+		repo: repo,
+		cfg:  cfg,
 	}, nil
 }
 

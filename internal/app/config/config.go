@@ -7,6 +7,7 @@ import (
 type Config struct {
 	App      AppConfig
 	Database DatabaseConfig
+	Scraper  ScraperConfig
 	JWT      JWTConfig
 	Logging  LoggingConfig
 	Web      WebConfig
@@ -23,6 +24,10 @@ type DatabaseConfig struct {
 	URL          string `yaml:"url"`
 	MaxOpenConns int    `yaml:"max_open_conns"`
 	MaxIdleConns int    `yaml:"max_idle_conns"`
+}
+
+type ScraperConfig struct {
+	URL string `yaml:"url"`
 }
 
 type JWTConfig struct {

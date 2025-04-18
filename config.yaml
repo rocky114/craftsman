@@ -9,6 +9,9 @@ database:
   max_open_conns: 25
   max_idle_conns: 5
 
+scraper:
+  url: "http://127.0.0.1:8000/api/v1/scrape"
+
 jwt:
   secret: "your-256-bit-secret"
   expiration: "24h"  # 1 day

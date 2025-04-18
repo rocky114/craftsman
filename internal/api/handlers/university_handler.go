@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"github.com/rocky114/craftman/internal/app/config"
+	"github.com/rocky114/craftman/internal/database"
 	"github.com/rocky114/craftman/internal/database/sqlc"
 	"github.com/rocky114/craftman/internal/utils"
 	"net/http"
@@ -10,11 +12,12 @@ import (
 )
 
 type UniversityHandler struct {
-	queries *sqlc.Queries
+	repo *database.Repository
+	cfg  *config.Config
 }
 
-func NewUniversityHandler(q *sqlc.Queries) *UniversityHandler {
-	return &UniversityHandler{queries: q}
+func NewUniversityHandler(q *database.Repository, cfg *config.Config) *UniversityHandler {
+	return &UniversityHandler{repo: q, cfg: cfg}
 }
 
 func (h *UniversityHandler) CreateUniversity(c echo.Context) error {
@@ -28,7 +31,7 @@ func (h *UniversityHandler) CreateUniversity(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	err := h.queries.CreateUniversity(c.Request().Context(), sqlc.CreateUniversityParams{
+	err := h.repo.CreateUniversity(c.Request().Context(), sqlc.CreateUniversityParams{
 		Name:             university.Name,
 		Province:         university.Province,
 		AdmissionWebsite: university.AdmissionWebsite,
@@ -46,7 +49,7 @@ func (h *UniversityHandler) GetUniversity(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "invalid user ID")
 	}
 
-	item, err := h.queries.GetUniversity(c.Request().Context(), uint32(id))
+	item, err := h.repo.GetUniversity(c.Request().Context(), uint32(id))
 	if err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "user not found")
 	}
@@ -55,7 +58,7 @@ func (h *UniversityHandler) GetUniversity(c echo.Context) error {
 }
 
 func (h *UniversityHandler) ListUniversities(c echo.Context) error {
-	items, err := h.queries.ListUniversities(c.Request().Context())
+	items, err := h.repo.ListUniversities(c.Request().Context())
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
@@ -69,7 +72,7 @@ func (h *UniversityHandler) DeleteUniversity(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "invalid user ID")
 	}
 
-	err = h.queries.DeleteUniversity(c.Request().Context(), uint32(id))
+	err = h.repo.DeleteUniversity(c.Request().Context(), uint32(id))
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
