@@ -46,8 +46,6 @@ type AdmissionScore struct {
 	EnrollmentQuota string `json:"enrollment_quota"`
 	// 投档分 600
 	MinAdmissionScore string `json:"min_admission_score"`
-	// 最低投档位次
-	MinAdmissionRank string `json:"min_admission_rank"`
 	// 最高分
 	HighestScore string `json:"highest_score"`
 	// 排名 200000名次

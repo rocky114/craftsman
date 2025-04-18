@@ -1,10 +1,10 @@
 -- name: CreateAdmissionScore :exec
 INSERT INTO admission_score (
     id, university_name, year, province, admission_type, academic_category,
-    major_name, enrollment_quota, min_admission_score, min_admission_rank,
+    major_name, enrollment_quota, min_admission_score,
     highest_score, highest_score_rank, lowest_score, lowest_score_rank
 ) VALUES (
-    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
 );
 
 -- name: GetAdmissionScoreByID :one

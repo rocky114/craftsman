@@ -8,12 +8,11 @@ CREATE TABLE `admission_score` (
    `major_name` varchar(100) NOT NULL DEFAULT '' COMMENT '专业名称 计算机',
    `enrollment_quota` varchar(100) NOT NULL DEFAULT '' COMMENT '招生名额',
    `min_admission_score` varchar(100) NOT NULL DEFAULT '' COMMENT '投档分 600',
-   `min_admission_rank` varchar(100) NOT NULL DEFAULT '' COMMENT '最低投档位次',
    `highest_score` varchar(100) NOT NULL DEFAULT '' COMMENT '最高分',
    `highest_score_rank` varchar(100) NOT NULL DEFAULT '' COMMENT '排名 200000名次',
    `lowest_score` varchar(100) NOT NULL DEFAULT '' COMMENT '最低分',
    `lowest_score_rank` varchar(100) NOT NULL DEFAULT '' COMMENT '排名 200000名次',
    `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
    PRIMARY KEY (`id`),
-   KEY `year_university` (`year`,`university_name`)
+   KEY `university_year` (`university_name`,`year`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='大学历史录取分数线';

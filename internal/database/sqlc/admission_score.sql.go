@@ -12,10 +12,10 @@ import (
 const createAdmissionScore = `-- name: CreateAdmissionScore :exec
 INSERT INTO admission_score (
     id, university_name, year, province, admission_type, academic_category,
-    major_name, enrollment_quota, min_admission_score, min_admission_rank,
+    major_name, enrollment_quota, min_admission_score,
     highest_score, highest_score_rank, lowest_score, lowest_score_rank
 ) VALUES (
-    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
 )
 `
 
@@ -29,7 +29,6 @@ type CreateAdmissionScoreParams struct {
 	MajorName         string `json:"major_name"`
 	EnrollmentQuota   string `json:"enrollment_quota"`
 	MinAdmissionScore string `json:"min_admission_score"`
-	MinAdmissionRank  string `json:"min_admission_rank"`
 	HighestScore      string `json:"highest_score"`
 	HighestScoreRank  string `json:"highest_score_rank"`
 	LowestScore       string `json:"lowest_score"`
@@ -47,7 +46,6 @@ func (q *Queries) CreateAdmissionScore(ctx context.Context, arg CreateAdmissionS
 		arg.MajorName,
 		arg.EnrollmentQuota,
 		arg.MinAdmissionScore,
-		arg.MinAdmissionRank,
 		arg.HighestScore,
 		arg.HighestScoreRank,
 		arg.LowestScore,
@@ -82,7 +80,7 @@ func (q *Queries) DeleteAdmissionScoreByYearAndUniversity(ctx context.Context, a
 }
 
 const getAdmissionScoreByID = `-- name: GetAdmissionScoreByID :one
-SELECT id, year, university_name, province, admission_type, academic_category, major_name, enrollment_quota, min_admission_score, min_admission_rank, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_score 
+SELECT id, year, university_name, province, admission_type, academic_category, major_name, enrollment_quota, min_admission_score, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_score 
 WHERE id = ? LIMIT 1
 `
 
@@ -99,7 +97,6 @@ func (q *Queries) GetAdmissionScoreByID(ctx context.Context, id uint32) (Admissi
 		&i.MajorName,
 		&i.EnrollmentQuota,
 		&i.MinAdmissionScore,
-		&i.MinAdmissionRank,
 		&i.HighestScore,
 		&i.HighestScoreRank,
 		&i.LowestScore,
@@ -110,7 +107,7 @@ func (q *Queries) GetAdmissionScoreByID(ctx context.Context, id uint32) (Admissi
 }
 
 const listAdmissionScores = `-- name: ListAdmissionScores :many
-SELECT id, year, university_name, province, admission_type, academic_category, major_name, enrollment_quota, min_admission_score, min_admission_rank, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_score 
+SELECT id, year, university_name, province, admission_type, academic_category, major_name, enrollment_quota, min_admission_score, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_score 
 ORDER BY create_time DESC
 `
 
@@ -133,7 +130,6 @@ func (q *Queries) ListAdmissionScores(ctx context.Context) ([]AdmissionScore, er
 			&i.MajorName,
 			&i.EnrollmentQuota,
 			&i.MinAdmissionScore,
-			&i.MinAdmissionRank,
 			&i.HighestScore,
 			&i.HighestScoreRank,
 			&i.LowestScore,
@@ -154,7 +150,7 @@ func (q *Queries) ListAdmissionScores(ctx context.Context) ([]AdmissionScore, er
 }
 
 const listAdmissionScoresByTypeAndCategory = `-- name: ListAdmissionScoresByTypeAndCategory :many
-SELECT id, year, university_name, province, admission_type, academic_category, major_name, enrollment_quota, min_admission_score, min_admission_rank, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_score 
+SELECT id, year, university_name, province, admission_type, academic_category, major_name, enrollment_quota, min_admission_score, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_score 
 WHERE admission_type = ? AND academic_category = ?
 ORDER BY year DESC, province
 `
@@ -183,7 +179,6 @@ func (q *Queries) ListAdmissionScoresByTypeAndCategory(ctx context.Context, arg 
 			&i.MajorName,
 			&i.EnrollmentQuota,
 			&i.MinAdmissionScore,
-			&i.MinAdmissionRank,
 			&i.HighestScore,
 			&i.HighestScoreRank,
 			&i.LowestScore,
@@ -204,7 +199,7 @@ func (q *Queries) ListAdmissionScoresByTypeAndCategory(ctx context.Context, arg 
 }
 
 const listAdmissionScoresByUniversity = `-- name: ListAdmissionScoresByUniversity :many
-SELECT id, year, university_name, province, admission_type, academic_category, major_name, enrollment_quota, min_admission_score, min_admission_rank, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_score 
+SELECT id, year, university_name, province, admission_type, academic_category, major_name, enrollment_quota, min_admission_score, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_score 
 WHERE id = ?
 ORDER BY year DESC, create_time DESC
 `
@@ -228,7 +223,6 @@ func (q *Queries) ListAdmissionScoresByUniversity(ctx context.Context, id uint32
 			&i.MajorName,
 			&i.EnrollmentQuota,
 			&i.MinAdmissionScore,
-			&i.MinAdmissionRank,
 			&i.HighestScore,
 			&i.HighestScoreRank,
 			&i.LowestScore,
@@ -249,7 +243,7 @@ func (q *Queries) ListAdmissionScoresByUniversity(ctx context.Context, id uint32
 }
 
 const listAdmissionScoresByYearAndProvince = `-- name: ListAdmissionScoresByYearAndProvince :many
-SELECT id, year, university_name, province, admission_type, academic_category, major_name, enrollment_quota, min_admission_score, min_admission_rank, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_score 
+SELECT id, year, university_name, province, admission_type, academic_category, major_name, enrollment_quota, min_admission_score, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_score 
 WHERE year = ? AND province = ?
 ORDER BY id, admission_type, academic_category
 `
@@ -278,7 +272,6 @@ func (q *Queries) ListAdmissionScoresByYearAndProvince(ctx context.Context, arg 
 			&i.MajorName,
 			&i.EnrollmentQuota,
 			&i.MinAdmissionScore,
-			&i.MinAdmissionRank,
 			&i.HighestScore,
 			&i.HighestScoreRank,
 			&i.LowestScore,
