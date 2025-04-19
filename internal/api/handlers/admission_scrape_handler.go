@@ -8,6 +8,7 @@ import (
 	"github.com/rocky114/craftman/internal/database/sqlc"
 	"github.com/rocky114/craftman/internal/utils"
 	"net/http"
+	"strings"
 )
 
 type AdmissionScrapeHandler struct {
@@ -23,6 +24,10 @@ func (h *AdmissionScrapeHandler) CreateAdmissionScore(c echo.Context) error {
 	var admissionScoreReq struct {
 		UniversityName string `json:"university_name"`
 		Year           string `json:"year"`
+	}
+
+	var admissionScoreResp struct {
+		Total int `json:"total"`
 	}
 
 	if err := c.Bind(&admissionScoreReq); err != nil {
@@ -63,10 +68,10 @@ func (h *AdmissionScrapeHandler) CreateAdmissionScore(c echo.Context) error {
 				AcademicCategory:  item.AcademicCategory,
 				MajorName:         item.MajorName,
 				EnrollmentQuota:   item.EnrollmentQuota,
-				MinAdmissionScore: item.MinAdmissionScore,
-				HighestScore:      item.HighestScore,
+				MinAdmissionScore: strings.Split(item.MinAdmissionScore, ".")[0],
+				HighestScore:      strings.Split(item.HighestScore, ".")[0],
 				HighestScoreRank:  item.HighestScoreRank,
-				LowestScore:       item.LowestScore,
+				LowestScore:       strings.Split(item.LowestScore, ".")[0],
 				LowestScoreRank:   item.LowestScoreRank,
 			}); err != nil {
 				return err
@@ -80,5 +85,7 @@ func (h *AdmissionScrapeHandler) CreateAdmissionScore(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	return utils.Success(c)
+	admissionScoreResp.Total = len(respAdmission.Data)
+
+	return utils.SuccessWithData(c, admissionScoreResp)
 }

@@ -6,52 +6,39 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type Response struct {
-	Status  string      `json:"status"`  // success/error
-	Data    interface{} `json:"data"`    // 实际数据
-	Message string      `json:"message"` // 提示信息
+type SuccessResponse struct {
+	Status string      `json:"status"` // success/error
+	Data   interface{} `json:"data"`   // 实际数据
+}
+
+type ErrorResponse struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
 }
 
 var (
-	EmptyArray = []struct{}{}
+	EmptyArray  = []struct{}{}
+	OKStatus    = "OK"
+	ErrorStatus = "ERROR"
 )
 
 func Success(c echo.Context) error {
-	return c.JSON(http.StatusOK, Response{
-		Status:  "success",
-		Data:    EmptyArray,
-		Message: "",
+	return c.JSON(http.StatusOK, SuccessResponse{
+		Status: OKStatus,
+		Data:   EmptyArray,
 	})
 }
 
 func SuccessWithData(c echo.Context, data interface{}) error {
-	return c.JSON(http.StatusOK, Response{
-		Status:  "success",
-		Data:    data,
-		Message: "",
-	})
-}
-
-func SuccessWithMessage(c echo.Context, data interface{}, message string) error {
-	return c.JSON(http.StatusOK, Response{
-		Status:  "success",
-		Data:    data,
-		Message: message,
+	return c.JSON(http.StatusOK, SuccessResponse{
+		Status: OKStatus,
+		Data:   data,
 	})
 }
 
 func Error(c echo.Context, code int, message string) error {
-	return c.JSON(code, Response{
-		Status:  "error",
-		Data:    EmptyArray,
-		Message: message,
-	})
-}
-
-func ErrorWithData(c echo.Context, code int, data interface{}, message string) error {
-	return c.JSON(code, Response{
-		Status:  "error",
-		Data:    data,
+	return c.JSON(code, ErrorResponse{
+		Status:  ErrorStatus,
 		Message: message,
 	})
 }
