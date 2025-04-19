@@ -20,29 +20,29 @@ func NewAdmissionScrapeHandler(q *database.Repository, cfg *config.Config) *Admi
 }
 
 func (h *AdmissionScrapeHandler) CreateAdmissionScore(c echo.Context) error {
-	var admissionScore struct {
-		Name string `query:"name"`
-		Year string `query:"year"`
+	var admissionScoreReq struct {
+		UniversityName string `json:"university_name"`
+		Year           string `json:"year"`
 	}
 
-	if err := c.Bind(&admissionScore); err != nil {
+	if err := c.Bind(&admissionScoreReq); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	condition, err := h.repo.GetQueryConditionByYearAndName(c.Request().Context(), sqlc.GetQueryConditionByYearAndNameParams{
-		Year:           admissionScore.Year,
-		UniversityName: admissionScore.Name,
+	admissionQueryCondition, err := h.repo.GetQueryConditionByYearAndName(c.Request().Context(), sqlc.GetQueryConditionByYearAndNameParams{
+		Year:           admissionScoreReq.Year,
+		UniversityName: admissionScoreReq.UniversityName,
 	})
 	if err != nil {
 		return utils.Error(c, http.StatusNotFound, fmt.Sprintf("failed to query condition: %s", err.Error()))
 	}
 
-	respAdmission, err := utils.FetchAdmissionData(h.cfg.Scraper.URL, utils.AdmissionRequest{
-		URL:            condition.Url,
-		Year:           condition.Year,
-		Province:       condition.Province,
-		AdmissionType:  condition.AdmissionType,
-		UniversityName: condition.UniversityName,
+	respAdmission, err := utils.FetchAdmissionScoreData(h.cfg.Scraper.URL, utils.AdmissionRequest{
+		URL:            admissionQueryCondition.Url,
+		Year:           admissionQueryCondition.Year,
+		Province:       admissionQueryCondition.Province,
+		AdmissionType:  admissionQueryCondition.AdmissionType,
+		UniversityName: admissionQueryCondition.UniversityName,
 	})
 
 	if err != nil {
@@ -56,7 +56,7 @@ func (h *AdmissionScrapeHandler) CreateAdmissionScore(c echo.Context) error {
 	err = h.repo.WithTransaction(c.Request().Context(), func(q *sqlc.Queries) error {
 		for _, item := range respAdmission.Data {
 			if err = q.CreateAdmissionScore(c.Request().Context(), sqlc.CreateAdmissionScoreParams{
-				UniversityName:    condition.UniversityName,
+				UniversityName:    admissionQueryCondition.UniversityName,
 				Province:          item.Province,
 				Year:              item.Year,
 				AdmissionType:     item.AdmissionType,

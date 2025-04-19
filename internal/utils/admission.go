@@ -39,8 +39,8 @@ type AdmissionResponse struct {
 	Message string          `json:"message"`
 }
 
-// FetchAdmissionData 发送 POST 请求获取招生数据
-func FetchAdmissionData(url string, req AdmissionRequest) (AdmissionResponse, error) {
+// FetchAdmissionScoreData 发送 POST 请求获取招生数据
+func FetchAdmissionScoreData(url string, req AdmissionRequest) (AdmissionResponse, error) {
 	var resp AdmissionResponse
 
 	// 将请求参数序列化为 JSON

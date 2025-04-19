@@ -21,8 +21,6 @@ func RegisterRoutes(e *echo.Echo, repo *database.Repository, cfg *config.Config)
 	universityGroup.GET("", universityHandler.ListUniversities)
 	universityGroup.GET("/:id", universityHandler.GetUniversity)
 	universityGroup.DELETE("/:id", universityHandler.DeleteUniversity)
-
-	universityAdmissionScrapeGroup := e.Group("/api/university/admission/score")
-	universityAdmissionScrapeGroup.POST("", admissionScoreHandler.CreateAdmissionScore)
+	universityGroup.POST("/admission_score", admissionScoreHandler.CreateAdmissionScore)
 
 }
