@@ -7,11 +7,12 @@ package sqlc
 
 import (
 	"context"
+	"database/sql"
 )
 
 const createAdmissionScore = `-- name: CreateAdmissionScore :exec
 INSERT INTO admission_score (
-    id, university_name, year, province, admission_type, academic_category,
+    id, university_name, year, province, admission_type, subject_category,
     major_name, enrollment_quota, min_admission_score,
     highest_score, highest_score_rank, lowest_score, lowest_score_rank
 ) VALUES (
@@ -20,19 +21,19 @@ INSERT INTO admission_score (
 `
 
 type CreateAdmissionScoreParams struct {
-	ID                uint32 `json:"id"`
-	UniversityName    string `json:"university_name"`
-	Year              string `json:"year"`
-	Province          string `json:"province"`
-	AdmissionType     string `json:"admission_type"`
-	AcademicCategory  string `json:"academic_category"`
-	MajorName         string `json:"major_name"`
-	EnrollmentQuota   string `json:"enrollment_quota"`
-	MinAdmissionScore string `json:"min_admission_score"`
-	HighestScore      string `json:"highest_score"`
-	HighestScoreRank  string `json:"highest_score_rank"`
-	LowestScore       string `json:"lowest_score"`
-	LowestScoreRank   string `json:"lowest_score_rank"`
+	ID                uint32         `json:"id"`
+	UniversityName    string         `json:"university_name"`
+	Year              string         `json:"year"`
+	Province          string         `json:"province"`
+	AdmissionType     string         `json:"admission_type"`
+	SubjectCategory   string         `json:"subject_category"`
+	MajorName         sql.NullString `json:"major_name"`
+	EnrollmentQuota   sql.NullString `json:"enrollment_quota"`
+	MinAdmissionScore sql.NullString `json:"min_admission_score"`
+	HighestScore      sql.NullString `json:"highest_score"`
+	HighestScoreRank  sql.NullString `json:"highest_score_rank"`
+	LowestScore       sql.NullString `json:"lowest_score"`
+	LowestScoreRank   sql.NullString `json:"lowest_score_rank"`
 }
 
 func (q *Queries) CreateAdmissionScore(ctx context.Context, arg CreateAdmissionScoreParams) error {
@@ -42,7 +43,7 @@ func (q *Queries) CreateAdmissionScore(ctx context.Context, arg CreateAdmissionS
 		arg.Year,
 		arg.Province,
 		arg.AdmissionType,
-		arg.AcademicCategory,
+		arg.SubjectCategory,
 		arg.MajorName,
 		arg.EnrollmentQuota,
 		arg.MinAdmissionScore,
@@ -80,7 +81,7 @@ func (q *Queries) DeleteAdmissionScoreByYearAndUniversity(ctx context.Context, a
 }
 
 const getAdmissionScoreByID = `-- name: GetAdmissionScoreByID :one
-SELECT id, year, university_name, province, admission_type, academic_category, major_name, enrollment_quota, min_admission_score, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_score 
+SELECT id, year, university_name, province, admission_type, subject_category, subject_category_txt, major_name, enrollment_quota, min_admission_score, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_score 
 WHERE id = ? LIMIT 1
 `
 
@@ -93,7 +94,8 @@ func (q *Queries) GetAdmissionScoreByID(ctx context.Context, id uint32) (Admissi
 		&i.UniversityName,
 		&i.Province,
 		&i.AdmissionType,
-		&i.AcademicCategory,
+		&i.SubjectCategory,
+		&i.SubjectCategoryTxt,
 		&i.MajorName,
 		&i.EnrollmentQuota,
 		&i.MinAdmissionScore,
@@ -107,8 +109,8 @@ func (q *Queries) GetAdmissionScoreByID(ctx context.Context, id uint32) (Admissi
 }
 
 const listAdmissionScores = `-- name: ListAdmissionScores :many
-SELECT id, year, university_name, province, admission_type, academic_category, major_name, enrollment_quota, min_admission_score, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_score 
-ORDER BY create_time DESC
+SELECT id, year, university_name, province, admission_type, subject_category, subject_category_txt, major_name, enrollment_quota, min_admission_score, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_score 
+ORDER BY id ASC
 `
 
 func (q *Queries) ListAdmissionScores(ctx context.Context) ([]AdmissionScore, error) {
@@ -126,7 +128,8 @@ func (q *Queries) ListAdmissionScores(ctx context.Context) ([]AdmissionScore, er
 			&i.UniversityName,
 			&i.Province,
 			&i.AdmissionType,
-			&i.AcademicCategory,
+			&i.SubjectCategory,
+			&i.SubjectCategoryTxt,
 			&i.MajorName,
 			&i.EnrollmentQuota,
 			&i.MinAdmissionScore,
@@ -149,19 +152,19 @@ func (q *Queries) ListAdmissionScores(ctx context.Context) ([]AdmissionScore, er
 	return items, nil
 }
 
-const listAdmissionScoresByTypeAndCategory = `-- name: ListAdmissionScoresByTypeAndCategory :many
-SELECT id, year, university_name, province, admission_type, academic_category, major_name, enrollment_quota, min_admission_score, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_score 
-WHERE admission_type = ? AND academic_category = ?
-ORDER BY year DESC, province
+const listAdmissionScoresByUniversityAndYear = `-- name: ListAdmissionScoresByUniversityAndYear :many
+SELECT id, year, university_name, province, admission_type, subject_category, subject_category_txt, major_name, enrollment_quota, min_admission_score, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_score 
+WHERE university_name = ? AND year = ?
+ORDER BY id ASC
 `
 
-type ListAdmissionScoresByTypeAndCategoryParams struct {
-	AdmissionType    string `json:"admission_type"`
-	AcademicCategory string `json:"academic_category"`
+type ListAdmissionScoresByUniversityAndYearParams struct {
+	UniversityName string `json:"university_name"`
+	Year           string `json:"year"`
 }
 
-func (q *Queries) ListAdmissionScoresByTypeAndCategory(ctx context.Context, arg ListAdmissionScoresByTypeAndCategoryParams) ([]AdmissionScore, error) {
-	rows, err := q.db.QueryContext(ctx, listAdmissionScoresByTypeAndCategory, arg.AdmissionType, arg.AcademicCategory)
+func (q *Queries) ListAdmissionScoresByUniversityAndYear(ctx context.Context, arg ListAdmissionScoresByUniversityAndYearParams) ([]AdmissionScore, error) {
+	rows, err := q.db.QueryContext(ctx, listAdmissionScoresByUniversityAndYear, arg.UniversityName, arg.Year)
 	if err != nil {
 		return nil, err
 	}
@@ -175,100 +178,8 @@ func (q *Queries) ListAdmissionScoresByTypeAndCategory(ctx context.Context, arg 
 			&i.UniversityName,
 			&i.Province,
 			&i.AdmissionType,
-			&i.AcademicCategory,
-			&i.MajorName,
-			&i.EnrollmentQuota,
-			&i.MinAdmissionScore,
-			&i.HighestScore,
-			&i.HighestScoreRank,
-			&i.LowestScore,
-			&i.LowestScoreRank,
-			&i.CreateTime,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const listAdmissionScoresByUniversity = `-- name: ListAdmissionScoresByUniversity :many
-SELECT id, year, university_name, province, admission_type, academic_category, major_name, enrollment_quota, min_admission_score, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_score 
-WHERE id = ?
-ORDER BY year DESC, create_time DESC
-`
-
-func (q *Queries) ListAdmissionScoresByUniversity(ctx context.Context, id uint32) ([]AdmissionScore, error) {
-	rows, err := q.db.QueryContext(ctx, listAdmissionScoresByUniversity, id)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []AdmissionScore
-	for rows.Next() {
-		var i AdmissionScore
-		if err := rows.Scan(
-			&i.ID,
-			&i.Year,
-			&i.UniversityName,
-			&i.Province,
-			&i.AdmissionType,
-			&i.AcademicCategory,
-			&i.MajorName,
-			&i.EnrollmentQuota,
-			&i.MinAdmissionScore,
-			&i.HighestScore,
-			&i.HighestScoreRank,
-			&i.LowestScore,
-			&i.LowestScoreRank,
-			&i.CreateTime,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const listAdmissionScoresByYearAndProvince = `-- name: ListAdmissionScoresByYearAndProvince :many
-SELECT id, year, university_name, province, admission_type, academic_category, major_name, enrollment_quota, min_admission_score, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_score 
-WHERE year = ? AND province = ?
-ORDER BY id, admission_type, academic_category
-`
-
-type ListAdmissionScoresByYearAndProvinceParams struct {
-	Year     string `json:"year"`
-	Province string `json:"province"`
-}
-
-func (q *Queries) ListAdmissionScoresByYearAndProvince(ctx context.Context, arg ListAdmissionScoresByYearAndProvinceParams) ([]AdmissionScore, error) {
-	rows, err := q.db.QueryContext(ctx, listAdmissionScoresByYearAndProvince, arg.Year, arg.Province)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []AdmissionScore
-	for rows.Next() {
-		var i AdmissionScore
-		if err := rows.Scan(
-			&i.ID,
-			&i.Year,
-			&i.UniversityName,
-			&i.Province,
-			&i.AdmissionType,
-			&i.AcademicCategory,
+			&i.SubjectCategory,
+			&i.SubjectCategoryTxt,
 			&i.MajorName,
 			&i.EnrollmentQuota,
 			&i.MinAdmissionScore,

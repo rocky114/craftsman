@@ -36,25 +36,27 @@ type AdmissionScore struct {
 	UniversityName string `json:"university_name"`
 	// 省份 江苏
 	Province string `json:"province"`
-	// 类型: 普通类/高校专项/地方专项
+	// 类型: 普通类,艺术类,国家专项,高校专项,中外合作,飞行技术,预科
 	AdmissionType string `json:"admission_type"`
 	// 科类: 历史+不限
-	AcademicCategory string `json:"academic_category"`
+	SubjectCategory string `json:"subject_category"`
+	// 科类文本
+	SubjectCategoryTxt string `json:"subject_category_txt"`
 	// 专业名称 计算机
-	MajorName string `json:"major_name"`
+	MajorName sql.NullString `json:"major_name"`
 	// 招生名额
-	EnrollmentQuota string `json:"enrollment_quota"`
+	EnrollmentQuota sql.NullString `json:"enrollment_quota"`
 	// 投档分 600
-	MinAdmissionScore string `json:"min_admission_score"`
+	MinAdmissionScore sql.NullString `json:"min_admission_score"`
 	// 最高分
-	HighestScore string `json:"highest_score"`
+	HighestScore sql.NullString `json:"highest_score"`
 	// 排名 200000名次
-	HighestScoreRank string `json:"highest_score_rank"`
+	HighestScoreRank sql.NullString `json:"highest_score_rank"`
 	// 最低分
-	LowestScore string `json:"lowest_score"`
+	LowestScore sql.NullString `json:"lowest_score"`
 	// 排名 200000名次
-	LowestScoreRank string    `json:"lowest_score_rank"`
-	CreateTime      time.Time `json:"create_time"`
+	LowestScoreRank sql.NullString `json:"lowest_score_rank"`
+	CreateTime      time.Time      `json:"create_time"`
 }
 
 // 学校基础信息表
