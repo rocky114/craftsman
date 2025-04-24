@@ -7,7 +7,6 @@ package sqlc
 
 import (
 	"context"
-	"database/sql"
 )
 
 const createAdmissionScore = `-- name: CreateAdmissionScore :exec
@@ -21,19 +20,19 @@ INSERT INTO admission_score (
 `
 
 type CreateAdmissionScoreParams struct {
-	ID                uint32         `json:"id"`
-	UniversityName    string         `json:"university_name"`
-	Year              string         `json:"year"`
-	Province          string         `json:"province"`
-	AdmissionType     string         `json:"admission_type"`
-	SubjectCategory   string         `json:"subject_category"`
-	MajorName         sql.NullString `json:"major_name"`
-	EnrollmentQuota   sql.NullString `json:"enrollment_quota"`
-	MinAdmissionScore sql.NullString `json:"min_admission_score"`
-	HighestScore      sql.NullString `json:"highest_score"`
-	HighestScoreRank  sql.NullString `json:"highest_score_rank"`
-	LowestScore       sql.NullString `json:"lowest_score"`
-	LowestScoreRank   sql.NullString `json:"lowest_score_rank"`
+	ID                uint32 `json:"id"`
+	UniversityName    string `json:"university_name"`
+	Year              string `json:"year"`
+	Province          string `json:"province"`
+	AdmissionType     string `json:"admission_type"`
+	SubjectCategory   string `json:"subject_category"`
+	MajorName         string `json:"major_name"`
+	EnrollmentQuota   string `json:"enrollment_quota"`
+	MinAdmissionScore string `json:"min_admission_score"`
+	HighestScore      string `json:"highest_score"`
+	HighestScoreRank  string `json:"highest_score_rank"`
+	LowestScore       string `json:"lowest_score"`
+	LowestScoreRank   string `json:"lowest_score_rank"`
 }
 
 func (q *Queries) CreateAdmissionScore(ctx context.Context, arg CreateAdmissionScoreParams) error {

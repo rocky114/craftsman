@@ -43,20 +43,20 @@ type AdmissionScore struct {
 	// 科类文本
 	SubjectCategoryTxt string `json:"subject_category_txt"`
 	// 专业名称 计算机
-	MajorName sql.NullString `json:"major_name"`
+	MajorName string `json:"major_name"`
 	// 招生名额
-	EnrollmentQuota sql.NullString `json:"enrollment_quota"`
+	EnrollmentQuota string `json:"enrollment_quota"`
 	// 投档分 600
-	MinAdmissionScore sql.NullString `json:"min_admission_score"`
+	MinAdmissionScore string `json:"min_admission_score"`
 	// 最高分
-	HighestScore sql.NullString `json:"highest_score"`
+	HighestScore string `json:"highest_score"`
 	// 排名 200000名次
-	HighestScoreRank sql.NullString `json:"highest_score_rank"`
+	HighestScoreRank string `json:"highest_score_rank"`
 	// 最低分
-	LowestScore sql.NullString `json:"lowest_score"`
+	LowestScore string `json:"lowest_score"`
 	// 排名 200000名次
-	LowestScoreRank sql.NullString `json:"lowest_score_rank"`
-	CreateTime      time.Time      `json:"create_time"`
+	LowestScoreRank string    `json:"lowest_score_rank"`
+	CreateTime      time.Time `json:"create_time"`
 }
 
 // 学校基础信息表

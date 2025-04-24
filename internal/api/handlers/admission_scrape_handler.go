@@ -65,7 +65,7 @@ func (h *AdmissionScrapeHandler) CreateAdmissionScore(c echo.Context) error {
 				Province:          item.Province,
 				Year:              item.Year,
 				AdmissionType:     item.AdmissionType,
-				AcademicCategory:  item.AcademicCategory,
+				SubjectCategory:   item.AcademicCategory,
 				MajorName:         item.MajorName,
 				EnrollmentQuota:   item.EnrollmentQuota,
 				MinAdmissionScore: strings.Split(item.MinAdmissionScore, ".")[0],

@@ -6,14 +6,14 @@ CREATE TABLE `admission_score` (
                                    `admission_type` varchar(100) NOT NULL DEFAULT '' COMMENT '类型: 普通类,艺术类,国家专项,高校专项,中外合作,飞行技术,预科',
                                    `subject_category` varchar(100) NOT NULL DEFAULT '' COMMENT '科类: 历史+不限',
                                    `subject_category_txt` varchar(100) NOT NULL DEFAULT '' COMMENT '科类文本',
-                                   `major_name` varchar(100) DEFAULT NULL COMMENT '专业名称 计算机',
-                                   `enrollment_quota` varchar(100) DEFAULT NULL COMMENT '招生名额',
-                                   `min_admission_score` varchar(100) DEFAULT NULL COMMENT '投档分 600',
-                                   `highest_score` varchar(100) DEFAULT NULL COMMENT '最高分',
-                                   `highest_score_rank` varchar(100) DEFAULT NULL COMMENT '排名 200000名次',
-                                   `lowest_score` varchar(100) DEFAULT NULL COMMENT '最低分',
-                                   `lowest_score_rank` varchar(100) DEFAULT NULL COMMENT '排名 200000名次',
+                                   `major_name` varchar(100) NOT NULL COMMENT '专业名称 计算机',
+                                   `enrollment_quota` varchar(100) NOT NULL COMMENT '招生名额',
+                                   `min_admission_score` varchar(100) NOT NULL COMMENT '投档分 600',
+                                   `highest_score` varchar(100) NOT NULL COMMENT '最高分',
+                                   `highest_score_rank` varchar(100) NOT NULL COMMENT '排名 200000名次',
+                                   `lowest_score` varchar(100) NOT NULL COMMENT '最低分',
+                                   `lowest_score_rank` varchar(100) NOT NULL COMMENT '排名 200000名次',
                                    `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                    PRIMARY KEY (`id`),
                                    KEY `university_year` (`university_name`,`year`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='大学历史录取分数线';
+) ENGINE=InnoDB AUTO_INCREMENT=3163 DEFAULT CHARSET=utf8mb4 COMMENT='大学历史录取分数线';
