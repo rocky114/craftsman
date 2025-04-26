@@ -1,7 +1,6 @@
 main
 log/*
 ad/*
-web/*
 .vscode/*
 .idea
 tmp
