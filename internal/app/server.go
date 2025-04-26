@@ -19,11 +19,11 @@ import (
 type Application struct {
 	echo *echo.Echo
 	cfg  *config.Config
-	repo *database.Repository
+	repo *database.Database
 }
 
 func NewApplication(cfg *config.Config) (*Application, error) {
-	repo, err := database.NewRepository(cfg.Database)
+	repo, err := database.NewDatabase(cfg.Database)
 	if err != nil {
 		return nil, err
 	}

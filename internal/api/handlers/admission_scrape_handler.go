@@ -12,11 +12,11 @@ import (
 )
 
 type AdmissionScrapeHandler struct {
-	repo *database.Repository
+	repo *database.Database
 	cfg  *config.Config
 }
 
-func NewAdmissionScrapeHandler(q *database.Repository, cfg *config.Config) *AdmissionScrapeHandler {
+func NewAdmissionScrapeHandler(q *database.Database, cfg *config.Config) *AdmissionScrapeHandler {
 	return &AdmissionScrapeHandler{repo: q, cfg: cfg}
 }
 

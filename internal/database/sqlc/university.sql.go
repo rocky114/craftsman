@@ -73,41 +73,6 @@ func (q *Queries) GetUniversityByName(ctx context.Context, name string) (Univers
 	return i, err
 }
 
-const listUniversities = `-- name: ListUniversities :many
-SELECT id, name, province, admission_website, create_time, update_time FROM university
-ORDER BY name
-`
-
-func (q *Queries) ListUniversities(ctx context.Context) ([]University, error) {
-	rows, err := q.db.QueryContext(ctx, listUniversities)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []University
-	for rows.Next() {
-		var i University
-		if err := rows.Scan(
-			&i.ID,
-			&i.Name,
-			&i.Province,
-			&i.AdmissionWebsite,
-			&i.CreateTime,
-			&i.UpdateTime,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
 const updateUniversity = `-- name: UpdateUniversity :exec
 UPDATE university
 SET name = ?, province = ?, admission_website = ?

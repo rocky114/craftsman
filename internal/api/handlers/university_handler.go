@@ -12,11 +12,11 @@ import (
 )
 
 type UniversityHandler struct {
-	repo *database.Repository
+	repo *database.Database
 	cfg  *config.Config
 }
 
-func NewUniversityHandler(q *database.Repository, cfg *config.Config) *UniversityHandler {
+func NewUniversityHandler(q *database.Database, cfg *config.Config) *UniversityHandler {
 	return &UniversityHandler{repo: q, cfg: cfg}
 }
 

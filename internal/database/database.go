@@ -2,21 +2,24 @@ package database
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jmoiron/sqlx"
 	"github.com/rocky114/craftman/internal/app/config"
+	"github.com/rocky114/craftman/internal/database/repository"
 	"github.com/rocky114/craftman/internal/database/sqlc"
 	"time"
 )
 
-type Repository struct {
-	*sql.DB
+type Database struct {
+	*sqlx.DB
 	*sqlc.Queries
+	*repository.Repository
 }
 
-func NewRepository(cfg config.DatabaseConfig) (*Repository, error) {
-	db, err := sql.Open("mysql", cfg.URL)
+func NewDatabase(cfg config.DatabaseConfig) (*Database, error) {
+
+	db, err := sqlx.Open("mysql", cfg.URL)
 	if err != nil {
 		return nil, err
 	}
@@ -29,15 +32,16 @@ func NewRepository(cfg config.DatabaseConfig) (*Repository, error) {
 	db.SetMaxOpenConns(cfg.MaxOpenConns)
 	db.SetConnMaxLifetime(time.Hour)
 
-	return &Repository{
-		DB:      db,
-		Queries: sqlc.New(db),
+	return &Database{
+		DB:         db,
+		Queries:    sqlc.New(db),
+		Repository: repository.NewRepository(db),
 	}, nil
 }
 
 type TxFunc func(queries *sqlc.Queries) error
 
-func (s *Repository) WithTransaction(ctx context.Context, fn TxFunc) error {
+func (s *Database) WithTransaction(ctx context.Context, fn TxFunc) error {
 	tx, err := s.DB.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("begin transaction: %v", err)

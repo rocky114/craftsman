@@ -6,10 +6,6 @@ VALUES (?, ?, ?);
 SELECT * FROM university
 WHERE id = ? LIMIT 1;
 
--- name: ListUniversities :many
-SELECT * FROM university
-ORDER BY name;
-
 -- name: UpdateUniversity :exec
 UPDATE university
 SET name = ?, province = ?, admission_website = ?

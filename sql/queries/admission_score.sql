@@ -11,15 +11,6 @@ INSERT INTO admission_score (
 SELECT * FROM admission_score 
 WHERE id = ? LIMIT 1;
 
--- name: ListAdmissionScores :many
-SELECT * FROM admission_score 
-ORDER BY id ASC;
-
--- name: ListAdmissionScoresByUniversityAndYear :many
-SELECT * FROM admission_score 
-WHERE university_name = ? AND year = ?
-ORDER BY id ASC;
-
 -- name: DeleteAdmissionScore :exec
 DELETE FROM admission_score
 WHERE id = ?;

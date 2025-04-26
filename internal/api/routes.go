@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func RegisterRoutes(e *echo.Echo, repo *database.Repository, cfg *config.Config) {
+func RegisterRoutes(e *echo.Echo, repo *database.Database, cfg *config.Config) {
 	universityHandler := handlers.NewUniversityHandler(repo, cfg)
 	admissionScoreHandler := handlers.NewAdmissionScrapeHandler(repo, cfg)
 
