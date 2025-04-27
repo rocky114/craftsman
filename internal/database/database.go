@@ -18,7 +18,6 @@ type Database struct {
 }
 
 func NewDatabase(cfg config.DatabaseConfig) (*Database, error) {
-
 	db, err := sqlx.Open("mysql", cfg.URL)
 	if err != nil {
 		return nil, err

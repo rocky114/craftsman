@@ -5,16 +5,53 @@ import (
 	"github.com/rocky114/craftman/internal/database/sqlc"
 )
 
-func (q *Repository) ListUniversities(ctx context.Context) ([]sqlc.University, error) {
-	var listUniversities = `-- name: ListUniversities :many
-SELECT id, name, province, admission_website, create_time, update_time FROM university
-ORDER BY name
-`
+type ListUniversitiesParams struct {
+	Name   string `json:"name"`
+	Limit  string `json:"limit"`
+	Offset string `json:"offset"`
+}
+
+func (q *Repository) ListUniversities(ctx context.Context, arg ListUniversitiesParams) ([]sqlc.University, error) {
+	query := "SELECT id, name, province, admission_website FROM university"
+
+	args := make([]interface{}, 0, 1)
+	if arg.Name != "" {
+		query += " AND name = ?"
+		args = append(args, arg.Name)
+	}
+
+	query += " ORDER BY id ASC LIMIT ? OFFSET ?"
+	args = append(args, arg.Limit, arg.Offset)
 
 	var items []sqlc.University
-	if err := q.db.Select(&items, listUniversities); err != nil {
+	if err := q.db.Select(&items, query, args...); err != nil {
 		return nil, err
 	}
 
 	return items, nil
+}
+
+type CountUniversitiesParams struct {
+	Name string `json:"name"`
+}
+
+type TotalCount struct {
+	TotalCount int64 `db:"total_count"`
+}
+
+func (q *Repository) CountUniversities(ctx context.Context, arg ListUniversitiesParams) (int64, error) {
+	query := "SELECT count(*) as total_count FROM university"
+
+	args := make([]interface{}, 0, 1)
+	if arg.Name != "" {
+		query += " AND name = ?"
+		args = append(args, arg.Name)
+	}
+
+	var result TotalCount
+	if err := q.db.Get(&result, query, args...); err != nil {
+		return 0, err
+	}
+
+	return result.TotalCount, nil
 }
