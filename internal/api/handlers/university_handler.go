@@ -5,6 +5,7 @@ import (
 	"github.com/rocky114/craftman/internal/database"
 	"github.com/rocky114/craftman/internal/database/repository"
 	"github.com/rocky114/craftman/internal/database/sqlc"
+	"github.com/rocky114/craftman/internal/dto"
 	"github.com/rocky114/craftman/internal/utils"
 	"net/http"
 	"strconv"
@@ -82,14 +83,14 @@ func (h *UniversityHandler) ListUniversities(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	ret := utils.Pagination[sqlc.University]{
-		List:       items,
+	ret := utils.Pagination[dto.UniversityResponse]{
+		List:       dto.ToUniversityResponse(items),
 		TotalCount: totalCount,
 		Page:       req.Page,
 		PageSize:   utils.PageSize,
 	}
 
-	return utils.SuccessWithData(c, ret)
+	return c.JSON(http.StatusOK, ret)
 }
 
 func (h *UniversityHandler) DeleteUniversity(c echo.Context) error {

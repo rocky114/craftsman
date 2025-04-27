@@ -15,9 +15,9 @@ VALUES (?, ?, ?)
 `
 
 type CreateUniversityParams struct {
-	Name             string `json:"name"`
-	Province         string `json:"province"`
-	AdmissionWebsite string `json:"admission_website"`
+	Name             string `db:"name"`
+	Province         string `db:"province"`
+	AdmissionWebsite string `db:"admission_website"`
 }
 
 func (q *Queries) CreateUniversity(ctx context.Context, arg CreateUniversityParams) error {
@@ -80,10 +80,10 @@ WHERE id = ?
 `
 
 type UpdateUniversityParams struct {
-	Name             string `json:"name"`
-	Province         string `json:"province"`
-	AdmissionWebsite string `json:"admission_website"`
-	ID               uint32 `json:"id"`
+	Name             string `db:"name"`
+	Province         string `db:"province"`
+	AdmissionWebsite string `db:"admission_website"`
+	ID               uint32 `db:"id"`
 }
 
 func (q *Queries) UpdateUniversity(ctx context.Context, arg UpdateUniversityParams) error {

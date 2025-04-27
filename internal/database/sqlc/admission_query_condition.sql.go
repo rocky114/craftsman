@@ -18,11 +18,11 @@ INSERT INTO admission_query_condition (
 `
 
 type CreateQueryConditionParams struct {
-	UniversityName string `json:"university_name"`
-	Url            string `json:"url"`
-	Year           string `json:"year"`
-	Province       string `json:"province"`
-	AdmissionType  string `json:"admission_type"`
+	UniversityName string `db:"university_name"`
+	Url            string `db:"url"`
+	Year           string `db:"year"`
+	Province       string `db:"province"`
+	AdmissionType  string `db:"admission_type"`
 }
 
 func (q *Queries) CreateQueryCondition(ctx context.Context, arg CreateQueryConditionParams) error {
@@ -72,8 +72,8 @@ WHERE year = ? AND university_name = ? LIMIT 1
 `
 
 type GetQueryConditionByYearAndNameParams struct {
-	Year           string `json:"year"`
-	UniversityName string `json:"university_name"`
+	Year           string `db:"year"`
+	UniversityName string `db:"university_name"`
 }
 
 func (q *Queries) GetQueryConditionByYearAndName(ctx context.Context, arg GetQueryConditionByYearAndNameParams) (AdmissionQueryCondition, error) {
@@ -176,12 +176,12 @@ WHERE id = ?
 `
 
 type UpdateQueryConditionParams struct {
-	UniversityName string `json:"university_name"`
-	Url            string `json:"url"`
-	Year           string `json:"year"`
-	Province       string `json:"province"`
-	AdmissionType  string `json:"admission_type"`
-	ID             int32  `json:"id"`
+	UniversityName string `db:"university_name"`
+	Url            string `db:"url"`
+	Year           string `db:"year"`
+	Province       string `db:"province"`
+	AdmissionType  string `db:"admission_type"`
+	ID             int32  `db:"id"`
 }
 
 func (q *Queries) UpdateQueryCondition(ctx context.Context, arg UpdateQueryConditionParams) error {

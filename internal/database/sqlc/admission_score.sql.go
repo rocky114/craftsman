@@ -20,19 +20,19 @@ INSERT INTO admission_score (
 `
 
 type CreateAdmissionScoreParams struct {
-	ID                uint32 `json:"id"`
-	UniversityName    string `json:"university_name"`
-	Year              string `json:"year"`
-	Province          string `json:"province"`
-	AdmissionType     string `json:"admission_type"`
-	SubjectCategory   string `json:"subject_category"`
-	MajorName         string `json:"major_name"`
-	EnrollmentQuota   string `json:"enrollment_quota"`
-	MinAdmissionScore string `json:"min_admission_score"`
-	HighestScore      string `json:"highest_score"`
-	HighestScoreRank  string `json:"highest_score_rank"`
-	LowestScore       string `json:"lowest_score"`
-	LowestScoreRank   string `json:"lowest_score_rank"`
+	ID                uint32 `db:"id"`
+	UniversityName    string `db:"university_name"`
+	Year              string `db:"year"`
+	Province          string `db:"province"`
+	AdmissionType     string `db:"admission_type"`
+	SubjectCategory   string `db:"subject_category"`
+	MajorName         string `db:"major_name"`
+	EnrollmentQuota   string `db:"enrollment_quota"`
+	MinAdmissionScore string `db:"min_admission_score"`
+	HighestScore      string `db:"highest_score"`
+	HighestScoreRank  string `db:"highest_score_rank"`
+	LowestScore       string `db:"lowest_score"`
+	LowestScoreRank   string `db:"lowest_score_rank"`
 }
 
 func (q *Queries) CreateAdmissionScore(ctx context.Context, arg CreateAdmissionScoreParams) error {
@@ -70,8 +70,8 @@ WHERE year = ? AND university_name = ?
 `
 
 type DeleteAdmissionScoreByYearAndUniversityParams struct {
-	Year           string `json:"year"`
-	UniversityName string `json:"university_name"`
+	Year           string `db:"year"`
+	UniversityName string `db:"university_name"`
 }
 
 func (q *Queries) DeleteAdmissionScoreByYearAndUniversity(ctx context.Context, arg DeleteAdmissionScoreByYearAndUniversityParams) error {

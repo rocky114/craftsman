@@ -12,62 +12,62 @@ import (
 // 高校录取查询条件表
 type AdmissionQueryCondition struct {
 	// 主键ID
-	ID int32 `json:"id"`
+	ID int32 `db:"id"`
 	// 学校名称
-	UniversityName string `json:"university_name"`
+	UniversityName string `db:"university_name"`
 	// 查询URL
-	Url string `json:"url"`
+	Url string `db:"url"`
 	// 查询年份
-	Year string `json:"year"`
+	Year string `db:"year"`
 	// 省份
-	Province string `json:"province"`
+	Province string `db:"province"`
 	// 录取类型(统招计划/专项计划等)
-	AdmissionType string `json:"admission_type"`
+	AdmissionType string `db:"admission_type"`
 	// 创建时间
-	CreateTime sql.NullTime `json:"create_time"`
+	CreateTime sql.NullTime `db:"create_time"`
 }
 
 // 大学历史录取分数线
 type AdmissionScore struct {
-	ID uint32 `json:"id"`
+	ID uint32 `db:"id"`
 	// 录取年份（如2024）
-	Year string `json:"year"`
+	Year string `db:"year"`
 	// 关联院校表
-	UniversityName string `json:"university_name"`
+	UniversityName string `db:"university_name"`
 	// 省份 江苏
-	Province string `json:"province"`
+	Province string `db:"province"`
 	// 类型: 普通类,艺术类,国家专项,高校专项,中外合作,飞行技术,预科
-	AdmissionType string `json:"admission_type"`
+	AdmissionType string `db:"admission_type"`
 	// 科类: 历史+不限
-	SubjectCategory string `json:"subject_category"`
+	SubjectCategory string `db:"subject_category"`
 	// 科类文本
-	SubjectCategoryTxt string `json:"subject_category_txt"`
+	SubjectCategoryTxt string `db:"subject_category_txt"`
 	// 专业名称 计算机
-	MajorName string `json:"major_name"`
+	MajorName string `db:"major_name"`
 	// 招生名额
-	EnrollmentQuota string `json:"enrollment_quota"`
+	EnrollmentQuota string `db:"enrollment_quota"`
 	// 投档分 600
-	MinAdmissionScore string `json:"min_admission_score"`
+	MinAdmissionScore string `db:"min_admission_score"`
 	// 最高分
-	HighestScore string `json:"highest_score"`
+	HighestScore string `db:"highest_score"`
 	// 排名 200000名次
-	HighestScoreRank string `json:"highest_score_rank"`
+	HighestScoreRank string `db:"highest_score_rank"`
 	// 最低分
-	LowestScore string `json:"lowest_score"`
+	LowestScore string `db:"lowest_score"`
 	// 排名 200000名次
-	LowestScoreRank string    `json:"lowest_score_rank"`
-	CreateTime      time.Time `json:"create_time"`
+	LowestScoreRank string    `db:"lowest_score_rank"`
+	CreateTime      time.Time `db:"create_time"`
 }
 
 // 学校基础信息表
 type University struct {
-	ID uint32 `json:"id"`
+	ID uint32 `db:"id"`
 	// 学校名称
-	Name string `json:"name"`
+	Name string `db:"name"`
 	// 省份
-	Province string `json:"province"`
+	Province string `db:"province"`
 	// 招生网址
-	AdmissionWebsite string    `json:"admission_website"`
-	CreateTime       time.Time `json:"create_time"`
-	UpdateTime       time.Time `json:"update_time"`
+	AdmissionWebsite string    `db:"admission_website"`
+	CreateTime       time.Time `db:"create_time"`
+	UpdateTime       time.Time `db:"update_time"`
 }
