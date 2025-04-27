@@ -16,11 +16,10 @@ func RegisterRoutes(e *echo.Echo, repo *database.Database, cfg *config.Config) {
 		return c.JSON(http.StatusOK, map[string]string{"status": "ok"})
 	})
 
-	universityGroup := e.Group("/api/university")
+	universityGroup := e.Group("/api/universities")
 	universityGroup.POST("", universityHandler.CreateUniversity)
 	universityGroup.GET("", universityHandler.ListUniversities)
 	universityGroup.GET("/:id", universityHandler.GetUniversity)
 	universityGroup.DELETE("/:id", universityHandler.DeleteUniversity)
 	universityGroup.POST("/admission_score", admissionScoreHandler.CreateAdmissionScore)
-
 }
