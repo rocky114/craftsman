@@ -3,6 +3,7 @@ package handlers
 import (
 	"github.com/rocky114/craftman/internal/app/config"
 	"github.com/rocky114/craftman/internal/database"
+	"github.com/rocky114/craftman/internal/database/repository"
 	"github.com/rocky114/craftman/internal/database/sqlc"
 	"github.com/rocky114/craftman/internal/utils"
 	"net/http"
@@ -58,12 +59,37 @@ func (h *UniversityHandler) GetUniversity(c echo.Context) error {
 }
 
 func (h *UniversityHandler) ListUniversities(c echo.Context) error {
-	items, err := h.repo.ListUniversities(c.Request().Context())
+	var req struct {
+		Page int    `json:"page" form:"page" query:"page"` // 当前页码（从1开始）
+		Name string `json:"name" form:"name" query:"name"` // 可选：搜索条件（如大学名称）
+	}
+
+	if err := c.Bind(&req); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	items, err := h.repo.ListUniversities(c.Request().Context(), repository.ListUniversitiesParams{
+		Name:   req.Name,
+		Limit:  utils.PageSize,
+		Offset: utils.Offset(req.Page),
+	})
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	return utils.SuccessWithData(c, items)
+	totalCount, err := h.repo.CountUniversities(c.Request().Context(), repository.CountUniversitiesParams{Name: req.Name})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	ret := utils.Pagination[sqlc.University]{
+		List:       items,
+		TotalCount: totalCount,
+		Page:       req.Page,
+		PageSize:   utils.PageSize,
+	}
+
+	return utils.SuccessWithData(c, ret)
 }
 
 func (h *UniversityHandler) DeleteUniversity(c echo.Context) error {

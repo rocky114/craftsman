@@ -7,8 +7,8 @@ import (
 
 type ListUniversitiesParams struct {
 	Name   string `json:"name"`
-	Limit  string `json:"limit"`
-	Offset string `json:"offset"`
+	Limit  int    `json:"limit"`
+	Offset int    `json:"offset"`
 }
 
 func (q *Repository) ListUniversities(ctx context.Context, arg ListUniversitiesParams) ([]sqlc.University, error) {
@@ -39,7 +39,7 @@ type TotalCount struct {
 	TotalCount int64 `db:"total_count"`
 }
 
-func (q *Repository) CountUniversities(ctx context.Context, arg ListUniversitiesParams) (int64, error) {
+func (q *Repository) CountUniversities(ctx context.Context, arg CountUniversitiesParams) (int64, error) {
 	query := "SELECT count(*) as total_count FROM university"
 
 	args := make([]interface{}, 0, 1)
