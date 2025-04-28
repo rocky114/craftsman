@@ -4,7 +4,7 @@ import (
 	"github.com/rocky114/craftman/internal/database/sqlc"
 )
 
-type ScoreDistribution struct {
+type ScoreDistributionResponse struct {
 	ID int32 `json:"id"`
 	// 年份
 	Year string `json:"year"`
@@ -20,10 +20,10 @@ type ScoreDistribution struct {
 	CumulativeCount string `json:"cumulative_count"`
 }
 
-func TransformListScoreDistributionsResponse(items []sqlc.ScoreDistribution) []ScoreDistribution {
-	ret := make([]ScoreDistribution, 0, len(items))
+func ToScoreDistributionResponses(items []sqlc.ScoreDistribution) []ScoreDistributionResponse {
+	ret := make([]ScoreDistributionResponse, 0, len(items))
 	for _, item := range items {
-		ret = append(ret, ScoreDistribution{
+		ret = append(ret, ScoreDistributionResponse{
 			ID:              item.ID,
 			Year:            item.Year,
 			Province:        item.Province,

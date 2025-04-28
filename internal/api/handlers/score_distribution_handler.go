@@ -41,8 +41,8 @@ func (h *ScoreDistributionHandler) ListScoreDistributions(c echo.Context) error 
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	ret := utils.Pagination[dto.ScoreDistribution]{
-		List:       dto.TransformListScoreDistributionsResponse(items),
+	ret := utils.Pagination[dto.ScoreDistributionResponse]{
+		List:       dto.ToScoreDistributionResponses(items),
 		TotalCount: totalCount,
 		Page:       req.Page,
 		PageSize:   utils.PageSize,

@@ -114,8 +114,8 @@ func (h *AdmissionScoreHandler) ListAdmissionScores(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	ret := utils.Pagination[dto.AdmissionScore]{
-		List:       dto.TransformListAdmissionScoresResponse(items),
+	ret := utils.Pagination[dto.AdmissionScoreResponse]{
+		List:       dto.ToAdmissionScoreResponses(items),
 		TotalCount: totalCount,
 		Page:       req.Page,
 		PageSize:   utils.PageSize,

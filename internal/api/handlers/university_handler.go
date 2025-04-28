@@ -84,7 +84,7 @@ func (h *UniversityHandler) ListUniversities(c echo.Context) error {
 	}
 
 	ret := utils.Pagination[dto.UniversityResponse]{
-		List:       dto.ToListUniversitiesResponse(items),
+		List:       dto.ToUniversityResponses(items),
 		TotalCount: totalCount,
 		Page:       req.Page,
 		PageSize:   utils.PageSize,

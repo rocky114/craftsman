@@ -12,16 +12,7 @@ type UniversityResponse struct {
 	AdmissionWebsite string `json:"admission_website"`
 }
 
-func ToUniversityResponse(item sqlc.University) UniversityResponse {
-	return UniversityResponse{
-		ID:               item.ID,
-		Name:             item.Name,
-		Province:         item.Province,
-		AdmissionWebsite: item.AdmissionWebsite,
-	}
-}
-
-func ToListUniversitiesResponse(items []sqlc.University) []UniversityResponse {
+func ToUniversityResponses(items []sqlc.University) []UniversityResponse {
 	ret := make([]UniversityResponse, 0, len(items))
 	for _, item := range items {
 		ret = append(ret, UniversityResponse{

@@ -41,8 +41,8 @@ func (h *AdmissionSummaryHandler) ListAdmissionSummaries(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	ret := utils.Pagination[dto.AdmissionSummary]{
-		List:       dto.TransformListAdmissionSummariesResponse(items),
+	ret := utils.Pagination[dto.AdmissionSummaryResponse]{
+		List:       dto.ToAdmissionSummaryResponses(items),
 		TotalCount: totalCount,
 		Page:       req.Page,
 		PageSize:   utils.PageSize,

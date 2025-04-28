@@ -4,7 +4,7 @@ import (
 	"github.com/rocky114/craftman/internal/database/sqlc"
 )
 
-type AdmissionScore struct {
+type AdmissionScoreResponse struct {
 	ID uint32 `json:"id"`
 	// 录取年份（如2024）
 	Year string `json:"year"`
@@ -28,10 +28,10 @@ type AdmissionScore struct {
 	LowestScoreRank string `json:"lowest_score_rank"`
 }
 
-func TransformListAdmissionScoresResponse(items []sqlc.AdmissionScore) []AdmissionScore {
-	ret := make([]AdmissionScore, 0, len(items))
+func ToAdmissionScoreResponses(items []sqlc.AdmissionScore) []AdmissionScoreResponse {
+	ret := make([]AdmissionScoreResponse, 0, len(items))
 	for _, item := range items {
-		ret = append(ret, AdmissionScore{
+		ret = append(ret, AdmissionScoreResponse{
 			ID:                 item.ID,
 			Year:               item.Year,
 			Province:           item.Province,
