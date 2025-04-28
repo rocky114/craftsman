@@ -14,7 +14,6 @@ type AdmissionScore struct {
 	Province string `db:"province"`
 	// 类型: 普通类,艺术类,国家专项,高校专项,中外合作,飞行技术,预科
 	AdmissionType string `db:"admission_type"`
-
 	// 科类文本
 	SubjectCategoryTxt string `db:"subject_category_txt"`
 	// 专业名称 计算机

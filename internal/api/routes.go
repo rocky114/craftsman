@@ -11,10 +11,15 @@ import (
 func RegisterRoutes(e *echo.Echo, repo *database.Database, cfg *config.Config) {
 	universityHandler := handlers.NewUniversityHandler(repo, cfg)
 	admissionScoreHandler := handlers.NewAdmissionScrapeHandler(repo, cfg)
+	admissionSummaryHandler := handlers.NewAdmissionSummaryHandler(repo, cfg)
+	scoreDistributionHandler := handlers.NewScoreDistributionHandler(repo, cfg)
 
-	e.GET("/health", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, map[string]string{"status": "ok"})
-	})
+	// check
+	{
+		e.GET("/api/health", func(c echo.Context) error {
+			return c.JSON(http.StatusOK, map[string]string{"status": "ok"})
+		})
+	}
 
 	// 大学路由
 	universityGroup := e.Group("/api/universities")
@@ -25,7 +30,7 @@ func RegisterRoutes(e *echo.Echo, repo *database.Database, cfg *config.Config) {
 		universityGroup.DELETE("/:id", universityHandler.DeleteUniversity)
 	}
 
-	// 招生分数路由（独立）
+	// 招生分数路由
 	admissionScoreGroup := e.Group("/api/admission_scores")
 	{
 		admissionScoreGroup.POST("", admissionScoreHandler.CreateAdmissionScore)
@@ -33,11 +38,14 @@ func RegisterRoutes(e *echo.Echo, repo *database.Database, cfg *config.Config) {
 	}
 
 	// 招生汇总路由
-	// e.GET("/api/admission_summaries", asmh.ListAdmissionSummaries)
+	admissionSummaryGroup := e.Group("/api/admission_summaries")
+	{
+		admissionSummaryGroup.GET("", admissionSummaryHandler.ListAdmissionSummaries)
+	}
 
 	// 分数段分布路由
-	//scoreDistributionGroup := e.Group("/api/score_distributions")
+	scoreDistributionGroup := e.Group("/api/score_distributions")
 	{
-		//scoreDistributionGroup.GET("", sdh.ListScoreDistributions)
+		scoreDistributionGroup.GET("", scoreDistributionHandler.ListScoreDistributions)
 	}
 }
