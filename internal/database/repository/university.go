@@ -2,56 +2,65 @@ package repository
 
 import (
 	"context"
+	"fmt"
+	"strings"
+
 	"github.com/rocky114/craftman/internal/database/sqlc"
 )
 
-type ListUniversitiesParams struct {
+type UniversityQueryParams struct {
 	Name   string `json:"name"`
 	Limit  int    `json:"limit"`
 	Offset int    `json:"offset"`
 }
 
-func (q *Repository) ListUniversities(ctx context.Context, arg ListUniversitiesParams) ([]sqlc.University, error) {
-	query := "SELECT id, name, province, admission_website FROM university"
+func (q *Repository) buildUniversityQuery(baseQuery string, arg UniversityQueryParams) (string, []interface{}) {
+	var queryBuilder strings.Builder
+	queryBuilder.WriteString(baseQuery)
 
-	args := make([]interface{}, 0, 1)
+	args := make([]interface{}, 0)
+	conditions := make([]string, 0)
+
 	if arg.Name != "" {
-		query += " AND name = ?"
-		args = append(args, arg.Name)
+		conditions = append(conditions, "name LIKE ?")
+		args = append(args, "%"+arg.Name+"%")
 	}
 
-	query += " ORDER BY id ASC LIMIT ? OFFSET ?"
-	args = append(args, arg.Limit, arg.Offset)
+	if len(conditions) > 0 {
+		queryBuilder.WriteString(" WHERE " + strings.Join(conditions, " AND "))
+	}
+
+	return queryBuilder.String(), args
+}
+
+func (q *Repository) ListUniversities(ctx context.Context, arg UniversityQueryParams) ([]sqlc.University, error) {
+	baseQuery := "SELECT id, name, province, admission_website FROM university"
+	query, args := q.buildUniversityQuery(baseQuery, arg)
+
+	query += " ORDER BY id ASC"
+	if arg.Limit > 0 {
+		query += " LIMIT ?"
+		args = append(args, arg.Limit)
+	}
+	if arg.Offset > 0 {
+		query += " OFFSET ?"
+		args = append(args, arg.Offset)
+	}
 
 	var items []sqlc.University
-	if err := q.db.Select(&items, query, args...); err != nil {
-		return nil, err
+	if err := q.db.SelectContext(ctx, &items, query, args...); err != nil {
+		return nil, fmt.Errorf("ListUniversities failed: %w", err)
 	}
-
 	return items, nil
 }
 
-type CountUniversitiesParams struct {
-	Name string `json:"name"`
-}
+func (q *Repository) CountUniversities(ctx context.Context, arg UniversityQueryParams) (int64, error) {
+	baseQuery := "SELECT COUNT(*) AS total_count FROM university"
+	query, args := q.buildUniversityQuery(baseQuery, arg)
 
-type TotalCount struct {
-	TotalCount int64 `db:"total_count"`
-}
-
-func (q *Repository) CountUniversities(ctx context.Context, arg CountUniversitiesParams) (int64, error) {
-	query := "SELECT count(*) as total_count FROM university"
-
-	args := make([]interface{}, 0, 1)
-	if arg.Name != "" {
-		query += " AND name = ?"
-		args = append(args, arg.Name)
+	var total int64
+	if err := q.db.GetContext(ctx, &total, query, args...); err != nil {
+		return 0, fmt.Errorf("CountUniversities failed: %w", err)
 	}
-
-	var result TotalCount
-	if err := q.db.Get(&result, query, args...); err != nil {
-		return 0, err
-	}
-
-	return result.TotalCount, nil
+	return total, nil
 }
