@@ -32,6 +32,7 @@ func TransformListAdmissionSummariesResponse(items []sqlc.AdmissionSummary) []Ad
 		ret = append(ret, AdmissionSummary{
 			ID:               item.ID,
 			Year:             item.Year,
+			Province:         item.Province,
 			UniversityName:   item.UniversityName,
 			AdmissionType:    item.AdmissionType,
 			SubjectCategory:  item.SubjectCategory,

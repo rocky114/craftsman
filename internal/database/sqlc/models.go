@@ -64,6 +64,8 @@ type AdmissionSummary struct {
 	ID uint32 `db:"id"`
 	// 录取年份
 	Year string `db:"year"`
+	// 省份
+	Province string `db:"province"`
 	// 高校名称
 	UniversityName string `db:"university_name"`
 	// 类型

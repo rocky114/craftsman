@@ -2,6 +2,7 @@
 -- name: CreateAdmissionSummary :exec
 INSERT INTO admission_summary (
     year,
+    province,
     university_name,
     admission_type,
     subject_category,
@@ -10,7 +11,7 @@ INSERT INTO admission_summary (
     lowest_score,
     lowest_score_rank
 ) VALUES (
-    ?, ?, ?, ?, ?, ?, ?, ?
+    ?, ?, ?, ?, ?, ?, ?, ?, ?
 );
 
 -- 删除操作

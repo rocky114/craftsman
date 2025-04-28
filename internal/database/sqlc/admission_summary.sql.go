@@ -12,6 +12,7 @@ import (
 const createAdmissionSummary = `-- name: CreateAdmissionSummary :exec
 INSERT INTO admission_summary (
     year,
+    province,
     university_name,
     admission_type,
     subject_category,
@@ -20,12 +21,13 @@ INSERT INTO admission_summary (
     lowest_score,
     lowest_score_rank
 ) VALUES (
-    ?, ?, ?, ?, ?, ?, ?, ?
+    ?, ?, ?, ?, ?, ?, ?, ?, ?
 )
 `
 
 type CreateAdmissionSummaryParams struct {
 	Year             string `db:"year"`
+	Province         string `db:"province"`
 	UniversityName   string `db:"university_name"`
 	AdmissionType    string `db:"admission_type"`
 	SubjectCategory  string `db:"subject_category"`
@@ -39,6 +41,7 @@ type CreateAdmissionSummaryParams struct {
 func (q *Queries) CreateAdmissionSummary(ctx context.Context, arg CreateAdmissionSummaryParams) error {
 	_, err := q.db.ExecContext(ctx, createAdmissionSummary,
 		arg.Year,
+		arg.Province,
 		arg.UniversityName,
 		arg.AdmissionType,
 		arg.SubjectCategory,
@@ -62,7 +65,7 @@ func (q *Queries) DeleteAdmissionSummary(ctx context.Context, id uint32) error {
 }
 
 const getAdmissionSummaryByID = `-- name: GetAdmissionSummaryByID :one
-SELECT id, year, university_name, admission_type, subject_category, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_summary 
+SELECT id, year, province, university_name, admission_type, subject_category, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_summary 
 WHERE id = ?
 `
 
@@ -73,6 +76,7 @@ func (q *Queries) GetAdmissionSummaryByID(ctx context.Context, id uint32) (Admis
 	err := row.Scan(
 		&i.ID,
 		&i.Year,
+		&i.Province,
 		&i.UniversityName,
 		&i.AdmissionType,
 		&i.SubjectCategory,
