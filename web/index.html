@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>本科院校招生信息网</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+        }
+
+        .header-container {
+            width: 100%;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+        }
+
+        .header {
+            width: 1180px;
+            height: 90px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+
+        .logo-icon {
+            font-size: 48px;
+            margin-right: 15px;
+            color: #e67e22;
+        }
+
+        .logo-text {
+            font-size: 30px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #555;
+            margin-left: 5px;
+            margin-right: 5px;
+            font-size: 12px;
+            transition: color 0.3s;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links a:first-child {
+            margin-left: 0;
+        }
+
+        .separator {
+            color: #ddd;
+            margin: 0 8px;
+        }
+
+        .banner-container {
+            width: 100%;
+            height: 300px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+
+        }
+
+        .banner {
+            width: 1180px;
+            height: 100%;
+            background-image: url('./banner_fun.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* 新增内容区域样式 */
+        .main-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-top: 5px;
+        }
+
+        .content-container {
+            width: 1180px;
+            margin: 0 auto;
+            display: flex;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 左侧导航栏 */
+        .left-nav {
+            width: 240px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            /* 移除固定高度，由内容撑开 */
+            align-self: flex-start; /* 不与右侧内容区域等高 */
+        }
+
+        .nav-item {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background-color: #f5f5f5;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 16px;
+            color: #333;
+            transition: all 0.3s ease;
+            position: relative; /* 为边框效果做准备 */
+        }
+
+        .nav-item:first-child {
+            height: 100px;
+            background-color: #007B42;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .nav-item:hover {
+            background-color: #e0e0e0;
+        }
+
+        .nav-item.active {
+            color: #007B42;
+            font-weight: bold;
+            background-color: #fff; /* 激活时背景色改为白色 */
+        }
+
+        /* 右侧内容区 */
+        .right-content {
+            flex: 1;
+            margin-left: 4px;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 搜索框样式 - 优化后 */
+        .search-box {
+            margin-bottom: 20px;
+            position: relative;
+            width: 60%; /* 调整搜索框宽度为60% */
+            max-width: 500px; /* 设置最大宽度 */
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .search-input:hover {
+            border-color: #bbb;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #007B42;
+            box-shadow: 0 0 0 2px rgba(0,123,66,0.2);
+        }
+
+        .search-box::after {
+            content: "\f002";
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        /* 纵向布局的筛选条件 - 优化后 */
+        .filter-section {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        .filter-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .filter-title {
+            width: 60px;
+            font-weight: bold;
+            color: #555;
+            margin-right: 2px;
+        }
+
+        .filter-title::after {
+            content: ":";
+            margin-left: 2px;
+        }
+
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            flex: 1;
+            gap: 8px;
+        }
+
+        .filter-option {
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            /* 移除默认边框 */
+            border: none;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .filter-option:hover {
+            background-color: #e9ecef;
+            /* 悬停时也不显示边框 */
+            border: none;
+            transform: translateY(-1px);
+        }
+
+        .filter-option.active {
+            background-color: #007B42;
+            color: white;
+            /* 激活状态也不显示边框 */
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,123,66,0.2);
+            transform: translateY(-1px);
+        }
+
+        .divider {
+            height: 1px;
+            background-color: #e0e0e0;
+            margin: 20px 0;
+        }
+
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .result-table thead {
+            background-color: #007B42; /* 为整个表头添加背景色 */
+        }
+
+        .result-table th {
+            background-color: transparent !important;
+            color: #fff;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            border-bottom: 2px solid #ddd; /* 增加底部边框增强视觉分隔 */
+        }
+
+        .result-table th, .result-table td {
+            border: 1px solid #ddd;
+            padding: 8px 10px;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+
+        .result-table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .result-table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            display: none;
+        }
+
+        /* 新增分页样式 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            list-style: none;
+            padding: 0;
+        }
+
+        .pagination li {
+            margin: 0 5px;
+        }
+
+        .pagination a {
+            display: block;
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            color: #333; /* 默认黑色文字 */
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .pagination a:hover:not(.disabled) {
+            background-color: #f5f5f5;
+        }
+
+        .pagination .active a {
+            background-color: #007B42;
+            color: white;
+            border-color: #007B42;
+        }
+
+        .pagination .disabled a {
+            color: #ccc; /* 禁用项文字颜色 */
+            cursor: not-allowed;
+            background-color: #f9f9f9;
+        }
+    </style>
+    <link rel="stylesheet" href="./all.min.css">
+</head>
+<body>
+<div class="header-container">
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-leaf logo-icon"></i>
+            <span class="logo-text">高校历年录取信息网</span>
+        </div>
+
+        <div class="nav-links">
+            <a href="#">登录</a>
+            <a href="#">注册</a>
+            <span class="separator">|</span>
+            <a href="#">帮助中心</a>
+        </div>
+    </header>
+</div>
+
+<div class="banner-container">
+    <div class="banner"></div>
+</div>
+
+<!-- 新增内容区域 -->
+<div class="main-container">
+    <div class="content-container">
+        <!-- 左侧导航栏 -->
+        <div class="left-nav">
+            <div class="nav-item">招生信息</div>
+            <div class="nav-item active">招生计划</div>
+            <div class="nav-item">历年分数</div>
+            <div class="nav-item">录取查询</div>
+        </div>
+
+        <!-- 右侧内容区 -->
+        <div class="right-content">
+            <!-- 优化后的搜索框 -->
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="输入学校名称搜索...">
+            </div>
+
+            <div class="filter-section">
+                <!-- 类型筛选 -->
+                <div class="filter-row">
+                    <div class="filter-title">类型</div>
+                    <div class="filter-options">
+                        <div class="filter-option active">普通类</div>
+                        <div class="filter-option">地方专项</div>
+                        <div class="filter-option">高校专项</div>
+                    </div>
+                </div>
+
+                <!-- 科类筛选 -->
+                <div class="filter-row">
+                    <div class="filter-title">科类</div>
+                    <div class="filter-options">
+                        <div class="filter-option active">物理类</div>
+                        <div class="filter-option">历史类</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="no-results">没有找到匹配的学校</div>
+
+            <table class="result-table">
+                <thead>
+                <tr>
+                    <th>学校名称</th>
+                    <th>年份</th>
+                    <th>省份</th>
+                    <th>最高分</th>
+                    <th>最低分</th>
+                    <th>最高分排名</th>
+                    <th>最低分排名</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>南京大学</td>
+                    <td>2024</td>
+                    <td>江苏</td>
+                    <td>658</td>
+                    <td>642</td>
+                    <td>1200</td>
+                    <td>2500</td>
+                </tr>
+                <tr>
+                    <td>东南大学</td>
+                    <td>2024</td>
+                    <td>江苏</td>
+                    <td>645</td>
+                    <td>630</td>
+                    <td>2500</td>
+                    <td>4500</td>
+                </tr>
+                <tr>
+                    <td>南京航空航天大学</td>
+                    <td>2024</td>
+                    <td>江苏</td>
+                    <td>635</td>
+                    <td>620</td>
+                    <td>4000</td>
+                    <td>6500</td>
+                </tr>
+                <tr>
+                    <td>南京理工大学</td>
+                    <td>2024</td>
+                    <td>江苏</td>
+                    <td>632</td>
+                    <td>615</td>
+                    <td>4500</td>
+                    <td>7500</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- 在表格下方添加分页 -->
+<div class="pagination-container">
+    <ul class="pagination">
+        <li class="disabled"><a href="#" class="disabled"> 上一页</a></li>
+        <li class="active"><a href="#">1</a></li>
+        <li><a href="#">2</a></li>
+        <li><a href="#">3</a></li>
+        <li><a href="#">4</a></li>
+        <li class="disabled"><a href="#" class="disabled">下一页</a></li>
+    </ul>
+</div>
+
+<script>
+    // 添加筛选项点击事件 - 优化后
+    document.querySelectorAll('.filter-option').forEach(option => {
+        option.addEventListener('click', function() {
+            // 添加点击动画
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 200);
+
+            // 移除同一组中其他选项的active类
+            const parentOptions = this.parentElement;
+            parentOptions.querySelectorAll('.filter-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+
+            // 为当前点击的选项添加active类
+            this.classList.add('active');
+
+            // 这里可以添加筛选逻辑
+            filterResults();
+        });
+    });
+
+    // 搜索功能实现 - 优化后
+    const searchInput = document.querySelector('.search-input');
+    const tableRows = document.querySelectorAll('.result-table tbody tr');
+    const noResults = document.querySelector('.no-results');
+
+    searchInput.addEventListener('input', function() {
+        filterResults();
+    });
+
+    function filterResults() {
+        const searchText = searchInput.value.toLowerCase();
+        let hasResults = false;
+
+        tableRows.forEach(row => {
+            const schoolName = row.cells[0].textContent.toLowerCase();
+            const shouldShow = schoolName.includes(searchText);
+
+            if(shouldShow) {
+                row.style.display = '';
+                hasResults = true;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // 显示/隐藏"无结果"提示
+        noResults.style.display = hasResults ? 'none' : 'block';
+    }
+
+    // 初始加载时过滤一次
+    filterResults();
+
+    // 分页功能
+    const totalPages = 4; // 总页数
+    let currentPage = 1; // 当前页
+
+    function updatePagination() {
+        const pagination = document.querySelector('.pagination');
+        const prevBtn = pagination.querySelector('li:first-child');
+        const nextBtn = pagination.querySelector('li:last-child');
+
+        // 更新上一页按钮状态
+        if(currentPage === 1) {
+            prevBtn.classList.add('disabled');
+        } else {
+            prevBtn.classList.remove('disabled');
+        }
+
+        // 更新下一页按钮状态
+        if(currentPage === totalPages) {
+            nextBtn.classList.add('disabled');
+        } else {
+            nextBtn.classList.remove('disabled');
+        }
+
+        // 更新页码active状态
+        pagination.querySelectorAll('li:not(:first-child):not(:last-child)').forEach((li, index) => {
+            if(index + 1 === currentPage) {
+                li.classList.add('active');
+            } else {
+                li.classList.remove('active');
+            }
+        });
+    }
+
+    // 分页点击事件
+    document.querySelectorAll('.pagination a:not(.disabled)').forEach(page => {
+        page.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            const text = this.textContent.trim();
+
+            if(text === '上一页' || text.includes('angle-left')) {
+                if(currentPage > 1) currentPage--;
+            }
+            else if(text === '下一页' || text.includes('angle-right')) {
+                if(currentPage < totalPages) currentPage++;
+            }
+            else {
+                currentPage = parseInt(text);
+            }
+
+            updatePagination();
+            // 这里可以添加加载对应页数据的逻辑
+            console.log('切换到第', currentPage, '页');
+        });
+    });
+
+    // 初始化分页
+    updatePagination();
+</script>
+</body>
+</html>

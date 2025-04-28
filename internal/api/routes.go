@@ -14,6 +14,9 @@ func RegisterRoutes(e *echo.Echo, repo *database.Database, cfg *config.Config) {
 	admissionSummaryHandler := handlers.NewAdmissionSummaryHandler(repo, cfg)
 	scoreDistributionHandler := handlers.NewScoreDistributionHandler(repo, cfg)
 
+	// 托管静态文件
+	e.Static("/", "web") // 访问 / 或 /index.html 会指向 /web/index.html
+
 	// check
 	{
 		e.GET("/api/health", func(c echo.Context) error {
