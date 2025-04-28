@@ -59,6 +59,45 @@ type AdmissionScore struct {
 	CreateTime      time.Time `db:"create_time"`
 }
 
+// 高校录取分数汇总表
+type AdmissionSummary struct {
+	ID uint32 `db:"id"`
+	// 录取年份
+	Year string `db:"year"`
+	// 高校名称
+	UniversityName string `db:"university_name"`
+	// 类型
+	AdmissionType string `db:"admission_type"`
+	// 科类
+	SubjectCategory string `db:"subject_category"`
+	// 全校最高分
+	HighestScore string `db:"highest_score"`
+	// 最高分位次
+	HighestScoreRank string `db:"highest_score_rank"`
+	// 全校最低分
+	LowestScore string `db:"lowest_score"`
+	// 最低分位次
+	LowestScoreRank string    `db:"lowest_score_rank"`
+	CreateTime      time.Time `db:"create_time"`
+}
+
+// 一段一分表
+type ScoreDistribution struct {
+	ID int32 `db:"id"`
+	// 年份
+	Year string `db:"year"`
+	// 省份
+	Province string `db:"province"`
+	// 物理等科目类, 历史等科目类
+	SubjectCategory string `db:"subject_category"`
+	// 分数段
+	ScoreRange string `db:"score_range"`
+	// 同分人数
+	SameScoreCount string `db:"same_score_count"`
+	// 累计人数
+	CumulativeCount string `db:"cumulative_count"`
+}
+
 // 学校基础信息表
 type University struct {
 	ID uint32 `db:"id"`
