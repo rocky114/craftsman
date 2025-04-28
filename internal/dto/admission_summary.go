@@ -5,25 +5,25 @@ import (
 )
 
 type AdmissionSummary struct {
-	ID uint32 `db:"id"`
+	ID uint32 `json:"id"`
 	// 录取年份
-	Year string `db:"year"`
+	Year string `json:"year"`
 	// 省份 江苏
-	Province string `db:"province"`
+	Province string `json:"province"`
 	// 高校名称
-	UniversityName string `db:"university_name"`
+	UniversityName string `json:"university_name"`
 	// 类型
-	AdmissionType string `db:"admission_type"`
+	AdmissionType string `json:"admission_type"`
 	// 科类
-	SubjectCategory string `db:"subject_category"`
+	SubjectCategory string `json:"subject_category"`
 	// 全校最高分
-	HighestScore string `db:"highest_score"`
+	HighestScore string `json:"highest_score"`
 	// 最高分位次
-	HighestScoreRank string `db:"highest_score_rank"`
+	HighestScoreRank string `json:"highest_score_rank"`
 	// 全校最低分
-	LowestScore string `db:"lowest_score"`
+	LowestScore string `json:"lowest_score"`
 	// 最低分位次
-	LowestScoreRank string `db:"lowest_score_rank"`
+	LowestScoreRank string `json:"lowest_score_rank"`
 }
 
 func TransformListAdmissionSummariesResponse(items []sqlc.AdmissionSummary) []AdmissionSummary {
