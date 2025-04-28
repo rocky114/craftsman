@@ -69,7 +69,7 @@ func (h *UniversityHandler) ListUniversities(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	items, err := h.repo.ListUniversities(c.Request().Context(), repository.ListUniversitiesParams{
+	items, err := h.repo.ListUniversities(c.Request().Context(), repository.UniversityQueryParams{
 		Name:   req.Name,
 		Limit:  utils.PageSize,
 		Offset: utils.Offset(req.Page),
@@ -78,7 +78,7 @@ func (h *UniversityHandler) ListUniversities(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	totalCount, err := h.repo.CountUniversities(c.Request().Context(), repository.CountUniversitiesParams{Name: req.Name})
+	totalCount, err := h.repo.CountUniversities(c.Request().Context(), repository.UniversityQueryParams{Name: req.Name})
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}

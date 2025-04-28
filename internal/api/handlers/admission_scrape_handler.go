@@ -5,22 +5,24 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/rocky114/craftman/internal/app/config"
 	"github.com/rocky114/craftman/internal/database"
+	"github.com/rocky114/craftman/internal/database/repository"
 	"github.com/rocky114/craftman/internal/database/sqlc"
+	"github.com/rocky114/craftman/internal/dto"
 	"github.com/rocky114/craftman/internal/utils"
 	"net/http"
 	"strings"
 )
 
-type AdmissionScrapeHandler struct {
+type AdmissionScoreHandler struct {
 	repo *database.Database
 	cfg  *config.Config
 }
 
-func NewAdmissionScrapeHandler(q *database.Database, cfg *config.Config) *AdmissionScrapeHandler {
-	return &AdmissionScrapeHandler{repo: q, cfg: cfg}
+func NewAdmissionScrapeHandler(q *database.Database, cfg *config.Config) *AdmissionScoreHandler {
+	return &AdmissionScoreHandler{repo: q, cfg: cfg}
 }
 
-func (h *AdmissionScrapeHandler) CreateAdmissionScore(c echo.Context) error {
+func (h *AdmissionScoreHandler) CreateAdmissionScore(c echo.Context) error {
 	var admissionScoreReq struct {
 		UniversityName string `json:"university_name"`
 		Year           string `json:"year"`
@@ -88,4 +90,36 @@ func (h *AdmissionScrapeHandler) CreateAdmissionScore(c echo.Context) error {
 	admissionScoreResp.Total = len(respAdmission.Data)
 
 	return utils.SuccessWithData(c, admissionScoreResp)
+}
+
+func (h *AdmissionScoreHandler) ListAdmissionScores(c echo.Context) error {
+	var req struct {
+		Page int `json:"page" form:"page" query:"page"` // 当前页码（从1开始）
+	}
+
+	if err := c.Bind(&req); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	items, err := h.repo.ListAdmissionScores(c.Request().Context(), repository.AdmissionScoreQueryParams{
+		Limit:  utils.PageSize,
+		Offset: utils.Offset(req.Page),
+	})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	totalCount, err := h.repo.CountAdmissionScores(c.Request().Context(), repository.AdmissionScoreQueryParams{})
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	ret := utils.Pagination[dto.AdmissionScore]{
+		List:       dto.TransformListAdmissionScoresResponse(items),
+		TotalCount: totalCount,
+		Page:       req.Page,
+		PageSize:   utils.PageSize,
+	}
+
+	return c.JSON(http.StatusOK, ret)
 }
