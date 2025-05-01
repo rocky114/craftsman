@@ -1,7 +1,7 @@
 package utils
 
 const (
-	PageSize = 10
+	PageSize = 15
 )
 
 type Pagination[T any] struct {
