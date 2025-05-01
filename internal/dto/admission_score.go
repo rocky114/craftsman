@@ -15,7 +15,7 @@ type AdmissionScoreResponse struct {
 	// 类型: 普通类,艺术类,国家专项,高校专项,中外合作,飞行技术,预科
 	AdmissionType string `json:"admission_type"`
 	// 科类文本
-	SubjectCategoryTxt string `json:"subject_category_txt"`
+	SubjectCategory string `json:"subject_category"`
 	// 专业名称 计算机
 	MajorName string `json:"major_name"`
 	// 最高分
@@ -32,17 +32,17 @@ func ToAdmissionScoreResponses(items []sqlc.AdmissionScore) []AdmissionScoreResp
 	ret := make([]AdmissionScoreResponse, 0, len(items))
 	for _, item := range items {
 		ret = append(ret, AdmissionScoreResponse{
-			ID:                 item.ID,
-			Year:               item.Year,
-			Province:           item.Province,
-			UniversityName:     item.UniversityName,
-			AdmissionType:      item.AdmissionType,
-			SubjectCategoryTxt: item.SubjectCategoryTxt,
-			MajorName:          item.MajorName,
-			HighestScore:       item.HighestScore,
-			HighestScoreRank:   item.HighestScoreRank,
-			LowestScore:        item.LowestScore,
-			LowestScoreRank:    item.LowestScoreRank,
+			ID:               item.ID,
+			Year:             item.Year,
+			Province:         item.Province,
+			UniversityName:   item.UniversityName,
+			AdmissionType:    item.AdmissionType,
+			SubjectCategory:  item.SubjectCategory,
+			MajorName:        item.MajorName,
+			HighestScore:     item.HighestScore,
+			HighestScoreRank: item.HighestScoreRank,
+			LowestScore:      item.LowestScore,
+			LowestScoreRank:  item.LowestScoreRank,
 		})
 	}
 

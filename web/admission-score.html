@@ -10,167 +10,208 @@
 </head>
 
 <body>
-    <div class="header-container">
-        <header class="header">
-            <div class="logo">
-                <i class="fas fa-leaf logo-icon"></i>
-                <span class="logo-text">院校历年录取信息</span>
+<div class="header-container">
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-leaf logo-icon"></i>
+            <span class="logo-text">院校历年录取信息</span>
+        </div>
+
+        <div class="nav-links">
+            <a href="#">登录</a>
+            <a href="#">注册</a>
+            <span class="separator">|</span>
+            <a href="#">帮助中心</a>
+        </div>
+    </header>
+</div>
+
+<div class="banner-container">
+    <div class="banner"></div>
+</div>
+
+<!-- 新增内容区域 -->
+<div class="main-container">
+    <div class="content-container">
+        <!-- 左侧导航栏 -->
+        <!-- 左侧导航栏 -->
+        <div class="left-nav">
+            <div class="nav-item">招生信息</div>
+            <a href="/" class="nav-item">院校查询</a>
+            <a href="/admission-summart.html" class="nav-item">院校分组分数</a>
+            <a href="javascript:void(0)" class="nav-item active">院校专业分数</a>
+            <a href="/score-ranking.html" class="nav-item">省内分数排名</a>
+        </div>
+
+        <!-- 右侧内容区 -->
+        <div class="right-content">
+            <!-- 优化后的搜索框 -->
+            <div class="search-box">
+                <input type="text" class="search-input" name="university_name" placeholder="输入学校名称搜索...">
             </div>
 
-            <div class="nav-links">
-                <a href="#">登录</a>
-                <a href="#">注册</a>
-                <span class="separator">|</span>
-                <a href="#">帮助中心</a>
-            </div>
-        </header>
-    </div>
-
-    <div class="banner-container">
-        <div class="banner"></div>
-    </div>
-
-    <!-- 新增内容区域 -->
-    <div class="main-container">
-        <div class="content-container">
-            <!-- 左侧导航栏 -->
-            <!-- 左侧导航栏 -->
-            <div class="left-nav">
-                <div class="nav-item">招生信息</div>
-                <a href="/" class="nav-item">院校查询</a>
-                <a href="/admission-summary.html" class="nav-item">院校分组分数</a>
-                <a href="javascript:void(0)" class="nav-item active">院校专业分数</a>
-                <a href="/score-ranking.html" class="nav-item">省内分数排名</a>
-            </div>
-
-            <!-- 右侧内容区 -->
-            <div class="right-content">
-                <!-- 优化后的搜索框 -->
-                <div class="search-box">
-                    <input type="text" class="search-input" name="university_name" placeholder="输入学校名称搜索...">
+            <div class="filter-section">
+                <!-- 类型筛选 -->
+                <div class="filter-row">
+                    <div class="filter-title">类型</div>
+                    <div class="filter-options">
+                        <div class="filter-option active">普通类</div>
+                        <div class="filter-option">提前批</div>
+                        <div class="filter-option">地方专项</div>
+                        <div class="filter-option">高校专项</div>
+                        <div class="filter-option">中外合作</div>
+                        <div class="filter-option">体育类</div>
+                        <div class="filter-option">艺术类</div>
+                    </div>
                 </div>
-
-                <div class="divider"></div>
-
-                <table class="result-table">
-                    <thead>
-                        <tr>
-                            <th>省份</th>
-                            <th>学校名称</th>
-                            <th>学校招生官网</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                    </tbody>
-                </table>
-
-                <div class="no-results">没有找到匹配的学校</div>
             </div>
+
+            <div class="divider"></div>
+
+            <table class="result-table">
+                <thead>
+                <tr>
+                    <th>年份</th>
+                    <th>省份</th>
+                    <th>院校</th>
+                    <th>类型</th>
+                    <th>科类</th>
+                    <th>专业</th>
+                    <th>最高分/排名</th>
+                    <th>最低分/排名</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+
+            <div class="no-results">没有找到匹配的学校</div>
         </div>
     </div>
+</div>
 
-    <!-- 在表格下方添加分页 -->
-    <div class="pagination-container">
-        <ul class="pagination"></ul>
-    </div>
+<!-- 在表格下方添加分页 -->
+<div class="pagination-container">
+    <ul class="pagination"></ul>
+</div>
 
-    <script src="./main.js"></script>
-    <script>
-        // 分页
-        function pagination(currentPage, totalPages, universityName) {
-            let html = '<ul class="pagination">';
+<script src="./main.js"></script>
+<script>
+    // 分页
+    function pagination(currentPage, totalPages, admissionType, universityName) {
+        let html = '<ul class="pagination">';
 
-            // 上一页按钮
-            if (currentPage === 1) {
-                html += '<li class="disabled"><a href="javascript:void(0)" class="disabled">上一页</a></li>';
-            } else {
-                html += `<li><a href="javascript:void(0)" onclick="loadUniversities(${currentPage - 1}, '${universityName}')">上一页</a></li>`;
-            }
-
-            // 页码按钮
-            const maxVisiblePages = 5; // 最多显示5个页码
-
-            // Calculate start and end page numbers
-            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-
-            // Adjust startPage if endPage is at the maximum
-            if (endPage - startPage + 1 < maxVisiblePages) {
-                startPage = Math.max(1, endPage - maxVisiblePages + 1);
-            }
-
-            // 生成页码
-            for (let i = startPage; i <= endPage; i++) {
-                if (i === currentPage) {
-                    html += `<li class="active"><a href="javascript:void(0)">${i}</a></li>`;
-                } else {
-                    html += `<li><a href="javascript:void(0)" onclick="loadUniversities(${i}, '${universityName}')">${i}</a></li>`;
-                }
-            }
-
-            // 下一页按钮
-            if (currentPage === totalPages) {
-                html += '<li class="disabled"><a href="javascript:void(0)" class="disabled">下一页</a></li>';
-            } else {
-                html += `<li><a href="javascript:void(0)" onclick="loadUniversities(${currentPage + 1}, '${universityName}')">下一页</a></li>`;
-            }
-
-            html += '</ul>';
-
-            document.querySelector('.pagination').innerHTML = html;
+        // 上一页按钮
+        if (currentPage === 1) {
+            html += '<li class="disabled"><a href="javascript:void(0)" class="disabled">上一页</a></li>';
+        } else {
+            html += `<li><a href="javascript:void(0)" onclick="loadAdmissionScores(${currentPage - 1}, '${admissionType}', '${universityName}')">上一页</a></li>`;
         }
 
-        // 加载大学数据
-        async function loadUniversities(page = 1, universityName = '') {
-            try {
-                const response = await fetch(`http://127.0.0.1/api/universities?page=${page}&name=${universityName}`);
-                const data = await response.json();
+        // 页码按钮
+        const maxVisiblePages = 5; // 最多显示5个页码
 
-                // 清除无数据
-                document.querySelector('.no-results').style.display = 'none';
+        // Calculate start and end page numbers
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
 
-                // 清除分页
-                document.querySelector('.pagination').innerHTML = '';
+        // Adjust startPage if endPage is at the maximum
+        if (endPage - startPage + 1 < maxVisiblePages) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
 
-                // 更新表格
-                const tbody = document.querySelector('.result-table tbody');
-                tbody.innerHTML = '';
-
-                if (data.list.length === 0) {
-                    document.querySelector('.no-results').style.display = 'block';
-                    return;
-                }
-
-                data.list.forEach(univ => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-            <td>${univ.province}</td>
-            <td>${univ.name}</td>
-            <td><a href="${univ.admission_website}" target="_blank">招生官网</a></td>
-        `;
-                    tbody.appendChild(row);
-                });
-
-                // 更新分页
-                pagination(data.page, Math.ceil(data.total_count / data.page_size), universityName);
-            } catch (error) {
-                console.error('加载数据失败:', error);
+        // 生成页码
+        for (let i = startPage; i <= endPage; i++) {
+            if (i === currentPage) {
+                html += `<li class="active"><a href="javascript:void(0)">${i}</a></li>`;
+            } else {
+                html += `<li><a href="javascript:void(0)" onclick="loadAdmissionScores(${i}, '${admissionType}', '${universityName}')">${i}</a></li>`;
             }
         }
 
-        // 初始化加载
-        document.addEventListener('DOMContentLoaded', () => {
-            const inputElement = document.querySelector('input[name="university_name"]');
-            // Attach debounced load function to input event
-            inputElement.addEventListener('input', debounce((event) => {
-                loadUniversities(1, event.target.value.trim());
-            }, 500)); // 500ms delay
+        // 下一页按钮
+        if (currentPage === totalPages) {
+            html += '<li class="disabled"><a href="javascript:void(0)" class="disabled">下一页</a></li>';
+        } else {
+            html += `<li><a href="javascript:void(0)" onclick="loadAdmissionScores(${currentPage + 1}, '${admissionType}', '${universityName}')">下一页</a></li>`;
+        }
 
-            // 初始化加载第一页数据
-            loadUniversities();
+        html += '</ul>';
+
+        document.querySelector('.pagination').innerHTML = html;
+    }
+
+    // 加载大学数据
+    async function loadAdmissionScores(page = 1, admissionType = '普通类', universityName = '') {
+        try {
+            const response = await fetch(`http://127.0.0.1/api/admission_scores?page=${page}&admission_type=${admissionType}&university_name=${universityName}`);
+            const data = await response.json();
+
+            // 清除无数据
+            document.querySelector('.no-results').style.display = 'none';
+
+            // 清除分页
+            document.querySelector('.pagination').innerHTML = '';
+
+            // 更新表格
+            const tbody = document.querySelector('.result-table tbody');
+            tbody.innerHTML = '';
+
+            if (data.list.length === 0) {
+                document.querySelector('.no-results').style.display = 'block';
+                return;
+            }
+
+            data.list.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                        <td>${item.year}</td>
+                        <td>${item.province}</td>
+                        <td>${item.university_name}</td>
+                        <td>${item.admission_type}</td>
+                        <td>${item.subject_category !== '' ? `${item.subject_category}` : '-'}</td>
+                        <td>${item.major_name !== '' ? `${item.major_name}` : '-'}</td>
+                        <td>${item.highest_score !== '' ? `${item.highest_score}/${item.highest_score_rank}` : '-'}</td>
+                        <td>${item.lowest_score !== '' ? `${item.lowest_score}/${item.lowest_score_rank}` : '-'}</td>
+                    `;
+                tbody.appendChild(row);
+            });
+
+            // 更新分页
+            pagination(data.page, Math.ceil(data.total_count / data.page_size), admissionType, universityName);
+        } catch (error) {
+            console.error('加载数据失败:', error);
+        }
+    }
+
+    // 初始化加载
+    document.addEventListener('DOMContentLoaded', () => {
+        const inputElement = document.querySelector('input[name="university_name"]');
+        // Attach debounced load function to input event
+        inputElement.addEventListener('input', debounce((event) => {
+            let admissionType = document.querySelector("div.filter-option.active").textContent;
+            loadAdmissionScores(1, admissionType, event.target.value.trim());
+        }, 500)); // 500ms delay
+
+        const filterOptions = document.querySelectorAll('.filter-option');
+
+        filterOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                // Remove 'active' class from all filter options
+                filterOptions.forEach(opt => opt.classList.remove('active'));
+                // Add 'active' class to the clicked option
+                option.classList.add('active');
+                // Get the filter value (text content) and call load function
+                const filterValue = option.textContent;
+
+                loadAdmissionScores(1, filterValue, inputElement.value.trim());
+            });
         });
-    </script>
+
+        // 初始化加载第一页数据
+        loadAdmissionScores();
+    });
+</script>
 </body>
 
 </html>
