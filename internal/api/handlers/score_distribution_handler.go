@@ -21,7 +21,9 @@ func NewScoreDistributionHandler(q *database.Database, cfg *config.Config) *Scor
 
 func (h *ScoreDistributionHandler) ListScoreDistributions(c echo.Context) error {
 	var req struct {
-		Page int `json:"page" form:"page" query:"page"` // 当前页码（从1开始）
+		Page            int    `json:"page" form:"page" query:"page"` // 当前页码（从1开始）
+		SubjectCategory string `json:"subject_category" form:"subject_category" query:"subject_category"`
+		Score           string `json:"score" form:"score" query:"score"`
 	}
 
 	if err := c.Bind(&req); err != nil {
@@ -29,14 +31,19 @@ func (h *ScoreDistributionHandler) ListScoreDistributions(c echo.Context) error 
 	}
 
 	items, err := h.repo.ListScoreDistributions(c.Request().Context(), repository.ScoreDistributionQueryParams{
-		Limit:  utils.PageSize,
-		Offset: utils.Offset(req.Page),
+		SubjectCategory: req.SubjectCategory,
+		ScoreRange:      req.Score,
+		Limit:           utils.PageSize,
+		Offset:          utils.Offset(req.Page),
 	})
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	totalCount, err := h.repo.CountScoreDistributions(c.Request().Context(), repository.ScoreDistributionQueryParams{})
+	totalCount, err := h.repo.CountScoreDistributions(c.Request().Context(), repository.ScoreDistributionQueryParams{
+		SubjectCategory: req.SubjectCategory,
+		ScoreRange:      req.Score,
+	})
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
