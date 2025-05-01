@@ -396,28 +396,7 @@
             <div class="right-content">
                 <!-- 优化后的搜索框 -->
                 <div class="search-box">
-                    <input type="text" class="search-input" placeholder="输入学校名称搜索...">
-                </div>
-
-                <div class="filter-section">
-                    <!-- 类型筛选 -->
-                    <div class="filter-row">
-                        <div class="filter-title">类型</div>
-                        <div class="filter-options">
-                            <div class="filter-option active">普通类</div>
-                            <div class="filter-option">地方专项</div>
-                            <div class="filter-option">高校专项</div>
-                        </div>
-                    </div>
-
-                    <!-- 科类筛选 -->
-                    <div class="filter-row">
-                        <div class="filter-title">科类</div>
-                        <div class="filter-options">
-                            <div class="filter-option active">物理类</div>
-                            <div class="filter-option">历史类</div>
-                        </div>
-                    </div>
+                    <input type="text" class="search-input" name="university_name" placeholder="输入学校名称搜索...">
                 </div>
 
                 <div class="divider"></div>
@@ -446,63 +425,70 @@
     </div>
 
     <script>
-        // 添加筛选项点击事件 - 优化后
-        document.querySelectorAll('.filter-option').forEach(option => {
-            option.addEventListener('click', function () {
-                // 添加点击动画
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = '';
-                }, 200);
+        // 防抖动
+        function debounce(func, delay) {
+            let timeoutId;
+            return function (...args) {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => func.apply(this, args), delay);
+            };
+        }
 
-                // 移除同一组中其他选项的active类
-                const parentOptions = this.parentElement;
-                parentOptions.querySelectorAll('.filter-option').forEach(opt => {
-                    opt.classList.remove('active');
-                });
+        // 分页
+        function pagination(currentPage, totalPages, universityName) {
+            let html = '<ul class="pagination">';
 
-                // 为当前点击的选项添加active类
-                this.classList.add('active');
+            // 上一页按钮
+            if (currentPage === 1) {
+                html += '<li class="disabled"><a href="javascript:void(0)" class="disabled">上一页</a></li>';
+            } else {
+                html += `<li><a href="javascript:void(0)" onclick="loadUniversities(${currentPage - 1}, '${universityName}')">上一页</a></li>`;
+            }
 
-                // 这里可以添加筛选逻辑
-                filterResults();
-            });
-        });
+            // 页码按钮
+            const maxVisiblePages = 5; // 最多显示5个页码
 
-        // 搜索功能实现 - 优化后
-        const searchInput = document.querySelector('.search-input');
-        const tableRows = document.querySelectorAll('.result-table tbody tr');
-        const noResults = document.querySelector('.no-results');
+            // Calculate start and end page numbers
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
 
-        searchInput.addEventListener('input', function () {
-            filterResults();
-        });
+            // Adjust startPage if endPage is at the maximum
+            if (endPage - startPage + 1 < maxVisiblePages) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
 
-        function filterResults() {
-            const searchText = searchInput.value.toLowerCase();
-            let hasResults = false;
-
-            tableRows.forEach(row => {
-                const schoolName = row.cells[0].textContent.toLowerCase();
-                const shouldShow = schoolName.includes(searchText);
-
-                if (shouldShow) {
-                    row.style.display = '';
-                    hasResults = true;
+            // 生成页码
+            for (let i = startPage; i <= endPage; i++) {
+                if (i === currentPage) {
+                    html += `<li class="active"><a href="javascript:void(0)">${i}</a></li>`;
                 } else {
-                    row.style.display = 'none';
+                    html += `<li><a href="javascript:void(0)" onclick="loadUniversities(${i}, '${universityName}')">${i}</a></li>`;
                 }
-            });
+            }
 
-            // 显示/隐藏"无结果"提示
-            noResults.style.display = hasResults ? 'none' : 'block';
+            // 下一页按钮
+            if (currentPage === totalPages) {
+                html += '<li class="disabled"><a href="javascript:void(0)" class="disabled">下一页</a></li>';
+            } else {
+                html += `<li><a href="javascript:void(0)" onclick="loadUniversities(${currentPage + 1}, '${universityName}')">下一页</a></li>`;
+            }
+
+            html += '</ul>';
+
+            document.querySelector('.pagination').innerHTML = html;
         }
 
         // 加载大学数据
-        async function loadUniversities(page = 1) {
+        async function loadUniversities(page = 1, universityName = '') {
             try {
-                const response = await fetch(`http://127.0.0.1/api/universities?page=${page}`);
+                const response = await fetch(`http://127.0.0.1/api/universities?page=${page}&name=${universityName}`);
                 const data = await response.json();
+
+                // 清除无数据
+                document.querySelector('.no-results').style.display = 'none';
+
+                // 清除分页
+                document.querySelector('.pagination').innerHTML = '';
 
                 // 更新表格
                 const tbody = document.querySelector('.result-table tbody');
@@ -524,55 +510,20 @@
                 });
 
                 // 更新分页
-                generatePaginationHTML(data.page, Math.ceil(data.total_count / data.page_size));
+                pagination(data.page, Math.ceil(data.total_count / data.page_size), universityName);
             } catch (error) {
                 console.error('加载数据失败:', error);
-                // document.querySelector('.no-results').style.display = 'block';
             }
         }
 
-        function generatePaginationHTML(currentPage, totalPages) {
-            let html = '<ul class="pagination">';
-
-            // 上一页按钮
-            if (currentPage === 1) {
-                html += '<li class="disabled"><a href="javascript:void(0)" class="disabled">上一页</a></li>';
-            } else {
-                html += `<li><a href="javascript:void(0)" onclick="loadUniversities(${currentPage - 1})">上一页</a></li>`;
-            }
-
-            // 页码按钮
-            const maxVisiblePages = 5; // 最多显示5个页码
-
-            // Calculate start and end page numbers
-            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-
-            // Adjust startPage if endPage is at the maximum
-            if (endPage - startPage + 1 < maxVisiblePages) {
-                startPage = Math.max(1, endPage - maxVisiblePages + 1);
-            }
-
-            // 生成页码
-            for (let i = startPage; i <= endPage; i++) {
-                if (i === currentPage) {
-                    html += `<li class="active"><a href="javascript:void(0)">${i}</a></li>`;
-                } else {
-                    html += `<li><a href="javascript:void(0)" onclick="loadUniversities(${i})">${i}</a></li>`;
-                }
-            }
-
-            // 下一页按钮
-            if (currentPage === totalPages) {
-                html += '<li class="disabled"><a href="javascript:void(0)" class="disabled">下一页</a></li>';
-            } else {
-                html += `<li><a href="javascript:void(0)" onclick="loadUniversities(${currentPage + 1})">下一页</a></li>`;
-            }
-
-            html += '</ul>';
-
-            document.querySelector('.pagination').innerHTML = html;
-        }
+        // 搜索
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputElement = document.querySelector('input[name="university_name"]');
+            // Attach debounced load function to input event
+            inputElement.addEventListener('input', debounce((event) => {
+                loadUniversities(1, event.target.value.trim());
+            }, 500)); // 500ms delay
+        });
 
         // 初始化加载第一页数据
         loadUniversities();
