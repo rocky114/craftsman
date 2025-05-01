@@ -34,12 +34,13 @@
     <div class="main-container">
         <div class="content-container">
             <!-- 左侧导航栏 -->
+            <!-- 左侧导航栏 -->
             <div class="left-nav">
                 <div class="nav-item">招生信息</div>
-                <div class="nav-item active">院校查询</div>
-                <div class="nav-item">院校分组分数</div>
-                <div class="nav-item">院校专业分数</div>
-                <div class="nav-item">省内分数排名</div>
+                <a href="/" class="nav-item">院校查询</a>
+                <a href="javascript:void(0)" class="nav-item active">院校分组分数</a>
+                <a href="/admission-score.html" class="nav-item">院校专业分数</a>
+                <a href="/score-ranking.html" class="nav-item">省内分数排名</a>
             </div>
 
             <!-- 右侧内容区 -->
@@ -144,10 +145,10 @@
                 data.list.forEach(univ => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                    <td>${univ.province}</td>
-                    <td>${univ.name}</td>
-                    <td><a href="${univ.admission_website}" target="_blank">招生官网</a></td>
-                `;
+            <td>${univ.province}</td>
+            <td>${univ.name}</td>
+            <td><a href="${univ.admission_website}" target="_blank">招生官网</a></td>
+        `;
                     tbody.appendChild(row);
                 });
 
@@ -158,17 +159,17 @@
             }
         }
 
-        // 搜索
+        // 初始化加载
         document.addEventListener('DOMContentLoaded', () => {
             const inputElement = document.querySelector('input[name="university_name"]');
             // Attach debounced load function to input event
             inputElement.addEventListener('input', debounce((event) => {
                 loadUniversities(1, event.target.value.trim());
             }, 500)); // 500ms delay
-        });
 
-        // 初始化加载第一页数据
-        loadUniversities();
+            // 初始化加载第一页数据
+            loadUniversities();
+        });
     </script>
 </body>
 
