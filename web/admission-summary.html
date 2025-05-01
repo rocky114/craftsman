@@ -50,18 +50,37 @@
                     <input type="text" class="search-input" name="university_name" placeholder="输入学校名称搜索...">
                 </div>
 
+                <div class="filter-section">
+                    <!-- 类型筛选 -->
+                    <div class="filter-row">
+                        <div class="filter-title">类型</div>
+                        <div class="filter-options">
+                            <div class="filter-option active">普通类</div>
+                            <div class="filter-option">提前批</div>
+                            <div class="filter-option">地方专项</div>
+                            <div class="filter-option">高校专项</div>
+                            <div class="filter-option">中外合作</div>
+                            <div class="filter-option">体育类</div>
+                            <div class="filter-option">艺术类</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="divider"></div>
 
                 <table class="result-table">
                     <thead>
                         <tr>
+                            <th>年份</th>
                             <th>省份</th>
-                            <th>学校名称</th>
-                            <th>学校招生官网</th>
+                            <th>院校</th>
+                            <th>类型</th>
+                            <th>科类</th>
+                            <th>最高分/排名</th>
+                            <th>最低分/排名</th>
                         </tr>
                     </thead>
                     <tbody>
-
                     </tbody>
                 </table>
 
@@ -78,14 +97,14 @@
     <script src="./main.js"></script>
     <script>
         // 分页
-        function pagination(currentPage, totalPages, universityName) {
+        function pagination(currentPage, totalPages, admissionType, universityName) {
             let html = '<ul class="pagination">';
 
             // 上一页按钮
             if (currentPage === 1) {
                 html += '<li class="disabled"><a href="javascript:void(0)" class="disabled">上一页</a></li>';
             } else {
-                html += `<li><a href="javascript:void(0)" onclick="loadUniversities(${currentPage - 1}, '${universityName}')">上一页</a></li>`;
+                html += `<li><a href="javascript:void(0)" onclick="loadAdmissionSummaries(${currentPage - 1}, '${admissionType}', '${universityName}')">上一页</a></li>`;
             }
 
             // 页码按钮
@@ -105,7 +124,7 @@
                 if (i === currentPage) {
                     html += `<li class="active"><a href="javascript:void(0)">${i}</a></li>`;
                 } else {
-                    html += `<li><a href="javascript:void(0)" onclick="loadUniversities(${i}, '${universityName}')">${i}</a></li>`;
+                    html += `<li><a href="javascript:void(0)" onclick="loadAdmissionSummaries(${i}, '${admissionType}', '${universityName}')">${i}</a></li>`;
                 }
             }
 
@@ -113,7 +132,7 @@
             if (currentPage === totalPages) {
                 html += '<li class="disabled"><a href="javascript:void(0)" class="disabled">下一页</a></li>';
             } else {
-                html += `<li><a href="javascript:void(0)" onclick="loadUniversities(${currentPage + 1}, '${universityName}')">下一页</a></li>`;
+                html += `<li><a href="javascript:void(0)" onclick="loadAdmissionSummaries(${currentPage + 1}, '${admissionType}', '${universityName}')">下一页</a></li>`;
             }
 
             html += '</ul>';
@@ -122,9 +141,9 @@
         }
 
         // 加载大学数据
-        async function loadUniversities(page = 1, universityName = '') {
+        async function loadAdmissionSummaries(page = 1, admissionType = '普通类', universityName = '') {
             try {
-                const response = await fetch(`http://127.0.0.1/api/universities?page=${page}&name=${universityName}`);
+                const response = await fetch(`http://127.0.0.1/api/admission_summaries?page=${page}&admission_type=${admissionType}&university_name=${universityName}`);
                 const data = await response.json();
 
                 // 清除无数据
@@ -142,18 +161,22 @@
                     return;
                 }
 
-                data.list.forEach(univ => {
+                data.list.forEach(item => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-            <td>${univ.province}</td>
-            <td>${univ.name}</td>
-            <td><a href="${univ.admission_website}" target="_blank">招生官网</a></td>
-        `;
+                        <td>${item.year}</td>
+                        <td>${item.province}</td>
+                        <td>${item.university_name}</td>
+                        <td>${item.admission_type}</td>
+                        <td>${item.subject_category !== '' ? `${item.subject_category}` : '-'}</td>
+                        <td>${item.highest_score !== '' ? `${item.highest_score}/${item.highest_score_rank}` : '-'}</td>
+                        <td>${item.lowest_score !== '' ? `${item.lowest_score}/${item.lowest_score_rank}` : '-'}</td>
+                    `;
                     tbody.appendChild(row);
                 });
 
                 // 更新分页
-                pagination(data.page, Math.ceil(data.total_count / data.page_size), universityName);
+                pagination(data.page, Math.ceil(data.total_count / data.page_size), admissionType, universityName);
             } catch (error) {
                 console.error('加载数据失败:', error);
             }
@@ -164,11 +187,27 @@
             const inputElement = document.querySelector('input[name="university_name"]');
             // Attach debounced load function to input event
             inputElement.addEventListener('input', debounce((event) => {
-                loadUniversities(1, event.target.value.trim());
+                let admissionType = document.querySelector("div.filter-option.active").textContent;
+                loadAdmissionSummaries(1, admissionType, event.target.value.trim());
             }, 500)); // 500ms delay
 
+            const filterOptions = document.querySelectorAll('.filter-option');
+
+            filterOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    // Remove 'active' class from all filter options
+                    filterOptions.forEach(opt => opt.classList.remove('active'));
+                    // Add 'active' class to the clicked option
+                    option.classList.add('active');
+                    // Get the filter value (text content) and call load function
+                    const filterValue = option.textContent;
+
+                    loadAdmissionSummaries(1, filterValue, inputElement.value.trim());
+                });
+            });
+
             // 初始化加载第一页数据
-            loadUniversities();
+            loadAdmissionSummaries();
         });
     </script>
 </body>

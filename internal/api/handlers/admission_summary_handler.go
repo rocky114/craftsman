@@ -21,7 +21,9 @@ func NewAdmissionSummaryHandler(q *database.Database, cfg *config.Config) *Admis
 
 func (h *AdmissionSummaryHandler) ListAdmissionSummaries(c echo.Context) error {
 	var req struct {
-		Page int `json:"page" form:"page" query:"page"` // 当前页码（从1开始）
+		Page           int    `json:"page" form:"page" query:"page"` // 当前页码（从1开始）
+		UniversityName string `json:"university_name" form:"university_name" query:"university_name"`
+		AdmissionType  string `json:"admission_type" form:"admission_type" query:"admission_type"`
 	}
 
 	if err := c.Bind(&req); err != nil {
@@ -29,14 +31,19 @@ func (h *AdmissionSummaryHandler) ListAdmissionSummaries(c echo.Context) error {
 	}
 
 	items, err := h.repo.ListAdmissionSummaries(c.Request().Context(), repository.AdmissionSummaryQueryParams{
-		Limit:  utils.PageSize,
-		Offset: utils.Offset(req.Page),
+		UniversityName: req.UniversityName,
+		AdmissionType:  req.AdmissionType,
+		Limit:          utils.PageSize,
+		Offset:         utils.Offset(req.Page),
 	})
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	totalCount, err := h.repo.CountAdmissionSummaries(c.Request().Context(), repository.AdmissionSummaryQueryParams{})
+	totalCount, err := h.repo.CountAdmissionSummaries(c.Request().Context(), repository.AdmissionSummaryQueryParams{
+		UniversityName: req.UniversityName,
+		AdmissionType:  req.AdmissionType,
+	})
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
