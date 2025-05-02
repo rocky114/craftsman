@@ -321,7 +321,6 @@ body {
 .filter-option:hover {
     background-color: #f1f3f5;
     border-color: #ced4da;
-    transform: translateY(-2px);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
@@ -329,8 +328,6 @@ body {
     background-color: #007B42;
     color: white;
     border-color: #007B42;
-    box-shadow: 0 4px 8px rgba(0, 123, 66, 0.2);
-    transform: translateY(-2px);
 }
 
 /* Responsive adjustments */
