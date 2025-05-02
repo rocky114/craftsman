@@ -70,6 +70,54 @@ body {
     margin: 0 8px;
 }
 
+/* 新增顶部导航栏样式 */
+.top-nav-container {
+    width: 100%;
+    background-color: #007B42;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+}
+
+.top-nav {
+    width: 1180px;
+    display: flex;
+    margin: 0 auto; /* 添加这个使导航居中 */
+}
+
+/* 表格列宽设置 */
+.result-table th,
+.result-table td {
+    border: 1px solid #ddd;
+    padding: 8px 10px;
+    text-align: center;
+    transition: background-color 0.2s;
+    min-width: 50px;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+.top-nav-item {
+    padding: 15px 25px;
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.top-nav-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.top-nav-item.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    font-weight: bold;
+}
+
 .banner-container {
     width: 100%;
     height: 300px;
@@ -90,7 +138,6 @@ body {
     width: 100%;
     display: flex;
     justify-content: center;
-    margin-top: 5px;
 }
 
 .content-container {
@@ -101,66 +148,14 @@ body {
     z-index: 1;
 }
 
-.left-nav {
-    width: 240px;
-    background-color: #fff;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    align-self: flex-start;
-}
-
-/* 修改原有 .nav-item 规则，使其适用于 div 和 a 标签 */
-.left-nav .nav-item {
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    background-color: #f5f5f5;
-    border-bottom: 1px solid #e0e0e0;
-    font-size: 16px;
-    color: #333;
-    transition: all 0.3s ease;
-    position: relative;
-    text-decoration: none;
-    /* 移除下划线 */
-}
-
-/* 保持第一个导航项的特殊样式 */
-.left-nav .nav-item:first-child {
-    height: 100px;
-    background-color: #007B42;
-    color: white;
-    font-weight: bold;
-    font-size: 18px;
-}
-
-/* 悬停和活动状态 */
-.left-nav .nav-item:hover {
-    background-color: #e0e0e0;
-}
-
-.left-nav .nav-item.active {
-    color: #007B42;
-    font-weight: bold;
-    background-color: #fff;
-}
-
-/* 特别处理第一个导航项（非链接）的悬停状态 */
-.left-nav>div.nav-item:first-child:hover {
-    background-color: #007B42;
-    /* 保持原色 */
-}
-
 .right-content {
     flex: 1;
-    margin-left: 4px;
     background-color: #fff;
-    padding: 20px;
+    padding: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .search-box {
-    margin-bottom: 20px;
     position: relative;
     width: 60%;
     max-width: 500px;
@@ -255,13 +250,12 @@ body {
 .divider {
     height: 1px;
     background-color: #e0e0e0;
-    margin: 20px 0;
+    margin: 10px 0;
 }
 
 .result-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 15px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
@@ -281,7 +275,7 @@ body {
 .result-table th,
 .result-table td {
     border: 1px solid #ddd;
-    padding: 8px 10px;
+    padding: 6px 10px;
     text-align: center;
     transition: background-color 0.2s;
 }
