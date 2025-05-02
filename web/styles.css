@@ -119,22 +119,6 @@ body {
     background-color: white;
 }
 
-.banner-container {
-    width: 100%;
-    height: 300px;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-}
-
-.banner {
-    width: 1180px;
-    height: 100%;
-    background-image: url('./banner_fun.jpg');
-    background-size: cover;
-    background-position: center;
-}
-
 .main-container {
     width: 100%;
     display: flex;
@@ -149,11 +133,91 @@ body {
     z-index: 1;
 }
 
+/* 优化右侧内容区域 */
 .right-content {
     flex: 1;
     background-color: #fff;
-    padding: 10px;
+    padding: 20px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+/* 优化表格容器 */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 20px;
+    flex: 1;
+}
+
+/* 优化表格样式 */
+.result-table {
+    width: 100%;
+    min-width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 2px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* 表格头部优化 */
+.result-table thead {
+    background: linear-gradient(to right, #007B42, #28a745);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.result-table th {
+    color: #fff;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 12px 15px;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: none;
+    position: relative;
+    min-width: 60px; /* 设置最小宽度 */
+    white-space: nowrap;
+}
+
+/* 表格列分隔线 */
+.result-table th:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 25%;
+    height: 50%;
+    width: 1px;
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* 表格内容优化 */
+.result-table td {
+    padding: 12px 15px;
+    border: 1px solid #eee;
+    text-align: center;
+    font-size: 14px;
+    min-width: 60px; /* 设置最小宽度 */
+    max-width: 200px; /* 设置最大宽度 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 斑马纹和悬停效果 */
+.result-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.result-table tbody tr:hover {
+    background-color: #f5f9f5;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 123, 66, 0.1);
+    transition: all 0.2s ease;
 }
 
 .search-box {
@@ -195,14 +259,13 @@ body {
 
 .filter-section {
     display: flex;
+    margin-top: 15px;
     flex-direction: column;
-    margin-bottom: 20px;
 }
 
 .filter-row {
     display: flex;
     align-items: center;
-    margin-bottom: 12px;
 }
 
 .filter-title {
@@ -252,55 +315,6 @@ body {
     height: 1px;
     background-color: #e0e0e0;
     margin: 10px 0;
-}
-
-.result-table {
-    width: 100%;
-    border-collapse: collapse;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-/* 表格列宽设置 */
-.result-table th,
-.result-table td {
-    border: 1px solid #ddd;
-    padding: 8px 10px;
-    text-align: center;
-    transition: background-color 0.2s;
-    min-width: 50px;
-    max-width: 100px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.result-table thead {
-    background-color: #007B42;
-}
-
-.result-table th {
-    background-color: transparent !important;
-    color: #fff;
-    font-weight: bold;
-    position: sticky;
-    top: 0;
-    border-bottom: 2px solid #ddd;
-}
-
-.result-table th,
-.result-table td {
-    border: 1px solid #ddd;
-    padding: 6px 10px;
-    text-align: center;
-    transition: background-color 0.2s;
-}
-
-.result-table tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-.result-table tbody tr:hover {
-    background-color: #f1f1f1;
 }
 
 .no-results {
