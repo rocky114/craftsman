@@ -51,7 +51,7 @@
 
                 <div class="filter-section">
                     <!-- 类型筛选 -->
-                    <div class="filter-row">
+                    <div class="filter-row admission-type">
                         <div class="filter-title">类型</div>
                         <div class="filter-options">
                             <div class="filter-option active">普通类</div>
@@ -63,7 +63,7 @@
                             <div class="filter-option">艺术类</div>
                         </div>
                     </div>
-                    <div class="filter-row">
+                    <div class="filter-row subject-category">
                         <div class="filter-title">科类</div>
                         <div class="filter-options">
                             <div class="filter-option active">物理类</div>
@@ -103,14 +103,14 @@
     <script src="./main.js"></script>
     <script>
         // 分页
-        function pagination(currentPage, totalPages, admissionType, universityName) {
+        function pagination(currentPage, totalPages, admissionType, subjectCategory, universityName) {
             let html = '<ul class="pagination">';
 
             // 上一页按钮
             if (currentPage === 1) {
                 html += '<li class="disabled"><a href="javascript:void(0)" class="disabled">上一页</a></li>';
             } else {
-                html += `<li><a href="javascript:void(0)" onclick="loadAdmissionSummaries(${currentPage - 1}, '${admissionType}', '${universityName}')">上一页</a></li>`;
+                html += `<li><a href="javascript:void(0)" onclick="loadAdmissionSummaries(${currentPage - 1}, '${admissionType}', '${subjectCategory}', '${universityName}')">上一页</a></li>`;
             }
 
             // 页码按钮
@@ -130,7 +130,7 @@
                 if (i === currentPage) {
                     html += `<li class="active"><a href="javascript:void(0)">${i}</a></li>`;
                 } else {
-                    html += `<li><a href="javascript:void(0)" onclick="loadAdmissionSummaries(${i}, '${admissionType}', '${universityName}')">${i}</a></li>`;
+                    html += `<li><a href="javascript:void(0)" onclick="loadAdmissionSummaries(${i}, '${admissionType}', '${subjectCategory}', '${universityName}')">${i}</a></li>`;
                 }
             }
 
@@ -138,7 +138,7 @@
             if (currentPage === totalPages) {
                 html += '<li class="disabled"><a href="javascript:void(0)" class="disabled">下一页</a></li>';
             } else {
-                html += `<li><a href="javascript:void(0)" onclick="loadAdmissionSummaries(${currentPage + 1}, '${admissionType}', '${universityName}')">下一页</a></li>`;
+                html += `<li><a href="javascript:void(0)" onclick="loadAdmissionSummaries(${currentPage + 1}, '${admissionType}', '${subjectCategory}', '${universityName}')">下一页</a></li>`;
             }
 
             html += '</ul>';
@@ -147,9 +147,9 @@
         }
 
         // 加载大学数据
-        async function loadAdmissionSummaries(page = 1, admissionType = '普通类', universityName = '') {
+        async function loadAdmissionSummaries(page = 1, admissionType = '普通类', subjectCategory = '物理类', universityName = '') {
             try {
-                const response = await fetch(`http://127.0.0.1/api/admission_summaries?page=${page}&admission_type=${admissionType}&university_name=${universityName}`);
+                const response = await fetch(`http://127.0.0.1/api/admission_summaries?page=${page}&admission_type=${admissionType}&subject_category=${subjectCategory}&university_name=${universityName}`);
                 const data = await response.json();
 
                 // 清除无数据
@@ -182,7 +182,7 @@
                 });
 
                 // 更新分页
-                pagination(data.page, Math.ceil(data.total_count / data.page_size), admissionType, universityName);
+                pagination(data.page, Math.ceil(data.total_count / data.page_size), admissionType, subjectCategory, universityName);
             } catch (error) {
                 console.error('加载数据失败:', error);
             }
@@ -193,22 +193,43 @@
             const inputElement = document.querySelector('input[name="university_name"]');
             // Attach debounced load function to input event
             inputElement.addEventListener('input', debounce((event) => {
-                let admissionType = document.querySelector("div.filter-option.active").textContent;
-                loadAdmissionSummaries(1, admissionType, event.target.value.trim());
+                let admissionType = document.querySelector("div.admission-type .filter-option.active").textContent;
+                let subjectCategory = document.querySelector("div.subject-category .filter-option.active").textContent;
+
+                loadAdmissionSummaries(1, admissionType, subjectCategory, event.target.value.trim());
             }, 500)); // 500ms delay
 
-            const filterOptions = document.querySelectorAll('.filter-option');
+            const admissionTypeFilterOptions = document.querySelectorAll('.admission-type .filter-option');
+            const subjectCategoryFilterOptions = document.querySelectorAll('.subject-category .filter-option');
 
-            filterOptions.forEach(option => {
+            admissionTypeFilterOptions.forEach(option => {
                 option.addEventListener('click', () => {
                     // Remove 'active' class from all filter options
-                    filterOptions.forEach(opt => opt.classList.remove('active'));
+                    admissionTypeFilterOptions.forEach(opt => opt.classList.remove('active'));
+                    subjectCategoryFilterOptions.forEach(opt => opt.classList.remove('active'));
+
+                    // Add 'active' class to the clicked option
+                    option.classList.add('active');
+                    subjectCategoryFilterOptions[0].classList.add('active');
+                    // Get the filter value (text content) and call load function
+                    const filterValue = option.textContent;
+
+                    loadAdmissionSummaries(1, filterValue, '物理类', inputElement.value.trim());
+                });
+            });
+
+            subjectCategoryFilterOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    // Remove 'active' class from all filter options
+                    subjectCategoryFilterOptions.forEach(opt => opt.classList.remove('active'));
                     // Add 'active' class to the clicked option
                     option.classList.add('active');
                     // Get the filter value (text content) and call load function
                     const filterValue = option.textContent;
 
-                    loadAdmissionSummaries(1, filterValue, inputElement.value.trim());
+                    let admissionType = document.querySelector('.admission-type .filter-option.active')
+
+                    loadAdmissionSummaries(1, admissionType.textContent, filterValue, inputElement.value.trim());
                 });
             });
 
