@@ -94,9 +94,10 @@ func (h *AdmissionScoreHandler) CreateAdmissionScore(c echo.Context) error {
 
 func (h *AdmissionScoreHandler) ListAdmissionScores(c echo.Context) error {
 	var req struct {
-		Page           int    `json:"page" form:"page" query:"page"` // 当前页码（从1开始）
-		UniversityName string `json:"university_name" form:"university_name" query:"university_name"`
-		AdmissionType  string `json:"admission_type" form:"admission_type" query:"admission_type"`
+		Page            int    `json:"page" form:"page" query:"page"` // 当前页码（从1开始）
+		UniversityName  string `json:"university_name" form:"university_name" query:"university_name"`
+		AdmissionType   string `json:"admission_type" form:"admission_type" query:"admission_type"`
+		SubjectCategory string `json:"subject_category" form:"subject_category" query:"subject_category"`
 	}
 
 	if err := c.Bind(&req); err != nil {
@@ -104,18 +105,20 @@ func (h *AdmissionScoreHandler) ListAdmissionScores(c echo.Context) error {
 	}
 
 	items, err := h.repo.ListAdmissionScores(c.Request().Context(), repository.AdmissionScoreQueryParams{
-		UniversityName: req.UniversityName,
-		AdmissionType:  req.AdmissionType,
-		Limit:          utils.PageSize,
-		Offset:         utils.Offset(req.Page),
+		UniversityName:  req.UniversityName,
+		AdmissionType:   req.AdmissionType,
+		SubjectCategory: req.SubjectCategory,
+		Limit:           utils.PageSize,
+		Offset:          utils.Offset(req.Page),
 	})
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
 	totalCount, err := h.repo.CountAdmissionScores(c.Request().Context(), repository.AdmissionScoreQueryParams{
-		AdmissionType:  req.AdmissionType,
-		UniversityName: req.UniversityName,
+		AdmissionType:   req.AdmissionType,
+		UniversityName:  req.UniversityName,
+		SubjectCategory: req.SubjectCategory,
 	})
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
