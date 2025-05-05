@@ -44,3 +44,7 @@ SELECT
 FROM admission_score
 WHERE admission_type IN ('艺术类', '体育类')
 GROUP BY university_name, admission_type;
+
+
+-- 统计缺失历史录取数据的学校
+select u.* from university u left join admission_score s on u.name = s.university_name where s.id is null
