@@ -63,18 +63,16 @@ func (h *AdmissionScoreHandler) CreateAdmissionScore(c echo.Context) error {
 	err = h.repo.WithTransaction(c.Request().Context(), func(q *sqlc.Queries) error {
 		for _, item := range respAdmission.Data {
 			if err = q.CreateAdmissionScore(c.Request().Context(), sqlc.CreateAdmissionScoreParams{
-				UniversityName:    admissionQueryCondition.UniversityName,
-				Province:          item.Province,
-				Year:              item.Year,
-				AdmissionType:     item.AdmissionType,
-				SubjectCategory:   item.AcademicCategory,
-				MajorName:         item.MajorName,
-				EnrollmentQuota:   item.EnrollmentQuota,
-				MinAdmissionScore: strings.Split(item.MinAdmissionScore, ".")[0],
-				HighestScore:      strings.Split(item.HighestScore, ".")[0],
-				HighestScoreRank:  item.HighestScoreRank,
-				LowestScore:       strings.Split(item.LowestScore, ".")[0],
-				LowestScoreRank:   item.LowestScoreRank,
+				UniversityName:   admissionQueryCondition.UniversityName,
+				Province:         item.Province,
+				Year:             item.Year,
+				AdmissionType:    item.AdmissionType,
+				SubjectCategory:  item.AcademicCategory,
+				MajorName:        item.MajorName,
+				HighestScore:     strings.Split(item.HighestScore, ".")[0],
+				HighestScoreRank: item.HighestScoreRank,
+				LowestScore:      strings.Split(item.LowestScore, ".")[0],
+				LowestScoreRank:  item.LowestScoreRank,
 			}); err != nil {
 				return err
 			}
