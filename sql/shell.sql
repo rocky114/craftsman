@@ -1,6 +1,6 @@
 INSERT INTO admission_summary (year, university_name, admission_type, subject_category, lowest_score, highest_score)
 SELECT
-    '2024',
+    '2024
     university_name,
     admission_type,
     subject_category,

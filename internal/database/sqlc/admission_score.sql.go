@@ -12,27 +12,24 @@ import (
 const createAdmissionScore = `-- name: CreateAdmissionScore :exec
 INSERT INTO admission_score (
     id, university_name, year, province, admission_type, subject_category,
-    major_name, enrollment_quota, min_admission_score,
-    highest_score, highest_score_rank, lowest_score, lowest_score_rank
+    major_name, highest_score, highest_score_rank, lowest_score, lowest_score_rank
 ) VALUES (
-    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
 )
 `
 
 type CreateAdmissionScoreParams struct {
-	ID                uint32 `db:"id"`
-	UniversityName    string `db:"university_name"`
-	Year              string `db:"year"`
-	Province          string `db:"province"`
-	AdmissionType     string `db:"admission_type"`
-	SubjectCategory   string `db:"subject_category"`
-	MajorName         string `db:"major_name"`
-	EnrollmentQuota   string `db:"enrollment_quota"`
-	MinAdmissionScore string `db:"min_admission_score"`
-	HighestScore      string `db:"highest_score"`
-	HighestScoreRank  string `db:"highest_score_rank"`
-	LowestScore       string `db:"lowest_score"`
-	LowestScoreRank   string `db:"lowest_score_rank"`
+	ID               uint32 `db:"id"`
+	UniversityName   string `db:"university_name"`
+	Year             string `db:"year"`
+	Province         string `db:"province"`
+	AdmissionType    string `db:"admission_type"`
+	SubjectCategory  string `db:"subject_category"`
+	MajorName        string `db:"major_name"`
+	HighestScore     string `db:"highest_score"`
+	HighestScoreRank string `db:"highest_score_rank"`
+	LowestScore      string `db:"lowest_score"`
+	LowestScoreRank  string `db:"lowest_score_rank"`
 }
 
 func (q *Queries) CreateAdmissionScore(ctx context.Context, arg CreateAdmissionScoreParams) error {
@@ -44,8 +41,6 @@ func (q *Queries) CreateAdmissionScore(ctx context.Context, arg CreateAdmissionS
 		arg.AdmissionType,
 		arg.SubjectCategory,
 		arg.MajorName,
-		arg.EnrollmentQuota,
-		arg.MinAdmissionScore,
 		arg.HighestScore,
 		arg.HighestScoreRank,
 		arg.LowestScore,
@@ -80,7 +75,7 @@ func (q *Queries) DeleteAdmissionScoreByYearAndUniversity(ctx context.Context, a
 }
 
 const getAdmissionScoreByID = `-- name: GetAdmissionScoreByID :one
-SELECT id, year, university_name, province, admission_type, subject_category, subject_category_txt, major_name, enrollment_quota, min_admission_score, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_score 
+SELECT id, year, province, university_name, admission_type, subject_category, subject_category_txt, major_name, enrollment_quota, min_admission_score, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_score 
 WHERE id = ? LIMIT 1
 `
 
@@ -90,8 +85,8 @@ func (q *Queries) GetAdmissionScoreByID(ctx context.Context, id uint32) (Admissi
 	err := row.Scan(
 		&i.ID,
 		&i.Year,
-		&i.UniversityName,
 		&i.Province,
+		&i.UniversityName,
 		&i.AdmissionType,
 		&i.SubjectCategory,
 		&i.SubjectCategoryTxt,

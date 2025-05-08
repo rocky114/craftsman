@@ -27,15 +27,15 @@ type AdmissionQueryCondition struct {
 	CreateTime sql.NullTime `db:"create_time"`
 }
 
-// 大学历史录取分数线
+// 高校专业录取分数
 type AdmissionScore struct {
 	ID uint32 `db:"id"`
 	// 录取年份（如2024）
 	Year string `db:"year"`
-	// 关联院校表
-	UniversityName string `db:"university_name"`
 	// 省份 江苏
 	Province string `db:"province"`
+	// 关联院校表
+	UniversityName string `db:"university_name"`
 	// 类型: 普通类,艺术类,国家专项,高校专项,中外合作,飞行技术,预科
 	AdmissionType string `db:"admission_type"`
 	// 科类: 历史+不限
