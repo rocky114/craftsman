@@ -38,9 +38,9 @@ func ToAdmissionSummaryResponses(items []sqlc.AdmissionSummary) []AdmissionSumma
 			AdmissionType:    item.AdmissionType,
 			SubjectCategory:  item.SubjectCategory,
 			HighestScore:     item.HighestScore,
-			HighestScoreRank: utils.Ternary[string](item.HighestScoreRank != "", item.HighestScoreRank, "无"),
+			HighestScoreRank: utils.Ternary[string](item.HighestScoreRank != "", item.HighestScoreRank, "无排名"),
 			LowestScore:      item.LowestScore,
-			LowestScoreRank:  utils.Ternary[string](item.LowestScoreRank != "", item.LowestScoreRank, "无"),
+			LowestScoreRank:  utils.Ternary[string](item.LowestScoreRank != "", item.LowestScoreRank, "无排名"),
 		})
 	}
 

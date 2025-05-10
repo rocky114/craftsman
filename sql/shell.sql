@@ -70,4 +70,11 @@ WHERE s.admission_type NOT IN ('体育类', '艺术类');
 select * from admission_summary
 where admission_type NOT IN ('体育类', '艺术类') and ((highest_score != '' and highest_score_rank = '') or (lowest_score != '' and lowest_score_rank = ''))
 
-
+-- 更新排序优先级
+update admission_summary set display_priority = 5 where admission_type = '提前批';
+update admission_summary set display_priority = 10 where admission_type = '地方专项';
+update admission_summary set display_priority = 15 where admission_type = '高校专项';
+update admission_summary set display_priority = 20 where admission_type = '普通类';
+update admission_summary set display_priority = 25 where admission_type = '中外合作';
+update admission_summary set display_priority = 30 where admission_type = '艺术类';
+update admission_summary set display_priority = 35 where admission_type = '体育类';

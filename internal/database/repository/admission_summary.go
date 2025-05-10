@@ -52,7 +52,7 @@ func (q *Repository) ListAdmissionSummaries(ctx context.Context, arg AdmissionSu
 	baseQuery := "SELECT id, year, province, university_name, admission_type, subject_category, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_summary"
 	query, args := q.buildAdmissionSummaryQuery(baseQuery, arg)
 
-	query += " ORDER BY admission_type, lowest_score desc"
+	query += " ORDER BY display_priority, lowest_score desc"
 	if arg.Limit > 0 {
 		query += " LIMIT ?"
 		args = append(args, arg.Limit)
