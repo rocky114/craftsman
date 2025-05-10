@@ -29,8 +29,8 @@ func (q *Repository) buildAdmissionSummaryQuery(baseQuery string, arg AdmissionS
 		args = append(args, arg.Year)
 	}
 	if arg.UniversityName != "" {
-		conditions = append(conditions, "university_name LIKE ?")
-		args = append(args, "%"+arg.UniversityName+"%")
+		conditions = append(conditions, "university_name = ?")
+		args = append(args, arg.UniversityName)
 	}
 	if arg.AdmissionType != "" {
 		conditions = append(conditions, "admission_type = ?")
@@ -52,7 +52,7 @@ func (q *Repository) ListAdmissionSummaries(ctx context.Context, arg AdmissionSu
 	baseQuery := "SELECT id, year, province, university_name, admission_type, subject_category, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_summary"
 	query, args := q.buildAdmissionSummaryQuery(baseQuery, arg)
 
-	query += " ORDER BY lowest_score desc"
+	query += " ORDER BY admission_type, lowest_score desc"
 	if arg.Limit > 0 {
 		query += " LIMIT ?"
 		args = append(args, arg.Limit)

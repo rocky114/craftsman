@@ -30,8 +30,8 @@ func (q *Repository) buildAdmissionScoreQuery(baseQuery string, arg AdmissionSco
 		args = append(args, arg.Year)
 	}
 	if arg.UniversityName != "" {
-		conditions = append(conditions, "university_name LIKE ?")
-		args = append(args, "%"+arg.UniversityName+"%")
+		conditions = append(conditions, "university_name = ?")
+		args = append(args, arg.UniversityName)
 	}
 	if arg.Province != "" {
 		conditions = append(conditions, "province = ?")

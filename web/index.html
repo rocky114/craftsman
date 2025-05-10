@@ -37,6 +37,30 @@
     </nav>
 </div>
 
+<!-- 弹窗结构 -->
+<div id="summaryModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>院校分数详情</h2>
+        <div class="modal-body">
+            <table class="result-table">
+                <thead>
+                <tr>
+                    <th>年份</th>
+                    <th>省份</th>
+                    <th>院校</th>
+                    <th>类型</th>
+                    <th>科类</th>
+                    <th>最高分/排名</th>
+                    <th>最低分/排名</th>
+                </tr>
+                </thead>
+                <tbody id="summaryTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 <div class="main-container">
     <div class="content-container">
         <!-- 右侧内容区 -->
@@ -131,7 +155,7 @@
             document.querySelector('.pagination').innerHTML = '';
 
             // 更新表格
-            const tbody = document.querySelector('.result-table tbody');
+            const tbody = document.querySelector('.content-container .result-table tbody');
             tbody.innerHTML = '';
 
             if (data.list.length === 0) {
@@ -144,7 +168,7 @@
                 row.innerHTML = `
             <td>${univ.province}</td>
             <td>${univ.name}</td>
-            <td><a href="/admission-summary.html?name=${univ.name}">${univ.name}分数</a></td>
+            <td><a href="javascript:void(0)" onclick="showAdmissionSummary('${univ.name}')">${univ.name}分数</a></td>
             <td><a href="${univ.admission_website}" target="_blank">${univ.name}招生网</a></td>
         `;
                 tbody.appendChild(row);
@@ -157,8 +181,56 @@
         }
     }
 
+    // 显示院校分数弹窗
+    async function showAdmissionSummary(universityName) {
+        try {
+            const response = await fetch(`http://127.0.0.1/api/admission_summaries?university_name=${encodeURIComponent(universityName)}`);
+            const data = await response.json();
+
+            const modal = document.getElementById('summaryModal');
+            const tbody = document.getElementById('summaryTableBody');
+            tbody.innerHTML = '';
+
+            if (data.list.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6">暂无数据</td></tr>';
+            } else {
+                data.list.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.year}</td>
+                        <td>${item.province}</td>
+                        <td>${item.university_name}</td>
+                        <td>${item.admission_type}</td>
+                        <td>${item.subject_category}</td>
+                        <td>${item.highest_score !== '' ? `${item.highest_score}/${item.highest_score_rank}` : '-'}</td>
+                        <td>${item.lowest_score !== '' ? `${item.lowest_score}/${item.lowest_score_rank}` : '-'}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+
+            modal.style.display = 'block';
+        } catch (error) {
+            console.error('加载院校分数失败:', error);
+            alert('加载院校分数失败，请稍后重试');
+        }
+    }
+
     // 初始化加载
     document.addEventListener('DOMContentLoaded', () => {
+        const modal = document.getElementById('summaryModal');
+        const closeBtn = document.querySelector('.close');
+
+        closeBtn.onclick = function() {
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+
         const inputElement = document.querySelector('input[name="university_name"]');
         // Attach debounced load function to input event
         inputElement.addEventListener('input', debounce((event) => {
