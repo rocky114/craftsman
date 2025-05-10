@@ -67,7 +67,7 @@ func (h *AdmissionScoreHandler) CreateAdmissionScore(c echo.Context) error {
 				Province:         item.Province,
 				Year:             item.Year,
 				AdmissionType:    item.AdmissionType,
-				SubjectCategory:  item.AcademicCategory,
+				SubjectCategory:  item.SubjectCategory,
 				MajorName:        item.MajorName,
 				HighestScore:     strings.Split(item.HighestScore, ".")[0],
 				HighestScoreRank: item.HighestScoreRank,

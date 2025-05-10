@@ -54,7 +54,7 @@ func (q *Repository) buildAdmissionScoreQuery(baseQuery string, arg AdmissionSco
 }
 
 func (q *Repository) ListAdmissionScores(ctx context.Context, arg AdmissionScoreQueryParams) ([]sqlc.AdmissionScore, error) {
-	baseQuery := "SELECT id, year, university_name, province, admission_type, subject_category, subject_category_txt, major_name, enrollment_quota, min_admission_score, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_score"
+	baseQuery := "SELECT id, year, university_name, province, admission_type, subject_category, major_name, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_score"
 	query, args := q.buildAdmissionScoreQuery(baseQuery, arg)
 
 	query += " ORDER BY id ASC"

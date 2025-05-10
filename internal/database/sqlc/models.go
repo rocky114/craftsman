@@ -40,14 +40,8 @@ type AdmissionScore struct {
 	AdmissionType string `db:"admission_type"`
 	// 科类: 历史+不限
 	SubjectCategory string `db:"subject_category"`
-	// 科类文本
-	SubjectCategoryTxt string `db:"subject_category_txt"`
 	// 专业名称 计算机
 	MajorName string `db:"major_name"`
-	// 招生名额
-	EnrollmentQuota string `db:"enrollment_quota"`
-	// 投档分 600
-	MinAdmissionScore string `db:"min_admission_score"`
 	// 最高分
 	HighestScore string `db:"highest_score"`
 	// 排名 200000名次

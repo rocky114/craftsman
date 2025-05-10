@@ -18,25 +18,23 @@ type AdmissionRequest struct {
 }
 
 // AdmissionData 定义响应数据中的 data 字段子项
-type AdmissionData struct {
-	Year              string `json:"year"`
-	Province          string `json:"province"`
-	AdmissionType     string `json:"admission_type"`
-	AcademicCategory  string `json:"academic_category"`
-	MajorName         string `json:"major_name"`
-	EnrollmentQuota   string `json:"enrollment_quota"`
-	MinAdmissionScore string `json:"min_admission_score"`
-	HighestScore      string `json:"highest_score"`
-	HighestScoreRank  string `json:"highest_score_rank"`
-	LowestScore       string `json:"lowest_score"`
-	LowestScoreRank   string `json:"lowest_score_rank"`
+type AdmissionScore struct {
+	Year             string `json:"year"`
+	Province         string `json:"province"`
+	AdmissionType    string `json:"admission_type"`
+	SubjectCategory  string `json:"subject_category"`
+	MajorName        string `json:"major_name"`
+	HighestScore     string `json:"highest_score"`
+	HighestScoreRank string `json:"highest_score_rank"`
+	LowestScore      string `json:"lowest_score"`
+	LowestScoreRank  string `json:"lowest_score_rank"`
 }
 
 // AdmissionResponse 定义响应参数结构体
 type AdmissionResponse struct {
-	Status  string          `json:"status"`
-	Data    []AdmissionData `json:"data"`
-	Message string          `json:"message"`
+	Status  string           `json:"status"`
+	Data    []AdmissionScore `json:"data"`
+	Message string           `json:"message"`
 }
 
 // FetchAdmissionScoreData 发送 POST 请求获取招生数据

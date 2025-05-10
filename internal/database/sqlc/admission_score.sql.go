@@ -75,7 +75,7 @@ func (q *Queries) DeleteAdmissionScoreByYearAndUniversity(ctx context.Context, a
 }
 
 const getAdmissionScoreByID = `-- name: GetAdmissionScoreByID :one
-SELECT id, year, province, university_name, admission_type, subject_category, subject_category_txt, major_name, enrollment_quota, min_admission_score, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_score 
+SELECT id, year, province, university_name, admission_type, subject_category, major_name, highest_score, highest_score_rank, lowest_score, lowest_score_rank, create_time FROM admission_score 
 WHERE id = ? LIMIT 1
 `
 
@@ -89,10 +89,7 @@ func (q *Queries) GetAdmissionScoreByID(ctx context.Context, id uint32) (Admissi
 		&i.UniversityName,
 		&i.AdmissionType,
 		&i.SubjectCategory,
-		&i.SubjectCategoryTxt,
 		&i.MajorName,
-		&i.EnrollmentQuota,
-		&i.MinAdmissionScore,
 		&i.HighestScore,
 		&i.HighestScoreRank,
 		&i.LowestScore,
