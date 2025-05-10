@@ -53,7 +53,8 @@
                 <tr>
                     <th>省份</th>
                     <th>院校名称</th>
-                    <th>院校招生</th>
+                    <th>院校分数</th>
+                    <th>院校招生网</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -143,7 +144,8 @@
                 row.innerHTML = `
             <td>${univ.province}</td>
             <td>${univ.name}</td>
-            <td><a href="${univ.admission_website}" target="_blank">院校招生官网地址</a></td>
+            <td><a href="/admission-summary.html?name=${univ.name}">${univ.name}分数</a></td>
+            <td><a href="${univ.admission_website}" target="_blank">${univ.name}招生网</a></td>
         `;
                 tbody.appendChild(row);
             });
