@@ -136,7 +136,7 @@
     // 加载大学数据
     async function loadScoreDistributions(page = 1, subjectCategory = '物理类', score = '') {
         try {
-            const response = await fetch(`http://127.0.0.1/api/score_distributions?page=${page}&subject_category=${subjectCategory}&score=${score}`);
+            const response = await fetch(`/api/score_distributions?page=${page}&subject_category=${subjectCategory}&score=${score}`);
             const data = await response.json();
 
             // 清除无数据

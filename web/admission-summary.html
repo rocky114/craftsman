@@ -149,7 +149,7 @@
         // 加载大学数据
         async function loadAdmissionSummaries(page = 1, admissionType = '普通类', subjectCategory = '物理类', universityName = '') {
             try {
-                const response = await fetch(`http://127.0.0.1/api/admission_summaries?page=${page}&admission_type=${admissionType}&subject_category=${subjectCategory}&university_name=${universityName}`);
+                const response = await fetch(`/api/admission_summaries?page=${page}&admission_type=${admissionType}&subject_category=${subjectCategory}&university_name=${universityName}`);
                 const data = await response.json();
 
                 // 清除无数据

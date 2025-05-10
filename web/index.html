@@ -145,7 +145,7 @@
     // 加载大学数据
     async function loadUniversities(page = 1, universityName = '') {
         try {
-            const response = await fetch(`http://127.0.0.1/api/universities?page=${page}&name=${universityName}`);
+            const response = await fetch(`/api/universities?page=${page}&name=${universityName}`);
             const data = await response.json();
 
             // 清除无数据
@@ -184,7 +184,7 @@
     // 显示院校分数弹窗
     async function showAdmissionSummary(universityName) {
         try {
-            const response = await fetch(`http://127.0.0.1/api/admission_summaries?university_name=${encodeURIComponent(universityName)}`);
+            const response = await fetch(`/api/admission_summaries?university_name=${encodeURIComponent(universityName)}`);
             const data = await response.json();
 
             const modal = document.getElementById('summaryModal');
