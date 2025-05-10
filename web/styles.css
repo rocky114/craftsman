@@ -174,7 +174,7 @@ body {
     color: #fff;
     font-weight: 600;
     font-size: 15px;
-    padding: 12px 15px;
+    padding: 8px 15px;
     text-align: center;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -197,7 +197,7 @@ body {
 
 /* 表格内容优化 */
 .result-table td {
-    padding: 12px 15px;
+    padding: 8px 15px;
     border: 1px solid #eee;
     text-align: center;
     font-size: 14px;
