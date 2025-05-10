@@ -2,6 +2,7 @@ package dto
 
 import (
 	"github.com/rocky114/craftman/internal/database/sqlc"
+	"github.com/rocky114/craftman/internal/utils"
 )
 
 type AdmissionSummaryResponse struct {
@@ -37,9 +38,9 @@ func ToAdmissionSummaryResponses(items []sqlc.AdmissionSummary) []AdmissionSumma
 			AdmissionType:    item.AdmissionType,
 			SubjectCategory:  item.SubjectCategory,
 			HighestScore:     item.HighestScore,
-			HighestScoreRank: item.HighestScoreRank,
+			HighestScoreRank: utils.Ternary[string](item.HighestScoreRank != "", item.HighestScoreRank, "无"),
 			LowestScore:      item.LowestScore,
-			LowestScoreRank:  item.LowestScoreRank,
+			LowestScoreRank:  utils.Ternary[string](item.LowestScoreRank != "", item.LowestScoreRank, "无"),
 		})
 	}
 

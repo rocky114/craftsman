@@ -69,3 +69,11 @@ func FetchAdmissionScoreData(url string, req AdmissionRequest) (AdmissionRespons
 
 	return resp, nil
 }
+
+func Ternary[T any](condition bool, trueVal, falseVal T) T {
+	if condition {
+		return trueVal
+	}
+
+	return falseVal
+}
