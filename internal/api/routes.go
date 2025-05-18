@@ -11,6 +11,7 @@ import (
 func RegisterRoutes(e *echo.Echo, repo *database.Database, cfg *config.Config) {
 	universityHandler := handlers.NewUniversityHandler(repo, cfg)
 	admissionScoreHandler := handlers.NewAdmissionScrapeHandler(repo, cfg)
+	admissionScoreLineHandler := handlers.NewAdmissionScoreLineHandler(repo, cfg)
 	admissionSummaryHandler := handlers.NewAdmissionSummaryHandler(repo, cfg)
 	scoreDistributionHandler := handlers.NewScoreDistributionHandler(repo, cfg)
 
@@ -33,11 +34,18 @@ func RegisterRoutes(e *echo.Echo, repo *database.Database, cfg *config.Config) {
 		universityGroup.DELETE("/:id", universityHandler.DeleteUniversity)
 	}
 
-	// 招生分数路由
+	// 录取分数路由
 	admissionScoreGroup := e.Group("/api/admission_scores")
 	{
 		admissionScoreGroup.POST("", admissionScoreHandler.CreateAdmissionScore)
 		admissionScoreGroup.GET("", admissionScoreHandler.ListAdmissionScores)
+	}
+
+	// 投档线路由
+	admissionScoreLineGroup := e.Group("/api/admission_score_lines")
+	{
+		admissionScoreLineGroup.POST("", admissionScoreLineHandler.CreateAdmissionScoreLine)
+		admissionScoreLineGroup.GET("", admissionScoreLineHandler.ListAdmissionScoreLines)
 	}
 
 	// 招生汇总路由
