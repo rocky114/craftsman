@@ -53,6 +53,30 @@ type AdmissionScore struct {
 	CreateTime      time.Time `db:"create_time"`
 }
 
+// 考试院公布的投档线
+type AdmissionScoreLine struct {
+	ID uint32 `db:"id"`
+	// 录取年份（如2024）
+	Year string `db:"year"`
+	// 省份 江苏
+	Province string `db:"province"`
+	// 关联院校表
+	UniversityName string `db:"university_name"`
+	// 录取批次
+	AdmissionBatch string `db:"admission_batch"`
+	// 类型: 普通类,艺术类,国家专项,高校专项,中外合作,飞行技术,预科
+	AdmissionType string `db:"admission_type"`
+	// 科类: 历史+不限
+	SubjectCategory string `db:"subject_category"`
+	// 专业组
+	MajorGroup string `db:"major_group"`
+	// 最低分
+	LowestScore string `db:"lowest_score"`
+	// 排名 200000名次
+	LowestScoreRank string    `db:"lowest_score_rank"`
+	CreateTime      time.Time `db:"create_time"`
+}
+
 // 高校录取分数汇总表
 type AdmissionSummary struct {
 	ID uint32 `db:"id"`
