@@ -24,6 +24,7 @@ type AdmissionScore struct {
 	UniversityName   string `json:"university_name"`
 	AdmissionBatch   string `json:"admission_batch"`
 	AdmissionType    string `json:"admission_type"`
+	AdmissionRegion  string `json:"admission_region"`
 	SubjectCategory  string `json:"subject_category"`
 	MajorGroup       string `json:"major_group"`
 	MajorName        string `json:"major_name"`

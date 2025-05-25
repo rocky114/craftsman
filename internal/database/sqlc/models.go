@@ -66,6 +66,8 @@ type AdmissionScoreLine struct {
 	AdmissionBatch string `db:"admission_batch"`
 	// 类型: 普通类,艺术类,国家专项,高校专项,中外合作,飞行技术,预科
 	AdmissionType string `db:"admission_type"`
+	// 定向区域
+	AdmissionRegion string `db:"admission_region"`
 	// 科类: 历史+不限
 	SubjectCategory string `db:"subject_category"`
 	// 专业组

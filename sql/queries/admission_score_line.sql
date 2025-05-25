@@ -6,12 +6,13 @@ INSERT INTO admission_score_line (
     university_name,
     admission_batch,
     admission_type,
+    admission_region,
     subject_category,
     major_group,
     lowest_score,
     lowest_score_rank
 ) VALUES (
-    ?, ?, ?, ?, ?, ?, ?, ?, ?
+    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
 );
 
 -- 删除操作

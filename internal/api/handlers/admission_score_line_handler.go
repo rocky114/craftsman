@@ -62,6 +62,7 @@ func (h *AdmissionScoreLineHandler) CreateAdmissionScoreLine(c echo.Context) err
 				Year:            item.Year,
 				AdmissionBatch:  item.AdmissionBatch,
 				AdmissionType:   item.AdmissionType,
+				AdmissionRegion: item.AdmissionRegion,
 				SubjectCategory: item.SubjectCategory,
 				MajorGroup:      item.MajorGroup,
 				LowestScore:     strings.Split(item.LowestScore, ".")[0],

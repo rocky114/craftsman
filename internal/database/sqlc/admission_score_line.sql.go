@@ -16,12 +16,13 @@ INSERT INTO admission_score_line (
     university_name,
     admission_batch,
     admission_type,
+    admission_region,
     subject_category,
     major_group,
     lowest_score,
     lowest_score_rank
 ) VALUES (
-    ?, ?, ?, ?, ?, ?, ?, ?, ?
+    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
 )
 `
 
@@ -31,6 +32,7 @@ type CreateAdmissionScoreLineParams struct {
 	UniversityName  string `db:"university_name"`
 	AdmissionBatch  string `db:"admission_batch"`
 	AdmissionType   string `db:"admission_type"`
+	AdmissionRegion string `db:"admission_region"`
 	SubjectCategory string `db:"subject_category"`
 	MajorGroup      string `db:"major_group"`
 	LowestScore     string `db:"lowest_score"`
@@ -45,6 +47,7 @@ func (q *Queries) CreateAdmissionScoreLine(ctx context.Context, arg CreateAdmiss
 		arg.UniversityName,
 		arg.AdmissionBatch,
 		arg.AdmissionType,
+		arg.AdmissionRegion,
 		arg.SubjectCategory,
 		arg.MajorGroup,
 		arg.LowestScore,
@@ -65,7 +68,7 @@ func (q *Queries) DeleteAdmissionScoreLine(ctx context.Context, id uint32) error
 }
 
 const getAdmissionScoreLineByID = `-- name: GetAdmissionScoreLineByID :one
-SELECT id, year, province, university_name, admission_batch, admission_type, subject_category, major_group, lowest_score, lowest_score_rank, create_time FROM admission_score_line
+SELECT id, year, province, university_name, admission_batch, admission_type, admission_region, subject_category, major_group, lowest_score, lowest_score_rank, create_time FROM admission_score_line
 WHERE id = ?
 `
 
@@ -80,6 +83,7 @@ func (q *Queries) GetAdmissionScoreLineByID(ctx context.Context, id uint32) (Adm
 		&i.UniversityName,
 		&i.AdmissionBatch,
 		&i.AdmissionType,
+		&i.AdmissionRegion,
 		&i.SubjectCategory,
 		&i.MajorGroup,
 		&i.LowestScore,
