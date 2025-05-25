@@ -21,8 +21,11 @@ type AdmissionRequest struct {
 type AdmissionScore struct {
 	Year             string `json:"year"`
 	Province         string `json:"province"`
+	UniversityName   string `json:"university_name"`
+	AdmissionBatch   string `json:"admission_batch"`
 	AdmissionType    string `json:"admission_type"`
 	SubjectCategory  string `json:"subject_category"`
+	MajorGroup       string `json:"major_group"`
 	MajorName        string `json:"major_name"`
 	HighestScore     string `json:"highest_score"`
 	HighestScoreRank string `json:"highest_score_rank"`
@@ -76,59 +79,6 @@ type AdmissionScoreLineRequest struct {
 	Year          string `json:"year"`
 	Province      string `json:"province"`
 	AdmissionType string `json:"admission_type"`
-}
-
-// AdmissionScoreLine 定义响应数据中的 data 字段子项
-type AdmissionScoreLine struct {
-	Year            string `json:"year"`
-	Province        string `json:"province"`
-	UniversityName  string `json:"university_name"`
-	AdmissionBatch  string `json:"admission_batch"`
-	AdmissionType   string `json:"admission_type"`
-	SubjectCategory string `json:"subject_category"`
-	MajorGroup      string `json:"major_group"`
-	LowestScore     string `json:"lowest_score"`
-	LowestScoreRank string `json:"lowest_score_rank"`
-}
-
-// AdmissionScoreLineResponse 定义响应参数结构体
-type AdmissionScoreLineResponse struct {
-	Status  string               `json:"status"`
-	Data    []AdmissionScoreLine `json:"data"`
-	Message string               `json:"message"`
-}
-
-// FetchAdmissionScoreLineData 发送 POST 请求获取招生数据
-func FetchAdmissionScoreLineData(url string, req AdmissionScoreLineRequest) (AdmissionScoreLineResponse, error) {
-	var resp AdmissionScoreLineResponse
-
-	// 将请求参数序列化为 JSON
-	body, err := json.Marshal(req)
-	if err != nil {
-		return resp, err
-	}
-
-	// 创建 HTTP POST 请求
-	httpReq, err := http.NewRequest("POST", url, bytes.NewBuffer(body))
-	if err != nil {
-		return resp, err
-	}
-	httpReq.Header.Set("Content-Type", "application/json")
-
-	// 发送请求
-	client := &http.Client{}
-	httpResp, err := client.Do(httpReq)
-	if err != nil {
-		return resp, err
-	}
-	defer httpResp.Body.Close()
-
-	// 解析响应
-	if err := json.NewDecoder(httpResp.Body).Decode(&resp); err != nil {
-		return resp, err
-	}
-
-	return resp, nil
 }
 
 func Ternary[T any](condition bool, trueVal, falseVal T) T {

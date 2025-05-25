@@ -24,8 +24,10 @@ func NewAdmissionScoreLineHandler(q *database.Database, cfg *config.Config) *Adm
 func (h *AdmissionScoreLineHandler) CreateAdmissionScoreLine(c echo.Context) error {
 	var admissionScoreLineReq struct {
 		Url            string `json:"url"`
-		UniversityName string `json:"universityName"`
-		Year           int    `json:"year"`
+		UniversityName string `json:"university_name"`
+		Year           string `json:"year"`
+		Province       string `json:"province"`
+		AdmissionType  string `json:"admission_type"`
 	}
 
 	var admissionScoreResp struct {
@@ -36,8 +38,12 @@ func (h *AdmissionScoreLineHandler) CreateAdmissionScoreLine(c echo.Context) err
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	respAdmission, err := utils.FetchAdmissionScoreLineData(h.cfg.Scraper.URL, utils.AdmissionScoreLineRequest{
-		URL: admissionScoreLineReq.Url,
+	respAdmission, err := utils.FetchAdmissionScoreData(h.cfg.Scraper.URL, utils.AdmissionRequest{
+		URL:            admissionScoreLineReq.Url,
+		Year:           admissionScoreLineReq.Year,
+		Province:       admissionScoreLineReq.Province,
+		AdmissionType:  admissionScoreLineReq.AdmissionType,
+		UniversityName: admissionScoreLineReq.UniversityName,
 	})
 
 	if err != nil {
@@ -51,7 +57,7 @@ func (h *AdmissionScoreLineHandler) CreateAdmissionScoreLine(c echo.Context) err
 	err = h.repo.WithTransaction(c.Request().Context(), func(q *sqlc.Queries) error {
 		for _, item := range respAdmission.Data {
 			if err = q.CreateAdmissionScoreLine(c.Request().Context(), sqlc.CreateAdmissionScoreLineParams{
-				UniversityName:  admissionScoreLineReq.UniversityName,
+				UniversityName:  item.UniversityName,
 				Province:        item.Province,
 				Year:            item.Year,
 				AdmissionBatch:  item.AdmissionBatch,
@@ -59,7 +65,6 @@ func (h *AdmissionScoreLineHandler) CreateAdmissionScoreLine(c echo.Context) err
 				SubjectCategory: item.SubjectCategory,
 				MajorGroup:      item.MajorGroup,
 				LowestScore:     strings.Split(item.LowestScore, ".")[0],
-				LowestScoreRank: item.LowestScoreRank,
 			}); err != nil {
 				return err
 			}
